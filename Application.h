@@ -8,7 +8,7 @@ class ModuleRender;
 class ModuleWindow;
 class ModuleTextures;
 class ModuleInput;
-class ModuleRenderExercise;
+class ModuleRenderTriangle;
 
 class Application
 {
@@ -26,7 +26,7 @@ public:
 	ModuleWindow* window = nullptr;
 	ModuleTextures* textures = nullptr;
 	ModuleInput* input = nullptr;
-    ModuleRenderExercise* exercise = nullptr;
+    ModuleRenderTriangle* triangle = nullptr;
 
 private:
 
