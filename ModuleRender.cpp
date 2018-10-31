@@ -57,7 +57,7 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
-
+	
 	return UPDATE_CONTINUE;
 }
 

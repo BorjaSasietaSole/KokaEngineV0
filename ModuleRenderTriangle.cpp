@@ -1,20 +1,20 @@
 #include "Application.h"
 
-#include "ModuleRenderExercise.h"
+#include "ModuleRenderTriangle.h"
 #include "ModuleWindow.h"
 
 #include "GL/glew.h"
 #include "SDL.h"
 
-ModuleRenderExercise::ModuleRenderExercise()
+ModuleRenderTriangle::ModuleRenderTriangle()
 {
 }
 
-ModuleRenderExercise::~ModuleRenderExercise()
+ModuleRenderTriangle::~ModuleRenderTriangle()
 {
 }
 
-bool ModuleRenderExercise::Init()
+bool ModuleRenderTriangle::Init()
 {
     float vertex_buffer_data[] = {
         -1.0f, -1.0f, 0.0f,
@@ -30,7 +30,7 @@ bool ModuleRenderExercise::Init()
     return vbo;
 }
 
-update_status ModuleRenderExercise::Update()
+update_status ModuleRenderTriangle::Update()
 {
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -51,7 +51,7 @@ update_status ModuleRenderExercise::Update()
 	return UPDATE_CONTINUE;
 }
 
-bool ModuleRenderExercise::CleanUp()
+bool ModuleRenderTriangle::CleanUp()
 {
     if(vbo != 0)
     {
