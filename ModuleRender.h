@@ -2,6 +2,8 @@
 #include "Module.h"
 #include "Globals.h"
 
+#include "ModuleLoader.h"
+
 struct SDL_Texture;
 struct SDL_Renderer;
 struct SDL_Rect;
@@ -20,5 +22,11 @@ public:
 	void WindowResized(unsigned width, unsigned height);
 
 private:
+
+	void RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleModelLoader::Material& material,
+		unsigned program, const math::float4x4& model,
+		const math::float4x4& view, const math::float4x4& proj);
+
 	void* context;
+	Frustum frustum;
 };

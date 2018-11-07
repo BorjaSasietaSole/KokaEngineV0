@@ -40,9 +40,29 @@ bool ModuleRender::Init()
 	glClearDepth(1.0f);
 	glClearColor(0.3f, 0.3f, 0.3f, 1.f);
 
-    int width, height;
-    SDL_GetWindowSize(App->window->window, &width, &height);
-    glViewport(0, 0, width, height);
+	int width, height;
+	SDL_GetWindowSize(App->window->window, &width, &height);
+	glViewport(0, 0, width, height);
+
+	frustum.type = FrustumType::PerspectiveFrustum;
+
+	frustum.pos = float3::zero;
+	frustum.front = -float3::unitZ;
+	frustum.up = float3::unitY;
+
+	frustum.nearPlaneDistance = 0.1f;
+	frustum.farPlaneDistance = 150.0f;
+	frustum.verticalFov = math::pi / 4.0f;
+	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * float(width) / float(height));
+
+	math::float3 eye = math::float3(-10.0f, 1.0f, -10.0f);
+	math::float3 target = math::float3(0.0f, 1.0f, 0.0f);
+
+	math::float3x3 lookat = math::float3x3::LookAt(math::float3::unitZ, (target - eye).Normalized(), math::float3::unitY, math::float3::unitY);
+
+	frustum.front = lookat*math::float3::unitZ;
+	frustum.up = lookat*math::float3::unitY;
+	frustum.pos = eye;
 
 	return true;
 }
@@ -57,7 +77,49 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
+	math::float4x4 proj = frustum.ProjectionMatrix();
+	math::float4x4 view = frustum.ViewMatrix();
+
+	for (unsigned i = 0; i< App->models->meshes.size(); ++i)
+	{
+		const ModuleModelLoader::Mesh& mesh = App->models->meshes[i];
+
+		RenderMesh(mesh, App->models->materials[mesh.material], App->programs->def_program,
+			App->models->transform, view, proj);
+	}
+
 	return UPDATE_CONTINUE;
+}
+
+void ModuleRender::RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleModelLoader::Material& material,
+	unsigned program, const math::float4x4& model,
+	const math::float4x4& view, const math::float4x4& proj)
+{
+	glUseProgram(program);
+
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, (const float*)&model);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, (const float*)&view);
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, (const float*)&proj);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, material.texture0);
+	glUniform1i(glGetUniformLocation(program, "texture0"), 0);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * mesh.num_vertices));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
+	glDrawElements(GL_TRIANGLES, mesh.num_indices, GL_UNSIGNED_INT, nullptr);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUseProgram(0);
+
 }
 
 update_status ModuleRender::PostUpdate()

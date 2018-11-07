@@ -27,6 +27,7 @@ public:
 	ModuleTextures* textures = nullptr;
 	ModuleInput* input = nullptr;
     ModuleRenderTriangle* triangle = nullptr;
+	ModuleModelLoader* models = nullptr;
 
 private:
 

@@ -16,6 +16,7 @@ Application::Application()
 	modules.push_back(textures = new ModuleTextures());
 	modules.push_back(input = new ModuleInput());
     modules.push_back(triangle = new ModuleRenderTriangle());
+	modules.push_back(models = new ModuleModelLoader());
 }
 
 Application::~Application()
