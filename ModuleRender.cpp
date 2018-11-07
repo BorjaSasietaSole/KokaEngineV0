@@ -82,7 +82,7 @@ update_status ModuleRender::Update()
 
 	for (unsigned i = 0; i< App->models->meshes.size(); ++i)
 	{
-		const ModuleModelLoader::Mesh& mesh = App->models->meshes[i];
+		const ModuleLoader::Mesh& mesh = App->models->meshes[i];
 
 		RenderMesh(mesh, App->models->materials[mesh.material], App->programs->def_program,
 			App->models->transform, view, proj);
@@ -91,7 +91,7 @@ update_status ModuleRender::Update()
 	return UPDATE_CONTINUE;
 }
 
-void ModuleRender::RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleModelLoader::Material& material,
+void ModuleRender::RenderMesh(const ModuleLoader::Mesh& mesh, const ModuleLoader::Material& material,
 	unsigned program, const math::float4x4& model,
 	const math::float4x4& view, const math::float4x4& proj)
 {

@@ -11,15 +11,15 @@
 #include "Assimp\include\assimp\postprocess.h"
 
 
-ModuleModelLoader::ModuleModelLoader()
+ModuleLoader::ModuleLoader()
 {
 }
 
-ModuleModelLoader::~ModuleModelLoader()
+ModuleLoader::~ModuleLoader()
 {
 }
 
-bool ModuleModelLoader::Init()
+bool ModuleLoader::Init()
 {
 	const aiScene* scene = aiImportFile("BakerHouse.fbx", aiProcessPreset_TargetRealtime_MaxQuality);
 
@@ -36,12 +36,12 @@ bool ModuleModelLoader::Init()
 	return false;
 }
 
-update_status ModuleModelLoader::Update()
+update_status ModuleLoader::Update()
 {
 	return UPDATE_CONTINUE;
 }
 
-bool ModuleModelLoader::CleanUp()
+bool ModuleLoader::CleanUp()
 {
 	for (unsigned i = 0; i < meshes.size(); ++i)
 	{
@@ -66,7 +66,7 @@ bool ModuleModelLoader::CleanUp()
 	return true;
 }
 
-void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
+void ModuleLoader::GenerateMeshes(const aiScene* scene)
 {
 	for (unsigned i = 0; i< scene->mNumMeshes; ++i)
 	{
@@ -124,7 +124,7 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
 	}
 }
 
-void ModuleModelLoader::GenerateMaterials(const aiScene* scene)
+void ModuleLoader::GenerateMaterials(const aiScene* scene)
 {
 	for (unsigned i = 0; i < scene->mNumMaterials; ++i)
 	{

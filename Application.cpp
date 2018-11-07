@@ -4,6 +4,7 @@
 #include "ModuleRender.h"
 #include "ModuleTextures.h"
 #include "ModuleInput.h"
+#include "ModulePrograms.h"
 #include "ModuleRenderTriangle.h"
 
 using namespace std;
@@ -15,8 +16,9 @@ Application::Application()
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(textures = new ModuleTextures());
 	modules.push_back(input = new ModuleInput());
+	modules.push_back(programs = new ModulePrograms());
     modules.push_back(triangle = new ModuleRenderTriangle());
-	modules.push_back(models = new ModuleModelLoader());
+	modules.push_back(models = new ModuleLoader());
 }
 
 Application::~Application()

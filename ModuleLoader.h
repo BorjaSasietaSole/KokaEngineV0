@@ -1,5 +1,5 @@
-#ifndef __ModuleModelLoader_h__
-#define __ModuleModelLoader_h__
+#ifndef __ModuleLoader_h__
+#define __ModuleLoader_h__
 
 #include "Module.h"
 
@@ -9,12 +9,12 @@
 
 struct aiScene;
 
-class ModuleModelLoader : public Module
+class ModuleLoader : public Module
 {
 public:
 
-	ModuleModelLoader();
-	~ModuleModelLoader();
+	ModuleLoader();
+	~ModuleLoader();
 
 	bool            Init();
 	update_status   Update();
@@ -46,4 +46,4 @@ public:
 	math::float4x4        transform = math::float4x4::identity;
 };
 
-#endif // __ModuleModelLoader_h__ 
+#endif // __ModuleLoader_h__ 

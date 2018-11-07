@@ -23,7 +23,7 @@ public:
 
 private:
 
-	void RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleModelLoader::Material& material,
+	void RenderMesh(const ModuleLoader::Mesh& mesh, const ModuleLoader::Material& material,
 		unsigned program, const math::float4x4& model,
 		const math::float4x4& view, const math::float4x4& proj);
 

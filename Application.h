@@ -9,6 +9,8 @@ class ModuleWindow;
 class ModuleTextures;
 class ModuleInput;
 class ModuleRenderTriangle;
+class ModulePrograms;
+class ModuleLoader;
 
 class Application
 {
@@ -27,7 +29,8 @@ public:
 	ModuleTextures* textures = nullptr;
 	ModuleInput* input = nullptr;
     ModuleRenderTriangle* triangle = nullptr;
-	ModuleModelLoader* models = nullptr;
+	ModuleLoader* models = nullptr;
+	ModulePrograms* programs = nullptr;
 
 private:
 
