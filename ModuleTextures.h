@@ -14,8 +14,6 @@ public:
 	bool Init();
 	bool CleanUp();
 
-	SDL_Texture* const Load(const char* path, bool mipmaps);
-
-private:
-	std::list<SDL_Texture*> textures;
+	unsigned Load(const char* path, bool mipmaps);
+	void Unload(unsigned id);
 };

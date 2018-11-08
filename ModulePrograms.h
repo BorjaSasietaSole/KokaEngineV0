@@ -9,7 +9,7 @@ public:
     ModulePrograms();
     ~ModulePrograms();
 
-	bool Init   ();
+	bool Init();
     bool CleanUp();
 
 private:

@@ -4,10 +4,10 @@
 #include "ModuleWindow.h"
 #include "ModuleTextures.h"
 
-#include "GL/glew.h"
-#include "SDL.h"
+#include <GL/glew.h>
+#include <SDL.h>
 
-#include "Geometry/Frustum.h"
+#include <Geometry/Frustum.h>
 
 ModuleRenderTriangle::ModuleRenderTriangle()
 {
@@ -62,6 +62,8 @@ bool ModuleRenderTriangle::Init()
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	texture0 = App->textures->Load("Lenna.png", false);
 
     return vbo;
 }

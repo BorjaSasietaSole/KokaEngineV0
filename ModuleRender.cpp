@@ -2,8 +2,11 @@
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
-#include "SDL.h"
-#include "GL/glew.h"
+#include "ModulePrograms.h"
+#include "ModuleLoader.h"
+
+#include <SDL.h>
+#include <GL/glew.h>
 
 ModuleRender::ModuleRender()
 {

@@ -4,11 +4,11 @@
 #include "ModuleLoader.h"
 #include "ModuleTextures.h"
 
-#include "GL/glew.h"
+#include <GL/glew.h>
 
-#include "Assimp\include\assimp\scene.h"
-#include "Assimp\include\assimp\cimport.h"
-#include "Assimp\include\assimp\postprocess.h"
+#include <assimp/scene.h>
+#include <assimp/cimport.h>
+#include <assimp/postprocess.h>
 
 
 ModuleLoader::ModuleLoader()
@@ -25,8 +25,8 @@ bool ModuleLoader::Init()
 
 	if (scene)
 	{
-		//GenerateMeshes(scene);
-		//GenerateMaterials(scene);
+		GenerateMeshes(scene);
+		GenerateMaterials(scene);
 
 		aiReleaseImport(scene);
 
