@@ -1,4 +1,5 @@
 #include "ModuleGui.h"
+#include <SDL.h>
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
 #include <GL/gl3w.h>
 #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
@@ -9,18 +10,28 @@
 #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif
 
-ModuleGui::ModuleGui() {
-	// Setup SDL
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
-	{
-		printf("Error: %s\n", SDL_GetError());
-	}
+static void ShowMenuBar();
+//static void ShowAbout();
+static void ShowHardware();
+static void ShowTextureConfig();
+static void ShowConsole();
+//static void ShowZoomMagnifier();
+static void PrintTextureParams(const char* currentTexture);
+static void PrintMipMapOption(const char* currentTexture);
 
+ModuleGui::ModuleGui() {
+}
+
+ModuleGui::~ModuleGui() {
+}
+
+bool ModuleGui::Init() {
+	
 	// Decide GL+GLSL versions
 #if __APPLE__
 	// GL 3.2 Core + GLSL 150
 	glsl_version = "#version 150";
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
@@ -39,15 +50,8 @@ ModuleGui::ModuleGui() {
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	SDL_DisplayMode current;
 	SDL_GetCurrentDisplayMode(0, &current);
-	window = SDL_CreateWindow("Dear ImGui SDL2+OpenGL3 exercice", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-	gl_context = SDL_GL_CreateContext(window);
 	SDL_GL_SetSwapInterval(1);
-}
 
-ModuleGui::~ModuleGui() {
-}
-
-bool ModuleGui::Init() {
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
 	bool err = gl3wInit() != 0;
 #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
@@ -70,7 +74,7 @@ bool ModuleGui::Init() {
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 
 														   // Setup Platform/Renderer bindings
-	ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	// Setup Style
@@ -102,62 +106,56 @@ bool ModuleGui::Init() {
 update_status ModuleGui::PreUpdate() {
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplSDL2_NewFrame(window);
+	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
 
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleGui::Update() {
-	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	if (show_demo_window){
-		ImGui::ShowDemoWindow(&show_demo_window);
 
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-	
-		static float f = 0.0f;
-		static int counter = 0;
+	update_status ret = UPDATE_CONTINUE;
+	ShowMenuBar();
 
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &show_another_window);
-
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			counter++;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::End();
+	if (showAboutMenu) {
+		//ShowAbout();
 	}
 
-	// 3. Show another simple window.
-	if (show_another_window)
-	{
-		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window!");
-		if (ImGui::Button("Close Me"))
-			show_another_window = false;
-		ImGui::End();
+	if (showHardwareMenu) {
+		ShowHardware();
 	}
 
-	return UPDATE_CONTINUE;
+	if (showSceneConfig) {
+		//ShowSceneConfig(fps_log, ms_log);
+	}
+
+	if (showTextureConfig) {
+		ShowTextureConfig();
+	}
+
+	if (showConsole) {
+		ShowConsole();
+	}
+
+	if (showZoomMagnifier) {
+		//ShowZoomMagnifier();
+	}
+
+	if (requestedExit)
+		ret = UPDATE_STOP;
+
+	return ret;
 }
 
 update_status ModuleGui::PostUpdate() {
 	// Rendering
 	ImGui::Render();
-	SDL_GL_MakeCurrent(window, gl_context);
+	SDL_GL_MakeCurrent(App->window->window, App->renderer->context);
 	glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 	glClear(GL_COLOR_BUFFER_BIT);
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	SDL_GL_SwapWindow(window);
+	SDL_GL_SwapWindow(App->window->window);
 
 	return UPDATE_CONTINUE;
 }
@@ -167,9 +165,233 @@ bool ModuleGui::CleanUp() {
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
-	SDL_GL_DeleteContext(gl_context);
-	SDL_DestroyWindow(window);
+	SDL_GL_DeleteContext(App->renderer->context);
+	SDL_DestroyWindow(App->window->window);
 	SDL_Quit();
 
 	return true;
+}
+
+void ModuleGui::HandleInputs(SDL_Event& event) {
+	ImGui_ImplSDL2_ProcessEvent(&event);
+}
+
+// General menu options
+static void ShowMenuBar() {
+	if (ImGui::BeginMainMenuBar()) {
+		if (ImGui::BeginMenu("File")) {
+			if (ImGui::MenuItem("Exit")) { App->options->requestedExit = true; }
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Scene")) {
+			if (ImGui::MenuItem("Configuration")) { App->options->showSceneConfig = true; }
+			if (ImGui::MenuItem("Textures")) { App->options->showTextureConfig = true; }
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Tools")) {
+			if (ImGui::MenuItem("Console")) { App->options->showConsole = true; }
+			if (ImGui::MenuItem("Hardware")) { App->options->showHardwareMenu = true; }
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Help")) {
+			if (ImGui::MenuItem("About")) { App->options->showAboutMenu = true; }
+			ImGui::EndMenu();
+		}
+	}
+	ImGui::EndMainMenuBar();
+}
+
+// Hardware
+static void ShowHardware() {
+	ImGui::Begin("Hardware specs", &App->options->showHardwareMenu, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::Text("CPU Count: "); ImGui::SameLine(); ImGui::TextColored(ImVec4(0.8f, 0.5f, 1.0f, 1.0f), "%d", SDL_GetCPUCount());
+	ImGui::Text("System RAM: "); ImGui::SameLine(); ImGui::TextColored(ImVec4(0.8f, 0.5f, 1.0f, 1.0f), "%d", SDL_GetSystemRAM());
+	ImGui::End();
+}
+
+// Scene config
+/*static void ShowSceneConfig(std::vector<float> fps, std::vector<float> ms) {
+	ImGui::Begin("Camera", &App->editor->showSceneConfig, ImGuiWindowFlags_AlwaysAutoResize);
+	bool fovXEdited = false, fovYEdited = false;
+	if (ImGui::CollapsingHeader("Performance")) {
+		char title[25];
+		sprintf_s(title, 25, "Framerate %0.1f", fps[fps.size() - 1]);
+		ImGui::PlotHistogram("##framerate", &fps[0], fps.size(), 0, title, 0.0f, 200.0f, ImVec2(310, 100));
+		sprintf_s(title, 25, "Milliseconds %0.1f", ms[ms.size() - 1]);
+		ImGui::PlotHistogram("##framerate", &ms[0], ms.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+	}
+	if (ImGui::CollapsingHeader("Camera properties")) {
+		float camPos[3] = { App->camera->cameraPos.x, App->camera->cameraPos.y, App->camera->cameraPos.z };
+		ImGui::InputFloat3("Cam position", camPos, "%.3f");
+		ImGui::Separator();
+		float front[3] = { App->camera->front.x, App->camera->front.y, App->camera->front.z };
+		ImGui::InputFloat3("Front", front, "%.3f");
+		float side[3] = { App->camera->side.x, App->camera->side.y, App->camera->side.z };
+		ImGui::InputFloat3("Side", side, "%.3f");
+		float up[3] = { App->camera->up.x, App->camera->up.y, App->camera->up.z };
+		ImGui::InputFloat3("Up", up, "%.3f");
+		ImGui::Separator();
+		ImGui::InputFloat("Pitch", &App->camera->pitch, 0, 0, 0);
+		ImGui::InputFloat("Yaw", &App->camera->yaw, 0, 0, 0);
+	}
+	if (ImGui::CollapsingHeader("Camera config")) {
+		ImGui::SliderFloat("Mov Speed", &App->camera->cameraSpeed, 0.0f, 100.0f);
+		ImGui::SliderFloat("Rot Speed", &App->camera->rotationSpeed, 0.0f, 100.0f);
+		ImGui::SliderFloat("Mouse Sens", &App->camera->mouseSensitivity, 0.0f, 1.0f);
+		ImGui::Separator();
+		fovXEdited = ImGui::SliderFloat("Horz. Fov", &App->camera->fovX, 1.0f, 45.0f, "%.00f", 1.0f);
+		if (ImGui::IsItemEdited()) {
+			App->camera->SetHorizontalFOV(App->camera->fovX);
+		}
+		// TODO: Not working properly
+		fovYEdited = ImGui::SliderFloat("Vertical. Fov", &App->camera->fovY, 1.0f, 45.0f, "%.00f", 1.0f);
+		if (ImGui::IsItemEdited()) {
+			App->camera->SetVerticalFOV(App->camera->fovY);
+		}
+		ImGui::InputFloat("AspectRatio", &App->camera->screenRatio, 0, 0, "%.3f");
+		ImGui::SliderFloat("Near Plane", &App->camera->frustum.nearPlaneDistance, 0.1f, App->camera->frustum.farPlaneDistance);
+		ImGui::SliderFloat("Far Plane", &App->camera->frustum.farPlaneDistance, 0.1f, 500.0f);
+		ImGui::Separator();
+		ImGui::SliderFloat3("Background color", App->renderer->bgColor, 0.0f, 1.0f);
+	}
+	ImGui::End();
+}*/
+
+//Texture config
+static void ShowTextureConfig() {
+	ImGui::Begin("Textures", &App->options->showTextureConfig, ImGuiWindowFlags_AlwaysAutoResize);
+	const char* items[] = { "./textures/Lenna.png", "./textures/Lennin.dds", "./textures/Lolnope.jpg", "./textures/Lolyes.gif" };
+	static const char* current_item = items[0];
+	if (ImGui::BeginCombo("Available textures", current_item, ImGuiComboFlags_NoArrowButton))
+	{
+		for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+		{
+			bool is_selected = (current_item == items[n]);
+			if (ImGui::Selectable(items[n], is_selected)) {
+				current_item = items[n];
+				// App->textures->ReloadTexture(items[n], App->renderer->texture0);
+			}
+			if (is_selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+	ImGui::Separator();
+	if (ImGui::CollapsingHeader("Texture information")) {
+		ImGui::InputText("Format", App->textures->imgFormat, sizeof(App->textures->imgFormat));
+		// TODO: this should be something like App->exercise->texture0.Width
+		/*ImGui::InputInt("Width", &App->textures->imgWidth, 0, 0);
+		ImGui::InputInt("Height", &App->textures->imgHeight, 0, 0);
+		ImGui::InputInt("Pixel depth", &App->textures->imgPixelDepth, 0, 0);*/
+	}
+	if (ImGui::CollapsingHeader("Texture config")) {
+		PrintTextureParams(current_item);
+		ImGui::Separator();
+		PrintMipMapOption(current_item);
+	}
+
+	ImGui::End();
+}
+
+// Texture functions
+static void PrintTextureParams(const char* currentTexture) {
+	// Wrap methods
+	const char* wrapMethods[] = { "GL_TEXTURE_WRAP_R", "GL_TEXTURE_WRAP_S", "GL_TEXTURE_WRAP_T" };
+	const int wrapMethodsValues[] = { GL_TEXTURE_WRAP_R, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T };
+	static const char* currentWrap = wrapMethods[0];
+	if (ImGui::BeginCombo("Wrap methods", currentWrap, ImGuiComboFlags_NoArrowButton))
+	{
+		for (int wr = 0; wr < IM_ARRAYSIZE(wrapMethods); wr++)
+		{
+			bool wrapSelected = (currentWrap == wrapMethods[wr]);
+			if (ImGui::Selectable(wrapMethods[wr], wrapSelected)) {
+				currentWrap = wrapMethods[wr];
+				// App->textures->SetNewParameter(currentTexture, App->exercise->texture0, App->textures->textFilter, App->textures->resizeMethod, wrapMethodsValues[wr], App->textures->clampMethod);
+			}
+			if (wrapSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+	// Resize methods
+	const char* resizeMethods[] = { "Linear", "Nearest" };
+	const int resizeMethodsValues[] = { GL_LINEAR, GL_NEAREST };
+	static const char* currentResize = resizeMethods[0];
+	if (ImGui::BeginCombo("Resize methods", currentResize, ImGuiComboFlags_NoArrowButton))
+	{
+		for (int rs = 0; rs < IM_ARRAYSIZE(resizeMethods); rs++)
+		{
+			bool resizeSelected = (currentResize == resizeMethods[rs]);
+			if (ImGui::Selectable(resizeMethods[rs], resizeSelected)) {
+				currentResize = resizeMethods[rs];
+				// App->textures->SetNewParameter(currentTexture, App->exercise->texture0, App->textures->textFilter, resizeMethodsValues[rs], App->textures->wrapMethod, App->textures->clampMethod);
+			}
+			if (resizeSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+	// Clamp methods
+	const char* clampMethods[] = { "GL_CLAMP", "GL_CLAMP_TO_BORDER", "GL_REPEAT", "GL_MIRRORED_REPEAT" };
+	const int clampMethodsValues[] = { GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_REPEAT, GL_MIRRORED_REPEAT };
+	static const char* currentClamp = clampMethods[0];
+	if (ImGui::BeginCombo("Clamp methods", currentClamp, ImGuiComboFlags_NoArrowButton))
+	{
+		for (int cl = 0; cl < IM_ARRAYSIZE(clampMethods); cl++)
+		{
+			bool clampSelected = (currentClamp == clampMethods[cl]);
+			if (ImGui::Selectable(clampMethods[cl], clampSelected)) {
+				currentClamp = clampMethods[cl];
+				// App->textures->SetNewParameter(currentTexture, App->exercise->texture0, App->textures->textFilter, App->textures->resizeMethod, App->textures->wrapMethod, clampMethodsValues[cl]);
+			}
+			if (clampSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+	// Texture filter methods
+	const char* filterMethods[] = { "GL_TEXTURE_MIN_FILTER", "GL_TEXTURE_MAG_FILTER" };
+	const int filterMethodsValues[] = { GL_TEXTURE_MIN_FILTER, GL_TEXTURE_MAG_FILTER };
+	static const char* currentFilter = filterMethods[0];
+	if (ImGui::BeginCombo("Filter methods", currentFilter, ImGuiComboFlags_NoArrowButton))
+	{
+		for (int fl = 0; fl < IM_ARRAYSIZE(filterMethods); fl++)
+		{
+			bool filterSelected = (currentFilter == filterMethods[fl]);
+			if (ImGui::Selectable(filterMethods[fl], filterSelected)) {
+				currentFilter = filterMethods[fl];
+				// App->textures->SetNewParameter(currentTexture, App->exercise->texture0, filterMethodsValues[fl], App->textures->resizeMethod, App->textures->wrapMethod, App->textures->clampMethod);
+			}
+			if (filterSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+}
+
+static void PrintMipMapOption(const char* currentTexture) {
+	const char* mipMapState[] = { "Disabled", "Enabled" };
+	bool valueMipMapValue[] = { false, true };
+	static const char* currentMMState = mipMapState[0];
+	if (ImGui::BeginCombo("MipMap", currentMMState, ImGuiComboFlags_NoArrowButton))
+	{
+		for (int mm = 0; mm < IM_ARRAYSIZE(mipMapState); mm++)
+		{
+			bool is_selected = (currentMMState == mipMapState[mm]);
+			if (ImGui::Selectable(mipMapState[mm], is_selected)) {
+				currentMMState = mipMapState[mm];
+				// App->textures->SwitchMipMaps(currentTexture, App->exercise->texture0, valueMipMapValue[mm]);
+			}
+			if (is_selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+}
+
+static void ShowConsole() {
+	// CONSOLE("Console", &App->options->showConsole);
 }

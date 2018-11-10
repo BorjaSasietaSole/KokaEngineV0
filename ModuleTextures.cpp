@@ -88,10 +88,38 @@ unsigned ModuleTextures::Load(const char* path, bool mipmaps)
 	return 0;
 }
 
+void ModuleTextures::ReloadTexture(const char* newPath, unsigned texture) {
+
+	Unload(texture);
+
+	texture = Load(newPath, true);
+
+	if (texture == -1) {
+		LOG("Error: Texture cannot be loaded");
+	}
+
+}
+
 void ModuleTextures::Unload(unsigned id)
 {
 	if (id != 0)
 	{
 		glDeleteTextures(1, &id);
 	}
+}
+
+void ModuleTextures::SwitchMipMaps(const char* newPath, unsigned texture, bool state) {
+	generateMipMaps = state;
+
+	ReloadTexture(newPath, texture);
+}
+
+void ModuleTextures::SetNewParameter(const char* newPath, unsigned texture, unsigned newTextFilter, unsigned newResizeMethod, unsigned newWrapMethod, unsigned newClampMethod) {
+
+	textFilter = newTextFilter;
+	resizeMethod = newResizeMethod;
+	wrapMethod = newWrapMethod;
+	clampMethod = newClampMethod;
+
+	ReloadTexture(newPath, texture);
 }

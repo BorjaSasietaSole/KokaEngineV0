@@ -21,12 +21,13 @@ public:
 	bool CleanUp();
 	void WindowResized(unsigned width, unsigned height);
 
+	void* context;
+
 private:
 
 	void RenderMesh(const ModuleLoader::Mesh& mesh, const ModuleLoader::Material& material,
 		unsigned program, const math::float4x4& model,
 		const math::float4x4& view, const math::float4x4& proj);
 
-	void* context;
 	Frustum frustum;
 };

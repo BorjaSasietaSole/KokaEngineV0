@@ -1,11 +1,16 @@
-#pragma once
+#ifndef __ModuleGui_H__
+#define __ModuleGui_H__
+
 #include "Module.h"
 #include "Application.h"
+#include "ModuleWindow.h"
+#include "ModuleRender.h"
 #include "Globals.h"
+#include "ModuleTextures.h"
 #include "./imgui/imgui.h"
 #include "./imgui/imgui_impl_sdl.h"
 #include "./imgui/imgui_impl_opengl3.h"
-#include <SDL.h>
+#include <vector>
 
 class ModuleGui : public Module 
 {
@@ -18,15 +23,19 @@ public:
 	update_status Update();
 	update_status PostUpdate();
 	bool CleanUp();
-private:
 
-	SDL_Window* window;
+	void HandleInputs(SDL_Event& event); 
+
 	const char* glsl_version;
-	SDL_GLContext gl_context;
 
 	ImGuiIO io;
 
-	bool show_demo_window;
-	bool show_another_window;
-	ImVec4 clear_color;
+	bool showAboutMenu = false;
+	bool showHardwareMenu = false;
+	bool requestedExit = false;
+	bool showSceneConfig = false;
+	bool showTextureConfig = false;
+	bool showConsole = false;
+	bool showZoomMagnifier = false;
 };
+#endif __ModuleGui_H__
