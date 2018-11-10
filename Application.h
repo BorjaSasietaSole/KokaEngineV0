@@ -11,6 +11,7 @@ class ModuleInput;
 class ModuleRenderTriangle;
 class ModulePrograms;
 class ModuleLoader;
+class ModuleGui;
 
 class Application
 {
@@ -31,6 +32,7 @@ public:
     ModuleRenderTriangle* triangle = nullptr;
 	ModuleLoader* models = nullptr;
 	ModulePrograms* programs = nullptr;
+	ModuleGui* options = nullptr;
 
 private:
 
