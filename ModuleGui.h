@@ -37,6 +37,5 @@ public:
 	std::vector<float> fps_log;
 	std::vector<float> ms_log;
 
-	ImVec4 clear_color;
 };
 #endif __ModuleGui_H__
