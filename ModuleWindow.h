@@ -2,7 +2,7 @@
 #define __ModuleWindow_H__
 
 #include "Module.h"
-#include <SDL.h>
+#include "SDL.h"
 #include "GL/glew.h"
 
 class Application;

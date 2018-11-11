@@ -62,7 +62,7 @@ bool ModuleRenderTriangle::Init()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	texture0 = App->textures->Load("Lenna.png", false);
+	texture0 = App->textures->Load("Lenna.png");
 
     return vbo;
 }

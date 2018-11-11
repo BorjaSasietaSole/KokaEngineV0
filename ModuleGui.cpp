@@ -10,7 +10,8 @@
 #include "SDL.h"
 
 static void ShowMenuBar();
-//static void ShowAbout();
+static void ShowUserGuide();
+static void ShowAbout();
 static void ShowHardware();
 static void ShowSceneConfig(std::vector<float> fps, std::vector<float> ms);
 static void ShowTextureConfig();
@@ -64,8 +65,12 @@ update_status ModuleGui::Update() {
 	update_status ret = UPDATE_CONTINUE;
 	ShowMenuBar();
 
+	if (showGuide) {
+		ShowUserGuide();
+	}
+
 	if (showAboutMenu) {
-		//ShowAbout();
+		ShowAbout();
 	}
 
 	if (showHardwareMenu) {
@@ -134,6 +139,7 @@ static void ShowMenuBar() {
 
 		if (ImGui::BeginMenu("Help")) {
 			if (ImGui::MenuItem("About")) { App->options->showAboutMenu = true; }
+			if (ImGui::MenuItem("Guide Enguine")) { App->options->showGuide = true; }
 			ImGui::EndMenu();
 		}
 	}
@@ -182,7 +188,7 @@ static void ShowSceneConfig(std::vector<float> fps, std::vector<float> ms) {
 		if (ImGui::IsItemEdited()) {
 			App->camera->SetHorizontalFOV(App->camera->fovX);
 		}
-		// TODO: Not working properly
+		
 		fovYEdited = ImGui::SliderFloat("Vertical. Fov", &App->camera->fovY, 1.0f, 45.0f, "%.00f", 1.0f);
 		if (ImGui::IsItemEdited()) {
 			App->camera->SetVerticalFOV(App->camera->fovY);
@@ -218,10 +224,6 @@ static void ShowTextureConfig() {
 	ImGui::Separator();
 	if (ImGui::CollapsingHeader("Texture information")) {
 		ImGui::InputText("Format", App->textures->imgFormat, sizeof(App->textures->imgFormat));
-		// TODO: this should be something like App->exercise->texture0.Width
-		/*ImGui::InputInt("Width", &App->textures->imgWidth, 0, 0);
-		ImGui::InputInt("Height", &App->textures->imgHeight, 0, 0);
-		ImGui::InputInt("Pixel depth", &App->textures->imgPixelDepth, 0, 0);*/
 	}
 	if (ImGui::CollapsingHeader("Texture config")) {
 		PrintTextureParams(current_item);
@@ -337,4 +339,49 @@ static void ShowZoomMagnifier() {
 
 static void ShowConsole() {
 	PrintConsole("Console", &App->options->showConsole);
+}
+
+// About
+static void ShowAbout() {
+
+	const char* MITLicense = "Copyright 2018 - Koka Engine \n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions";
+
+	ImGui::Begin("About", &App->options->showAboutMenu);
+
+	ImGui::Text(TITLE);
+	ImGui::Text("C++/C engine for game development");
+	ImGui::Separator();
+	ImGui::Text("Libraries:");
+	if (ImGui::MenuItem("SDL v2.0.8")) { ShellExecute(0, 0, "https://www.libsdl.org/index.php", 0, 0, SW_SHOW); }
+	if (ImGui::MenuItem("Glew v2.1.0")) { ShellExecute(0, 0, "http://glew.sourceforge.net/", 0, 0, SW_SHOW); }
+	if (ImGui::MenuItem("ImGui v1.66")) { ShellExecute(0, 0, "https://github.com/ocornut/imgui/tree/docking", 0, 0, SW_SHOW); }
+	if (ImGui::MenuItem("Devil v1.8.0")) { ShellExecute(0, 0, "http://openil.sourceforge.net/", 0, 0, SW_SHOW); }
+	ImGui::Separator();
+	ImGui::Text("Author:");
+	if (ImGui::MenuItem("Borja Sasieta Sole")) { ShellExecute(0, 0, "https://github.com/BorjaSasietaSole/", 0, 0, SW_SHOW); }
+	ImGui::Separator();
+	ImGui::TextWrapped(MITLicense);
+	ImGui::End();
+}
+
+static void ShowUserGuide()
+{
+	ImGui::BulletText("Double-click on title bar to collapse window.");
+	ImGui::BulletText("Click and drag on lower right corner to resize window\n(double-click to auto fit window to its contents).");
+	ImGui::BulletText("Click and drag on any empty space to move window.");
+	ImGui::BulletText("TAB/SHIFT+TAB to cycle through keyboard editable fields.");
+	ImGui::BulletText("CTRL+Click on a slider or drag box to input value as text.");
+	if (ImGui::GetIO().FontAllowUserScaling)
+		ImGui::BulletText("CTRL+Mouse Wheel to zoom window contents.");
+	ImGui::BulletText("Mouse Wheel to scroll.");
+	ImGui::BulletText("While editing text:\n");
+	ImGui::Indent();
+	ImGui::BulletText("Hold SHIFT or use mouse to select text.");
+	ImGui::BulletText("CTRL+Left/Right to word jump.");
+	ImGui::BulletText("CTRL+A or double-click to select all.");
+	ImGui::BulletText("CTRL+X,CTRL+C,CTRL+V to use clipboard.");
+	ImGui::BulletText("CTRL+Z,CTRL+Y to undo/redo.");
+	ImGui::BulletText("ESCAPE to revert.");
+	ImGui::BulletText("You can apply arithmetic operators +,*,/ on numerical values.\nUse +- to subtract.");
+	ImGui::Unindent();
 }

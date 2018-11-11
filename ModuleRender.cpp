@@ -44,8 +44,8 @@ bool ModuleRender::Init()
 	SDL_GetWindowSize(App->window->window, &width, &height);
 	glViewport(0, 0, width, height);
 
-	program0 = App->programs->LoadProgram("default.vs", "default.fs");
-	program1 = App->programs->LoadProgram("texture.vs", "texture.fs");
+	program0 = App->programs->LoadProgram("../default.vs", "../default.fs");
+	program1 = App->programs->LoadProgram("../texture.vs", "../texture.fs");
 	return true;
 }
 

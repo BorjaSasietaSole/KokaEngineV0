@@ -53,10 +53,7 @@ void ModuleLoader::GenerateMeshes(const aiScene* scene)
 		// Positions
 		glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * 3 + sizeof(float) * 2)*src_mesh->mNumVertices, nullptr, GL_STATIC_DRAW);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 3 * src_mesh->mNumVertices, src_mesh->mVertices);
-
-		// TODO: Getting the mesh center we could easily get the bounding box or the smallest sphere that contains the mesh
-		// Assimp::FindMeshCenter() // AABB
-
+		
 		// Texture coords
 		math::float2* texture_coords = (math::float2*)glMapBufferRange(GL_ARRAY_BUFFER, sizeof(float) * 3 * src_mesh->mNumVertices, sizeof(float) * 2 * src_mesh->mNumVertices, GL_MAP_WRITE_BIT);
 		for (unsigned i = 0; i < src_mesh->mNumVertices; ++i)
@@ -94,6 +91,7 @@ void ModuleLoader::GenerateMeshes(const aiScene* scene)
 
 		meshes.push_back(dst_mesh);
 	}
+
 }
 
 void ModuleLoader::GenerateMaterials(const aiScene* scene)
@@ -110,7 +108,7 @@ void ModuleLoader::GenerateMaterials(const aiScene* scene)
 
 		if (src_material->GetTexture(aiTextureType_DIFFUSE, 0, &file, &mapping, &uvindex) == AI_SUCCESS)
 		{
-			dst_material.texture0 = App->textures->Load(file.data, false);
+			dst_material.texture0 = App->textures->Load(file.data);
 		}
 
 		materials.push_back(dst_material);
@@ -125,10 +123,7 @@ bool ModuleLoader::LoadModel(const char* pathFile) {
 	}
 	else {
 		LOG("Error: %s", aiGetErrorString());
-	}
-
-	//App->camera->FocusObject();
-	
+	}	
 
 	return scene;
 }

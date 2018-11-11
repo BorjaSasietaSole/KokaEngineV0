@@ -33,7 +33,8 @@ public:
 	bool showTextureConfig = false;
 	bool showConsole = false;
 	bool showZoomMagnifier = false;
-	
+	bool showGuide = false;
+
 	std::vector<float> fps_log;
 	std::vector<float> ms_log;
 
