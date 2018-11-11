@@ -1,15 +1,6 @@
-#include "Globals.h"
-
 #include "Application.h"
 #include "ModuleLoader.h"
 #include "ModuleTextures.h"
-
-#include <GL/glew.h>
-
-#include <assimp/scene.h>
-#include <assimp/cimport.h>
-#include <assimp/postprocess.h>
-
 
 ModuleLoader::ModuleLoader()
 {
@@ -143,4 +134,16 @@ void ModuleLoader::GenerateMaterials(const aiScene* scene)
 
 		materials.push_back(dst_material);
 	}
+}
+bool ModuleLoader::LoadModel(const char* pathFile) {
+	const aiScene* scene = aiImportFile(pathFile, aiProcessPreset_TargetRealtime_MaxQuality);
+
+	if (scene) {
+		GenerateMeshes(scene);
+		GenerateMaterials(scene);
+	}
+	else {
+		LOG("Error: %s", aiGetErrorString());
+	}
+	return scene;
 }

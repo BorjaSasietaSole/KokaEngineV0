@@ -1,10 +1,8 @@
 #include "Globals.h"
+#include "Application.h"
+#include "ModuleRender.h"
 #include "ModuleTextures.h"
-
-#include <GL/glew.h>
-
-#include <IL/il.h>
-#include <IL/ilut.h>
+#pragma comment( lib, "SDL_image/libx86/SDL2_image.lib" )
 
 ModuleTextures::ModuleTextures()
 {

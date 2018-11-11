@@ -1,4 +1,3 @@
-#pragma once
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
@@ -7,6 +6,7 @@
 #include "ModulePrograms.h"
 #include "ModuleRenderTriangle.h"
 #include "ModuleGui.h"
+#include "ModuleCamera.h"
 
 using namespace std;
 
@@ -21,6 +21,7 @@ Application::Application()
   //  modules.push_back(new ModuleRenderTriangle());
 	modules.push_back(models = new ModuleLoader());
 	modules.push_back(options = new ModuleGui());
+	modules.push_back(camera = new ModuleCamera());
 }
 
 Application::~Application()
@@ -35,6 +36,9 @@ bool Application::Init()
 {
 	bool ret = true;
 
+	lastTickTime = 0;
+	deltaTime = 0;
+
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
 
@@ -44,6 +48,8 @@ bool Application::Init()
 update_status Application::Update()
 {
 	update_status ret = UPDATE_CONTINUE;
+
+	Tick();
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PreUpdate();
@@ -65,4 +71,18 @@ bool Application::CleanUp()
 		ret = (*it)->CleanUp();
 
 	return ret;
+}
+
+void Application::Tick()
+{
+	++frameCounter;
+	float ticksNow = (float)SDL_GetTicks();
+	deltaTime = (float)(ticksNow - lastTickTime) * (float)0.001;
+	lastTickTime = ticksNow;
+	auxTimer += deltaTime;
+	if (auxTimer >= 1.0f) {
+		FPS = frameCounter;
+		auxTimer = 0;
+		frameCounter = 0;
+	}
 }

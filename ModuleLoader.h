@@ -1,11 +1,19 @@
 #ifndef __ModuleLoader_h__
 #define __ModuleLoader_h__
 
-#include "Module.h"
+#include <vector>
 
 #include "MathGeoLib.h"
 
-#include <vector>
+#include "Module.h"
+#include "GL/glew.h"
+#include "SDL.h"
+
+#include <assimp/cimport.h>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+#include <assimp/material.h>
+#include <assimp/mesh.h>
 
 struct aiScene;
 
@@ -16,14 +24,15 @@ public:
 	ModuleLoader();
 	~ModuleLoader();
 
-	bool            Init();
-	update_status   Update();
-	bool            CleanUp();
+	bool Init();
+	update_status Update();
+	bool CleanUp();
+	bool LoadModel(const char* pathFile);
 
 private:
 
-	void            GenerateMeshes(const aiScene* scene);
-	void            GenerateMaterials(const aiScene* scene);
+	void GenerateMeshes(const aiScene* scene);
+	void GenerateMaterials(const aiScene* scene);
 
 public:
 

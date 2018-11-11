@@ -1,7 +1,5 @@
 #include "ModulePrograms.h"
 
-#include <GL/glew.h>
-
 ModulePrograms::ModulePrograms() 
 {
 }

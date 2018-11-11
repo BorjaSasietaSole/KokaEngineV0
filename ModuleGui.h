@@ -2,11 +2,7 @@
 #define __ModuleGui_H__
 
 #include "Module.h"
-#include "Application.h"
-#include "ModuleWindow.h"
-#include "ModuleRender.h"
 #include "Globals.h"
-#include "ModuleTextures.h"
 #include "./imgui/imgui.h"
 #include "./imgui/imgui_impl_sdl.h"
 #include "./imgui/imgui_impl_opengl3.h"
@@ -37,5 +33,10 @@ public:
 	bool showTextureConfig = false;
 	bool showConsole = false;
 	bool showZoomMagnifier = false;
+	
+	std::vector<float> fps_log;
+	std::vector<float> ms_log;
+
+	ImVec4 clear_color;
 };
 #endif __ModuleGui_H__

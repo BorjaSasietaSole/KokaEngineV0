@@ -1,7 +1,11 @@
-#pragma once
 #include<list>
 #include "Module.h"
 #include "Globals.h"
+#include "IL/il.h"
+#include "IL/ilut.h"
+#include "IL/ilu.h"
+#include "SDL.h"
+#include "SDL_image/include/SDL_image.h"
 
 struct SDL_Texture;
 

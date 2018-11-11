@@ -1,12 +1,10 @@
-#include "Globals.h"
 #include "Application.h"
 #include "ModuleRender.h"
+#include "ModuleGui.h"
 #include "ModuleWindow.h"
 #include "ModulePrograms.h"
-#include "ModuleLoader.h"
+#include "ModuleCamera.h"
 
-#include <SDL.h>
-#include <GL/glew.h>
 
 ModuleRender::ModuleRender()
 {
@@ -72,6 +70,7 @@ bool ModuleRender::Init()
 
 update_status ModuleRender::PreUpdate()
 {
+	glClearColor(bgColor[0], bgColor[1], bgColor[2], bgColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	return UPDATE_CONTINUE;
@@ -80,15 +79,12 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
-	math::float4x4 proj = frustum.ProjectionMatrix();
-	math::float4x4 view = frustum.ViewMatrix();
+	DrawReferenceDebug(program0, math::float4x4::identity, App->camera->viewMatrix, App->camera->ProjectionMatrix());
 
-	for (unsigned i = 0; i< App->models->meshes.size(); ++i)
-	{
+	for (unsigned i = 0; i < App->models->meshes.size(); ++i) {
 		const ModuleLoader::Mesh& mesh = App->models->meshes[i];
 
-		RenderMesh(mesh, App->models->materials[mesh.material], App->programs->def_program,
-			App->models->transform, view, proj);
+		RenderMesh(mesh, App->models->materials[mesh.material], program1, math::float4x4::identity, App->camera->viewMatrix, App->camera->ProjectionMatrix());
 	}
 
 	return UPDATE_CONTINUE;
@@ -127,6 +123,9 @@ void ModuleRender::RenderMesh(const ModuleLoader::Mesh& mesh, const ModuleLoader
 
 update_status ModuleRender::PostUpdate()
 {
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	SDL_GL_SwapWindow(App->window->window);
 
 	return UPDATE_CONTINUE;
@@ -147,3 +146,72 @@ void ModuleRender::WindowResized(unsigned width, unsigned height)
     glViewport(0, 0, width, height); 
 }
 
+void ModuleRender::DrawReferenceDebug(unsigned program, const math::float4x4& model, const math::float4x4& view, const math::float4x4& proj) {
+
+	glUseProgram(program);
+
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, (const float*)&model);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, (const float*)&view);
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, (const float*)&proj);
+
+	// Grid white
+	int gridColor = glGetUniformLocation(program, "newColor");
+	float white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glUniform4fv(gridColor, 1, white);
+
+	// Base grid
+	glLineWidth(1.0f);
+
+	float d = 200.0f;
+	glBegin(GL_LINES);
+	for (float i = -d; i <= d; i += 1.0f)
+	{
+		glVertex3f(i, 0.0f, -d);
+		glVertex3f(i, 0.0f, d);
+		glVertex3f(-d, 0.0f, i);
+		glVertex3f(d, 0.0f, i);
+	}
+	glEnd();
+
+	/// AXIS X Y Z
+	glLineWidth(2.0f);
+
+	// red X
+	int xAxis = glGetUniformLocation(program, "newColor");
+	float red[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
+	glUniform4fv(xAxis, 1, red);
+
+	glBegin(GL_LINES);
+	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
+	glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
+	glEnd();
+
+	// green Y
+	int yAxis = glGetUniformLocation(program, "newColor");
+	float green[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
+	glUniform4fv(yAxis, 1, green);
+
+	glBegin(GL_LINES);
+	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+	glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+	glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
+	glEnd();
+
+	// blue Z
+	int zAxis = glGetUniformLocation(program, "newColor");
+	float blue[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
+	glUniform4fv(zAxis, 1, blue);
+
+	glBegin(GL_LINES);
+	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
+	glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
+	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
+	glEnd();
+
+	glLineWidth(1.0f);
+
+	glUseProgram(0);
+}

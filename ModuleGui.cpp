@@ -1,21 +1,20 @@
+#include "Globals.h"
+#include "Application.h"
+#include "ModuleRender.h"
+#include "ModuleWindow.h"
+#include "ModuleTextures.h"
 #include "ModuleGui.h"
+#include "ModuleCamera.h"
 #include <SDL.h>
-#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
-#include <GL/gl3w.h>
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
 #include <GL/glew.h>
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
-#include <glad/glad.h>
-#else
-#include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
-#endif
 
 static void ShowMenuBar();
 //static void ShowAbout();
 static void ShowHardware();
+static void ShowSceneConfig(std::vector<float> fps, std::vector<float> ms);
 static void ShowTextureConfig();
 static void ShowConsole();
-//static void ShowZoomMagnifier();
+static void ShowZoomMagnifier();
 static void PrintTextureParams(const char* currentTexture);
 static void PrintMipMapOption(const char* currentTexture);
 
@@ -31,7 +30,7 @@ bool ModuleGui::Init() {
 #if __APPLE__
 	// GL 3.2 Core + GLSL 150
 	glsl_version = "#version 150";
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
@@ -51,20 +50,6 @@ bool ModuleGui::Init() {
 	SDL_DisplayMode current;
 	SDL_GetCurrentDisplayMode(0, &current);
 	SDL_GL_SetSwapInterval(1);
-
-#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
-	bool err = gl3wInit() != 0;
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
-	bool err = glewInit() != GLEW_OK;
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
-	bool err = gladLoadGL() == 0;
-#else
-	bool err = false; // If you use IMGUI_IMPL_OPENGL_LOADER_CUSTOM, your loader is likely to requires some form of initialization.
-#endif
-	if (err)
-	{
-		fprintf(stderr, "Failed to initialize OpenGL loader!\n");
-	}
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -96,11 +81,7 @@ bool ModuleGui::Init() {
 	//ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
 	//IM_ASSERT(font != NULL);
 
-	show_demo_window = true;
-	show_another_window = false;
-	clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-	return !err;
+	return true;
 }
 
 update_status ModuleGui::PreUpdate() {
@@ -126,7 +107,7 @@ update_status ModuleGui::Update() {
 	}
 
 	if (showSceneConfig) {
-		//ShowSceneConfig(fps_log, ms_log);
+		ShowSceneConfig(fps_log, ms_log);
 	}
 
 	if (showTextureConfig) {
@@ -138,7 +119,7 @@ update_status ModuleGui::Update() {
 	}
 
 	if (showZoomMagnifier) {
-		//ShowZoomMagnifier();
+		ShowZoomMagnifier();
 	}
 
 	if (requestedExit)
@@ -148,15 +129,7 @@ update_status ModuleGui::Update() {
 }
 
 update_status ModuleGui::PostUpdate() {
-	// Rendering
-	ImGui::Render();
-	SDL_GL_MakeCurrent(App->window->window, App->renderer->context);
-	glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-	glClear(GL_COLOR_BUFFER_BIT);
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	SDL_GL_SwapWindow(App->window->window);
-
+	
 	return UPDATE_CONTINUE;
 }
 
@@ -213,8 +186,8 @@ static void ShowHardware() {
 }
 
 // Scene config
-/*static void ShowSceneConfig(std::vector<float> fps, std::vector<float> ms) {
-	ImGui::Begin("Camera", &App->editor->showSceneConfig, ImGuiWindowFlags_AlwaysAutoResize);
+static void ShowSceneConfig(std::vector<float> fps, std::vector<float> ms) {
+	ImGui::Begin("Camera", &App->options->showSceneConfig, ImGuiWindowFlags_AlwaysAutoResize);
 	bool fovXEdited = false, fovYEdited = false;
 	if (ImGui::CollapsingHeader("Performance")) {
 		char title[25];
@@ -258,7 +231,7 @@ static void ShowHardware() {
 		ImGui::SliderFloat3("Background color", App->renderer->bgColor, 0.0f, 1.0f);
 	}
 	ImGui::End();
-}*/
+}
 
 //Texture config
 static void ShowTextureConfig() {
@@ -392,6 +365,13 @@ static void PrintMipMapOption(const char* currentTexture) {
 	}
 }
 
+static void ShowZoomMagnifier() {
+	ImGuiWindowFlags zommingFlags = ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_AlwaysAutoResize;
+	ImGui::Begin("Zooming", &App->options->showHardwareMenu, zommingFlags);
+	ImGui::InputFloat("Zoom value", &App->camera->zoomValue, 0, 0, 2);
+	ImGui::End();
+}
+
 static void ShowConsole() {
-	// CONSOLE("Console", &App->options->showConsole);
+	PrintConsole("Console", &App->options->showConsole);
 }

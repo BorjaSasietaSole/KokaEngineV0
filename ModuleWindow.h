@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include <SDL.h>
+#include "GL/glew.h"
 
 class Application;
 
@@ -20,6 +21,8 @@ public:
 
 	// Called before quitting
 	bool CleanUp();
+
+	void WindowResized(unsigned width, unsigned height);
 
 	//The window we'll be rendering to
 	SDL_Window* window = nullptr;

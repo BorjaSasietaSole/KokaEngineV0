@@ -4,7 +4,6 @@
 #include "ModuleWindow.h"
 #include "ModuleTextures.h"
 
-#include <GL/glew.h>
 #include <SDL.h>
 
 #include <Geometry/Frustum.h>

@@ -33,7 +33,8 @@
 
 #ifndef __gl_h_
 #define __gl_h_
-#endif
+#endif 
+
 
 #ifdef __cplusplus
 extern "C" {

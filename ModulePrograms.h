@@ -2,6 +2,7 @@
 #define __ModulePrograms_h__
 
 #include "Module.h"
+#include "GL/glew.h"
 
 class ModulePrograms : public Module
 {

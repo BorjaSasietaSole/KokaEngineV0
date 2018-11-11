@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "Application.h"
 #include "ModuleRender.h"
+#include "Timer.h"
 #include "Globals.h"
 
 #include <SDL.h>
@@ -35,6 +36,11 @@ int main(int argc, char ** argv)
 			break;
 
 		case MAIN_START:
+		{
+			Timer time;
+			TimerPerfomance timeP;
+			time.Start();
+			timeP.Start();
 
 			LOG("Application Init --------------");
 			if (App->Init() == false)
@@ -48,8 +54,12 @@ int main(int argc, char ** argv)
 				LOG("Application Update --------------");
 			}
 
-			break;
+			timeP.Stop();
+			time.Stop();
+			LOG("Start in %ums", time.GetTicks());
+			LOG("Start in %ums", timeP.GetTicks());
 
+		}
 		case MAIN_UPDATE:
 		{
 			int update_return = App->Update();
@@ -78,25 +88,6 @@ int main(int argc, char ** argv)
 			state = MAIN_EXIT;
 
 			break;
-
-		}
-
-		SDL_Event sdlEvent;
-
-		while (SDL_PollEvent(&sdlEvent) != 0)
-		{
-			// Esc button is pressed
-			switch (sdlEvent.type)
-			{
-			case SDL_QUIT:
-				state = MAIN_FINISH;
-				break;
-
-			case SDL_WINDOWEVENT:
-				if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-					App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
-					break;
-			}
 		}
 	}
 

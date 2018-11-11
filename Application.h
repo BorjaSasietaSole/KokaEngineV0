@@ -13,6 +13,7 @@ class ModuleRenderTriangle;
 class ModulePrograms;
 class ModuleLoader;
 class ModuleGui;
+class ModuleCamera;
 
 class Application
 {
@@ -24,6 +25,7 @@ public:
 	bool Init();
 	update_status Update();
 	bool CleanUp();
+	void Tick();
 
 public:
 	ModuleRender* renderer = nullptr;
@@ -34,6 +36,13 @@ public:
 	ModuleLoader* models = nullptr;
 	ModulePrograms* programs = nullptr;
 	ModuleGui* options = nullptr;
+	ModuleCamera* camera = nullptr;
+
+	float lastTickTime = 0.0f;
+	float deltaTime = 0.0f;
+	float auxTimer = 0.0f;
+	int frameCounter = 0;
+	int FPS = 0;
 
 private:
 
