@@ -286,7 +286,7 @@ void ModuleCamera::CameraMovementKeyboard() {
 	else if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
 		MoveCamera(Backwards);
 	}
-	else if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) {
+	/*else if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) {
 	RotateCameraKeyBoard(Upwards);
 	} else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) {
 	RotateCameraKeyBoard(Downwards);
@@ -294,5 +294,5 @@ void ModuleCamera::CameraMovementKeyboard() {
 	RotateCameraKeyBoard(Left);
 	} else if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
 	RotateCameraKeyBoard(Right);
-	} 
+	} */
 }

@@ -60,6 +60,7 @@ int main(int argc, char ** argv)
 			LOG("Start in %ums", timeP.GetTicks());
 
 		}
+		break;
 		case MAIN_UPDATE:
 		{
 			int update_return = App->Update();

@@ -39,32 +39,13 @@ bool ModuleRender::Init()
 	glEnable(GL_TEXTURE_2D);
 
 	glClearDepth(1.0f);
-	glClearColor(0.3f, 0.3f, 0.3f, 1.f);
 
 	int width, height;
 	SDL_GetWindowSize(App->window->window, &width, &height);
 	glViewport(0, 0, width, height);
 
-	frustum.type = FrustumType::PerspectiveFrustum;
-
-	frustum.pos = float3::zero;
-	frustum.front = -float3::unitZ;
-	frustum.up = float3::unitY;
-
-	frustum.nearPlaneDistance = 0.1f;
-	frustum.farPlaneDistance = 150.0f;
-	frustum.verticalFov = math::pi / 4.0f;
-	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * float(width) / float(height));
-
-	math::float3 eye = math::float3(-10.0f, 1.0f, -10.0f);
-	math::float3 target = math::float3(0.0f, 1.0f, 0.0f);
-
-	math::float3x3 lookat = math::float3x3::LookAt(math::float3::unitZ, (target - eye).Normalized(), math::float3::unitY, math::float3::unitY);
-
-	frustum.front = lookat*math::float3::unitZ;
-	frustum.up = lookat*math::float3::unitY;
-	frustum.pos = eye;
-
+	program0 = App->programs->LoadProgram("default.vs", "default.fs");
+	program1 = App->programs->LoadProgram("texture.vs", "texture.fs");
 	return true;
 }
 
@@ -139,11 +120,6 @@ bool ModuleRender::CleanUp()
 	//Destroy window
 
 	return true;
-}
-
-void ModuleRender::WindowResized(unsigned width, unsigned height)
-{
-    glViewport(0, 0, width, height); 
 }
 
 void ModuleRender::DrawReferenceDebug(unsigned program, const math::float4x4& model, const math::float4x4& view, const math::float4x4& proj) {

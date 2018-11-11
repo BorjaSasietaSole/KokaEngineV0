@@ -25,7 +25,6 @@ public:
 	~ModuleLoader();
 
 	bool Init();
-	update_status Update();
 	bool CleanUp();
 	bool LoadModel(const char* pathFile);
 

@@ -13,22 +13,21 @@ using namespace std;
 Application::Application()
 {
 	// Order matters: they will Init/start/update in this order
-	modules.push_back(window = new ModuleWindow());
-	modules.push_back(renderer = new ModuleRender());
-	modules.push_back(textures = new ModuleTextures());
 	modules.push_back(input = new ModuleInput());
-	modules.push_back(programs = new ModulePrograms());
-  //  modules.push_back(new ModuleRenderTriangle());
-	modules.push_back(models = new ModuleLoader());
-	modules.push_back(options = new ModuleGui());
+	modules.push_back(window = new ModuleWindow());
 	modules.push_back(camera = new ModuleCamera());
+	modules.push_back(renderer = new ModuleRender());
+	modules.push_back(programs = new ModulePrograms());
+	modules.push_back(textures = new ModuleTextures());
+	modules.push_back(options = new ModuleGui());
+	modules.push_back(models = new ModuleLoader());
 }
 
 Application::~Application()
 {
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)
     {
-        delete *it;
+		RELEASE(*it);
     }
 }
 

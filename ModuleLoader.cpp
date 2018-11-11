@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ModuleLoader.h"
 #include "ModuleTextures.h"
+#include "ModuleCamera.h"
 
 ModuleLoader::ModuleLoader()
 {
@@ -12,24 +13,7 @@ ModuleLoader::~ModuleLoader()
 
 bool ModuleLoader::Init()
 {
-	const aiScene* scene = aiImportFile("BakerHouse.fbx", aiProcessPreset_TargetRealtime_MaxQuality);
-
-	if (scene)
-	{
-		GenerateMeshes(scene);
-		GenerateMaterials(scene);
-
-		aiReleaseImport(scene);
-
-		return true;
-	}
-
-	return false;
-}
-
-update_status ModuleLoader::Update()
-{
-	return UPDATE_CONTINUE;
+	return true;
 }
 
 bool ModuleLoader::CleanUp()
@@ -40,11 +24,6 @@ bool ModuleLoader::CleanUp()
 		{
 			glDeleteBuffers(1, &meshes[i].vbo);
 		}
-
-		if (meshes[i].ibo != 0)
-		{
-			glDeleteBuffers(1, &meshes[i].ibo);
-		}
 	}
 
 	for (unsigned i = 0; i < materials.size(); ++i)
@@ -54,13 +33,16 @@ bool ModuleLoader::CleanUp()
 			App->textures->Unload(materials[i].texture0);
 		}
 	}
+
+	meshes.clear();
+	materials.clear();
+
 	return true;
 }
 
 void ModuleLoader::GenerateMeshes(const aiScene* scene)
 {
-	for (unsigned i = 0; i< scene->mNumMeshes; ++i)
-	{
+	for (unsigned i = 0; i < scene->mNumMeshes; ++i) {
 		const aiMesh* src_mesh = scene->mMeshes[i];
 
 		Mesh dst_mesh;
@@ -69,15 +51,15 @@ void ModuleLoader::GenerateMeshes(const aiScene* scene)
 		glBindBuffer(GL_ARRAY_BUFFER, dst_mesh.vbo);
 
 		// Positions
-
 		glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * 3 + sizeof(float) * 2)*src_mesh->mNumVertices, nullptr, GL_STATIC_DRAW);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 3 * src_mesh->mNumVertices, src_mesh->mVertices);
 
-		// Texture coords
+		// TODO: Getting the mesh center we could easily get the bounding box or the smallest sphere that contains the mesh
+		// Assimp::FindMeshCenter() // AABB
 
-		math::float2* texture_coords = (math::float2*)glMapBufferRange(GL_ARRAY_BUFFER, sizeof(float) * 3 * src_mesh->mNumVertices,
-			sizeof(float) * 2 * src_mesh->mNumVertices, GL_MAP_WRITE_BIT);
-		for (unsigned i = 0; i< src_mesh->mNumVertices; ++i)
+		// Texture coords
+		math::float2* texture_coords = (math::float2*)glMapBufferRange(GL_ARRAY_BUFFER, sizeof(float) * 3 * src_mesh->mNumVertices, sizeof(float) * 2 * src_mesh->mNumVertices, GL_MAP_WRITE_BIT);
+		for (unsigned i = 0; i < src_mesh->mNumVertices; ++i)
 		{
 			texture_coords[i] = math::float2(src_mesh->mTextureCoords[0][i].x, src_mesh->mTextureCoords[0][i].y);
 		}
@@ -86,7 +68,6 @@ void ModuleLoader::GenerateMeshes(const aiScene* scene)
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		// Indices
-
 		glGenBuffers(1, &dst_mesh.ibo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dst_mesh.ibo);
 
@@ -95,14 +76,14 @@ void ModuleLoader::GenerateMeshes(const aiScene* scene)
 		unsigned* indices = (unsigned*)glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0,
 			sizeof(unsigned)*src_mesh->mNumFaces * 3, GL_MAP_WRITE_BIT);
 
-		for (unsigned i = 0; i< src_mesh->mNumFaces; ++i)
-		{
+		for (unsigned i = 0; i < src_mesh->mNumFaces; ++i) {
 			assert(src_mesh->mFaces[i].mNumIndices == 3);
 
 			*(indices++) = src_mesh->mFaces[i].mIndices[0];
 			*(indices++) = src_mesh->mFaces[i].mIndices[1];
 			*(indices++) = src_mesh->mFaces[i].mIndices[2];
 		}
+
 
 		glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -145,5 +126,9 @@ bool ModuleLoader::LoadModel(const char* pathFile) {
 	else {
 		LOG("Error: %s", aiGetErrorString());
 	}
+
+	//App->camera->FocusObject();
+	
+
 	return scene;
 }

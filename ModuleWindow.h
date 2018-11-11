@@ -25,10 +25,10 @@ public:
 	void WindowResized(unsigned width, unsigned height);
 
 	//The window we'll be rendering to
-	SDL_Window* window = nullptr;
+	SDL_Window* window = NULL;
 
 	//The surface contained by the window
-	SDL_Surface* screen_surface = nullptr;
+	SDL_Surface* screen_surface = NULL;
 };
 
 #endif // __ModuleWindow_H__

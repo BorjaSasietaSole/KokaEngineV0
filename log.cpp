@@ -1,6 +1,6 @@
 #pragma once
 #include "Globals.h"
-#include "./imgui/imgui.h"
+#include "imgui/imgui.h"
 
 ImGuiTextBuffer	Buf;
 ImVector<int> LineOffsets;// Index to lines offset

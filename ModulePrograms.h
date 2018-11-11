@@ -7,18 +7,14 @@
 class ModulePrograms : public Module
 {
 public:
-    ModulePrograms();
-    ~ModulePrograms();
+	ModulePrograms();
+	~ModulePrograms();
 
-	bool Init();
-    bool CleanUp();
+	unsigned LoadProgram(const char* vertShaderPath, const char* fragShaderPath);
 
 private:
-    char* LoadFile(const char* file_name);
-    bool  Compile(unsigned id, char* data);
-
-public:
-    unsigned def_program = 0;
+	char* ReadShaderFile(const char* shaderPath);
+	bool CompileShader(unsigned shaderAddress, const char* shaderContent);
+	void CompileProgram(unsigned programAddress);
 };
-
-#endif /* __ModulePrograms_h__ */
+#endif // __ModulePrograms_h__

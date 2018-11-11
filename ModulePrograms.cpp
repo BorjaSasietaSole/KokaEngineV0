@@ -1,117 +1,100 @@
 #include "ModulePrograms.h"
 
-ModulePrograms::ModulePrograms() 
-{
-}
+ModulePrograms::ModulePrograms(){}
 
-ModulePrograms::~ModulePrograms()
-{
-}
+ModulePrograms::~ModulePrograms(){}
 
-bool ModulePrograms::Init()
-{
-    unsigned vertex_id   = glCreateShader(GL_VERTEX_SHADER);
-    unsigned fragment_id = glCreateShader(GL_FRAGMENT_SHADER);
+unsigned ModulePrograms::LoadProgram(const char* vertShaderPath, const char* fragShaderPath) {
+	unsigned program = 0;
 
-    char* vertex_data = LoadFile("default.vs");
-    char* fragment_data = LoadFile("default.fs");
+	unsigned vertShader = glCreateShader(GL_VERTEX_SHADER);
+	unsigned fragShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-    bool ok = Compile(vertex_id, vertex_data) && Compile(fragment_id, fragment_data);
+	char* vertShaderStr = ReadShaderFile(vertShaderPath);
+	char* fragShaderStr = ReadShaderFile(fragShaderPath);
 
-    free(vertex_data);
-    free(fragment_data);
+	if (CompileShader(vertShader, vertShaderStr) && CompileShader(fragShader, fragShaderStr)) {
 
-    if(ok)
-    {
-        def_program = glCreateProgram();
+		program = glCreateProgram();
 
-        glAttachShader(def_program, vertex_id);
-        glAttachShader(def_program, fragment_id);
+		glAttachShader(program, vertShader);
+		glAttachShader(program, fragShader);
 
-        glLinkProgram(def_program);
+		glLinkProgram(program);
 
-        int len = 0;
-        glGetProgramiv(def_program, GL_INFO_LOG_LENGTH, &len);
-        if(len > 0)
-        {
-            int written = 0;
-            char* info  = (char*)malloc(len);
-
-            glGetProgramInfoLog(def_program, len, &written, info);
-
-            LOG("Program Log Info: %s", info);
-
-            free(info);
-        }
-
-    }
-
-    glDeleteShader(vertex_id);
-    glDeleteShader(fragment_id);
-
-    return ok;
-}
-
-bool ModulePrograms::CleanUp()
-{
-	if (def_program != 0)
-	{
-		glDeleteProgram(def_program);
+		CompileProgram(program);
 	}
 
-	return true;
+	delete[] vertShaderStr;
+	delete[] fragShaderStr;
+	// Remove shaders, we wont need them anymore if they are loaded correctly into Program
+	glDeleteShader(vertShader);
+	glDeleteShader(fragShader);
+
+	return program;
 }
 
-bool ModulePrograms::Compile(unsigned id, char* data)
-{
-    glShaderSource(id, 1, &data, 0);
-    glCompileShader(id);
-
-    int res = GL_FALSE;
-    glGetShaderiv(id, GL_COMPILE_STATUS, &res);
-
-    if(res == GL_FALSE)
-    {
-        int len = 0;
-        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &len);
-
-        if(len > 0)
-        {
-            int written = 0;
-            char* info  = (char*)malloc(len);
-
-            glGetShaderInfoLog(id, len, &written, info);
-
-            LOG("Log Info: %s", info);
-
-            free(info);
-        }
-
-        return false;
-    }
-
-    return true;
-}
-
-char* ModulePrograms::LoadFile(const char* file_name)
-{
-    char* data = nullptr;
-
-	FILE* file = 0;
-	fopen_s(&file, file_name, "rb");
-
-	if(file)
+char* ModulePrograms::ReadShaderFile(const char* shaderPath) {
+	FILE* file;
+	errno_t err = fopen_s(&file, shaderPath, "rb");
+	if (file)
 	{
 		fseek(file, 0, SEEK_END);
 		int size = ftell(file);
 		rewind(file);
-		data = (char*)malloc(size + 1);
-
-		fread(data, 1, size, file);
-		data[size] = 0;
-
+		char* shaderData = (char*)malloc(size + 1);
+		fread(shaderData, 1, size, file);
+		shaderData[size] = 0;
 		fclose(file);
+		return shaderData;
 	}
 
-    return data;
+	LOG("Error: Shader reading failed with %s", shaderPath);
+	return nullptr;
+}
+
+bool ModulePrograms::CompileShader(unsigned shaderAddress, const char* shaderContent) {
+	int compiled = GL_FALSE;
+
+	glShaderSource(shaderAddress, 1, &shaderContent, NULL);
+	glCompileShader(shaderAddress);
+	glGetShaderiv(shaderAddress, GL_COMPILE_STATUS, &compiled);
+
+	if (!compiled) {
+		int infoLogLength = 0.0f;
+		glGetShaderiv(shaderAddress, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+		if (infoLogLength > 0.0f) {
+			GLchar* strInfoLog = new GLchar[infoLogLength + 1];
+			glGetShaderInfoLog(shaderAddress, infoLogLength, NULL, strInfoLog);
+
+			LOG("Error: Shader failed at %s", strInfoLog);
+
+			delete[] strInfoLog;
+			infoLogLength = NULL;
+		}
+
+		glDeleteShader(shaderAddress); // Don't leak the shader.
+	}
+
+	return compiled;
+}
+
+void ModulePrograms::CompileProgram(unsigned programAddress) {
+	int errorLength = 0;
+
+	glGetProgramiv(programAddress, GL_COMPILE_STATUS, &errorLength);
+
+	if (errorLength > 0) {
+		int written = 0;
+		GLchar* strInfoLog = new GLchar[errorLength + 1];
+		glGetProgramInfoLog(programAddress, errorLength, &written, strInfoLog);
+
+		LOG("Error: Program failed at %s", strInfoLog);
+
+		delete[] strInfoLog;
+
+		glDeleteProgram(programAddress); // Don't leak the program.
+	}
+
 }

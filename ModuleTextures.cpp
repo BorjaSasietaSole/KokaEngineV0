@@ -16,9 +16,19 @@ ModuleTextures::~ModuleTextures()
 // Called before render is available
 bool ModuleTextures::Init()
 {
+	LOG("Init Image library");
+	bool ret = true;
+
+	// Default filters
+	textFilter = GL_TEXTURE_MIN_FILTER;
+	resizeMethod = GL_LINEAR;
+	wrapMethod = GL_TEXTURE_WRAP_S;
+	clampMethod = GL_CLAMP;
+
 	ilInit();
 	iluInit();
 	ilutInit();
+	ilutRenderer(ILUT_OPENGL);
 
 	return true;
 }
@@ -26,6 +36,8 @@ bool ModuleTextures::Init()
 // Called before quitting
 bool ModuleTextures::CleanUp()
 {
+	LOG("Freeing textures and Image library");
+
 	return true;
 }
 
@@ -71,6 +83,7 @@ unsigned ModuleTextures::Load(const char* path, bool mipmaps)
 		{
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 			glGenerateMipmap(GL_TEXTURE_2D);
+			glGenerateTextureMipmap(textureId);
 		}
 		else
 		{
@@ -83,7 +96,9 @@ unsigned ModuleTextures::Load(const char* path, bool mipmaps)
 
 		return textureId;
 	}
-	return 0;
+
+	LOG("Error: Image loading %s", iluErrorString(ilGetError()));
+	return -1;
 }
 
 void ModuleTextures::ReloadTexture(const char* newPath, unsigned texture) {
