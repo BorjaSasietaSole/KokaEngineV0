@@ -115,6 +115,7 @@ void ModuleLoader::GenerateMaterials(const aiScene* scene)
 	}
 }
 bool ModuleLoader::LoadModel(const char* pathFile) {
+
 	const aiScene* scene = aiImportFile(pathFile, aiProcessPreset_TargetRealtime_MaxQuality);
 
 	if (scene) {

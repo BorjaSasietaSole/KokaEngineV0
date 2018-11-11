@@ -18,7 +18,7 @@ public:
 	bool Init();
 	bool CleanUp();
 
-	unsigned Load(const char* path);
+	unsigned int Load(const char* path);
 	void ReloadTexture(const char* newPath, unsigned texture);
 	void Unload(unsigned id);
 	void SetNewParameter(const char* newPath, unsigned texture, unsigned newTextFilter, unsigned newResizeMethod, unsigned newWrapMethod, unsigned newClampMethod);

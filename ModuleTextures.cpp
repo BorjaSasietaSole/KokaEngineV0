@@ -42,14 +42,14 @@ bool ModuleTextures::CleanUp()
 }
 
 // Load new texture from file path
-unsigned ModuleTextures::Load(const char* path)
+unsigned int ModuleTextures::Load(const char* path)
 {
 	ILuint imageId;
 	ilGenImages(1, &imageId);
 	ilBindImage(imageId);
+	unsigned textureId = 0;
 
-	if (ilLoadImage(path)){
-		unsigned textureId = 0;
+	if (ilLoadImage(path)){		
 		glGenTextures(1, &textureId);
 		// Bind the texture to a name
 		glBindTexture(GL_TEXTURE_2D, textureId);
@@ -103,14 +103,12 @@ unsigned ModuleTextures::Load(const char* path)
 		}
 
 		ilDeleteImages(1, &imageId); // Because we have already copied image data into texture data we can release memory used by image.
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		return textureId; // Return the GLuint to the texture so you can use it!
+		glBindTexture(GL_TEXTURE_2D, 0);		
 	}
 
 	LOG("Error: Image loading %s", iluErrorString(ilGetError()));
 
-	return -1;
+	return textureId; // Return the GLuint to the texture so you can use it!
 }
 
 void ModuleTextures::ReloadTexture(const char* newPath, unsigned texture) {

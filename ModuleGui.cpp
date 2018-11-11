@@ -344,12 +344,12 @@ static void ShowConsole() {
 // About
 static void ShowAbout() {
 
-	const char* MITLicense = "Copyright 2018 - Koka Engine \n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions";
+	const char* MITLicense = "@Copyright 2018 - Koka Engine \n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions.";
 
 	ImGui::Begin("About", &App->options->showAboutMenu);
 
 	ImGui::Text(TITLE);
-	ImGui::Text("C++/C engine for game development");
+	ImGui::Text("C/C++ engine for game development");
 	ImGui::Separator();
 	ImGui::Text("Libraries:");
 	if (ImGui::MenuItem("SDL v2.0.8")) { ShellExecute(0, 0, "https://www.libsdl.org/index.php", 0, 0, SW_SHOW); }
