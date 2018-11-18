@@ -180,6 +180,7 @@
     <ClInclude Include="ModuleGui.h" />
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="ModuleLoader.h" />
+    <ClInclude Include="ModuleModel.h" />
     <ClInclude Include="ModulePrograms.h">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
@@ -212,6 +213,7 @@
     <ClCompile Include="ModuleCamera.cpp" />
     <ClCompile Include="ModuleGui.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
+    <ClCompile Include="ModuleModel.cpp" />
     <ClCompile Include="ModulePrograms.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />

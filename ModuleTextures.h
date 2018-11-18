@@ -1,13 +1,13 @@
-#include<list>
+#ifndef __MODULETEXTURES_H__
+#define __MODULETEXTURES_H__
+
 #include "Module.h"
 #include "Globals.h"
-#include "IL/il.h"
+#include "imgui.h"
+#include "GL/glew.h"
 #include "IL/ilut.h"
-#include "IL/ilu.h"
-#include "SDL.h"
-#include "SDL_image/include/SDL_image.h"
 
-struct SDL_Texture;
+struct Texture;
 
 class ModuleTextures : public Module
 {
@@ -15,19 +15,20 @@ public:
 	ModuleTextures();
 	~ModuleTextures();
 
-	bool Init();
-	bool CleanUp();
+	bool Init() override;
+	Texture const Load(const char* path);
+	void DrawGui();
 
-	unsigned int Load(const char* path);
-	void ReloadTexture(const char* newPath, unsigned texture);
-	void Unload(unsigned id);
-	void SetNewParameter(const char* newPath, unsigned texture, unsigned newTextFilter, unsigned newResizeMethod, unsigned newWrapMethod, unsigned newClampMethod);
-	void SwitchMipMaps(const char* newPath, unsigned texture, bool state);
+	int pixelDepth = 0;
+	int height = 0;
+	int format = 0;
+	int width = 0;
 
-	char* imgFormat;
-	unsigned textFilter = 0;
-	unsigned resizeMethod = 0;
-	unsigned wrapMethod = 0;
-	unsigned clampMethod = 0;
-	bool generateMipMaps = false;
+	bool anisotropic_filter = false;
+	int filterType = GL_LINEAR;
+	bool mipmaping = false;
+	int wrapMode = 0;
+	ILuint imageId = 0u;
 };
+
+#endif //__MODULETEXTURES_H__

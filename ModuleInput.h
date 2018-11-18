@@ -23,29 +23,22 @@ enum KeyState
 
 class ModuleInput : public Module
 {
-
 public:
-
 	ModuleInput();
-
-	// Destructor
 	virtual ~ModuleInput();
 
-	// Called each loop iteration
-	update_status PreUpdate();
-
-	// Called before quitting
-	bool CleanUp();
+	bool Init() override;
+	update_status PreUpdate() override;
+	bool CleanUp() override;
+	void DrawGui();
 
 	// Check key states from keyboard
-	KeyState GetKey(int id) const
-	{
+	KeyState GetKey(int id) const {
 		return keyboard[id];
 	}
 
 	// Check mouse key states
-	KeyState GetMouseButtonDown(int id) const
-	{
+	KeyState GetMouseButtonDown(int id) const {
 		return mouse_buttons[id - 1];
 	}
 
@@ -53,13 +46,15 @@ public:
 	bool GetWindowEvent(EventWindow code) const;
 
 	// Get mouse / axis position
-	const iPoint& GetMouseMotion() const;
-	const iPoint& GetMousePosition() const;
+	const fPoint& GetMouseMotion() const;
+	const fPoint& GetMousePosition() const;
+	const int GetMouseWheel() const;
 
 private:
-	bool		windowEvents[WE_COUNT];
-	KeyState*	keyboard;
-	KeyState	mouse_buttons[NUM_MOUSE_BUTTONS];
-	iPoint		mouse_motion;
-	iPoint		mouse;
+	int mouse_wheel = 0;
+	bool windowEvents[WE_COUNT];
+	KeyState* keyboard = nullptr;
+	KeyState mouse_buttons[NUM_MOUSE_BUTTONS];
+	fPoint mouse_motion;
+	fPoint mouse;
 };

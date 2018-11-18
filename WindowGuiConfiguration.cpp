@@ -40,7 +40,7 @@ void WindowGuiConfiguration::Draw() {
 	}
 
 	if (ImGui::CollapsingHeader("Models")) {
-		App->model->DrawGui();
+		App->models->DrawGui();
 	}
 
 	if (ImGui::CollapsingHeader("Window")) {
