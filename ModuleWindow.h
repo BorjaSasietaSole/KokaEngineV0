@@ -3,7 +3,6 @@
 
 #include "Module.h"
 #include "SDL.h"
-#include "GL/glew.h"
 
 class Application;
 
@@ -29,6 +28,14 @@ public:
 
 	//The surface contained by the window
 	SDL_Surface* screen_surface = nullptr;
+
+	int width = SCREEN_WIDTH;
+	int height = SCREEN_HEIGHT;
+	float screenRatio = SCREEN_WIDTH / SCREEN_HEIGHT;
+
+	bool fullscreen = false;
+	bool resizable = true;
+	bool borderless = false;
 };
 
 #endif // __ModuleWindow_H__

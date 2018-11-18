@@ -1,12 +1,23 @@
 #ifndef __ModuleGui_H__
 #define __ModuleGui_H__
 
-#include "Module.h"
 #include "Globals.h"
+
+#include "WindowGui.h"
+#include "WindowGuiAboutOf.h"
+#include "WindowGuiConfiguration.h"
+#include "WindowGuiConsole.h"
+#include "WindowGuiEditScene.h"
+
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include <vector>
+
+class WindowGui;
+class WindowGuiConfiguration;
+class WindowGuiConsole;
+class WindowGuiEditScene;
 
 class ModuleGui : public Module 
 {
@@ -20,23 +31,22 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	void HandleInputs(SDL_Event& event); 
+	void AddFPSCount(float fps) const;
+	void CreateDockSpace();
+	void PrintDocks();
+	void RenderGUI();
+	bool SceneFocused() const;
 
+	void HandleInputs(SDL_Event* event) const; 
+
+	WindowGuiAboutOf* about = nullptr;
+	WindowGuiConfiguration* config = nullptr;
+	WindowGuiConsole* console = nullptr;
+	WindowGuiEditScene* scene = nullptr;
+
+private:
+	ImGuiIO& io;
 	const char* glsl_version;
-
-	ImGuiIO io;
-
-	bool showAboutMenu = false;
-	bool showHardwareMenu = false;
-	bool requestedExit = false;
-	bool showSceneConfig = false;
-	bool showTextureConfig = false;
-	bool showConsole = false;
-	bool showZoomMagnifier = false;
-	bool showGuide = false;
-
-	std::vector<float> fps_log;
-	std::vector<float> ms_log;
-
+	std::list<WindowGui*> windowsGui;
 };
 #endif __ModuleGui_H__
