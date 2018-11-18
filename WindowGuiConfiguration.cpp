@@ -13,7 +13,7 @@ WindowGuiConfiguration::WindowGuiConfiguration() {}
 
 WindowGuiConfiguration::~WindowGuiConfiguration() {}
 
-WindowGuiConfiguration::Draw() {
+void WindowGuiConfiguration::Draw() {
 	if (!ImGui::Begin("Configuration", &enabled)) {
 		ImGui::End();
 		return;
@@ -24,40 +24,40 @@ WindowGuiConfiguration::Draw() {
 	}
 
 	if (ImGui::CollapsingHeader("Camera")) {
-		App->camera->DrawGUI();
+		App->camera->DrawGui();
 	}
 
 	if (ImGui::CollapsingHeader("Input")) {
-		App->input->DrawGUI();
+		App->input->DrawGui();
 	}
 
 	if (ImGui::CollapsingHeader("Textures")) {
-		App->textures->DrawGUI();
+		App->textures->DrawGui();
 	}
 
 	if (ImGui::CollapsingHeader("Renderer")) {
-		App->renderer->DrawGUI();
+		App->renderer->DrawGui();
 	}
 
 	if (ImGui::CollapsingHeader("Models")) {
-		App->model->DrawGUI();
+		App->model->DrawGui();
 	}
 
 	if (ImGui::CollapsingHeader("Window")) {
-		App->window->DrawGUI();
+		App->window->DrawGui();
 	}
 
 	ImGui::End();
 }
 
-WindowGuiConfiguration::AddFps(float fpsValue) {
+void WindowGuiConfiguration::AddFps(float fpsValue) {
 	fps.insert(fps.begin(), fpsValue);
 	if (fps.size() > NUMFPS) {
 		fps.pop_back();
 	}
 }
 
-WindowGuiConfiguration::DrawFPSgraph() const{
+void WindowGuiConfiguration::DrawFPSgraph() const{
 	float total = 0.0f;
 	for (int i = 0; i < fps.size(); i++) {
 		total += fps[i];

@@ -4,7 +4,7 @@ WindowGuiEditScene::WindowGuiEditScene() {}
 
 WindowGuiEditScene::~WindowGuiEditScene() {}
 
-WindowGuiEditScene::Draw() {
+void WindowGuiEditScene::Draw() {
 	ImGui::Begin("Scene", &enabled, ImGuiWindowFlags_NoScrollbar);
 
 	ImVec2 size = ImGui::GetWindowSize();

@@ -6,11 +6,11 @@
 #include "assimp/version.h"
 #include "GL/glew.h"
 
-WindowGuiAboutOf::WindowGuiAboutOf() enabled(false) {}
+WindowGuiAboutOf::WindowGuiAboutOf(): enabled(false) {}
 
 WindowGuiAboutOf::~WindowGuiAboutOf(){}
 
-WindowGuiAboutOf::Draw() {
+void WindowGuiAboutOf::Draw() {
 	if (!ImGui::Begin("About", &enabled, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		ImGui::End();

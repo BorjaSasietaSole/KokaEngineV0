@@ -7,6 +7,7 @@
 #include "ModuleGui.h"
 #include "ModuleCamera.h"
 #include "ModuleTime.h"
+#include "Model.h"
 #include "Timer.h"
 
 using namespace std;

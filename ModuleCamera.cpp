@@ -4,6 +4,7 @@
 #include "ModuleWindow.h"
 #include "ModuleGui.h"
 #include "ModuleCamera.h"
+#include "ModuleTime.h"
 
 ModuleCamera::ModuleCamera() { }
 
@@ -69,7 +70,7 @@ bool ModuleCamera::CleanUp() {
 
 void ModuleCamera::MoveCamera(CameraMovement cameraSide) {
 
-	float normMoveSpeed = cameraSpeed * App->time->deltaTime;
+	float normMoveSpeed = cameraSpeed * App->timer->deltaTime;
 
 	switch (cameraSide) {
 	case Upwards:
@@ -143,7 +144,7 @@ void ModuleCamera::Zooming() {
 
 	const int wheelSlide = App->input->GetMouseWheel();
 	if (wheelSlide != 0) {
-		float zoomValue = App->renderer->frustum.verticalFov + -wheelSlide * 20.0f * App->time->deltaTime;
+		float zoomValue = App->renderer->frustum.verticalFov + -wheelSlide * 20.0f * App->timer->deltaTime;
 		float newAngleFov = math::Clamp(zoomValue, math::DegToRad(minFov), math::DegToRad(maxFov));
 		App->renderer->frustum.verticalFov = newAngleFov;
 		App->renderer->frustum.horizontalFov = 2.0f * atanf(tanf(newAngleFov * 0.5f) * ((float)App->window->width / (float)App->window->height));

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __MODULERENDER_H__
+#define __MODULERENDER_H__
+
 #include "Module.h"
 #include "Globals.h"
 #include "ModuleLoader.h"
@@ -19,22 +21,32 @@ public:
 	ModuleRender();
 	~ModuleRender();
 
-	bool Init();
-	update_status PreUpdate();
-	update_status Update();
-	update_status PostUpdate();
-	bool CleanUp();
-	void RenderMesh(const ModuleLoader::Mesh& mesh, const ModuleLoader::Material& material,
-		unsigned program, const math::float4x4& model,
-		const math::float4x4& view, const math::float4x4& proj);
+	bool Init() override;
+	update_status PreUpdate() override;
+	update_status Update() override;
+	update_status PostUpdate() override;
+	void DrawGui();
 
-	void* context;
+	void InitFrustum();
+	void InitSDL();
+	void InitOpenGL();
+	void ViewMatrix(unsigned programUsed);
+	void ProjectionMatrix(unsigned programUsed);
+	void ModelTransform(unsigned programUsed);
+	void LookAt(math::float3& cameraPos, math::float3& target);
+	void SetScreenNewScreenSize();
+
 	float bgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	unsigned program0;
-	unsigned program1;
+	Frustum frustum;
+	math::float4x4 viewMatrix;
+	void* context = nullptr;
+	unsigned fbo = 0u;
+	unsigned rbo = 0u;
+	unsigned renderTexture = 0u;
 
 private:
 		
-	void DrawReferenceDebug(unsigned program, const math::float4x4& model, const math::float4x4& view, const math::float4x4& proj);
-	Frustum frustum;
+	void DrawReferenceDebug();
+	void CreateFrameBuffer();
 };
+#endif

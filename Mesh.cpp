@@ -2,6 +2,8 @@
 #include "ModuleModel.h"
 #include "Model.h"
 #include "Mesh.h"
+#include "ModuleLoader.h"
+#include "ModuleTextures.h"
 
 Mesh::Mesh(aiMesh* mesh) {
 	assert(mesh != nullptr);
@@ -90,8 +92,8 @@ void Mesh::Draw(unsigned shaderProgram, const std::vector<Texture>& textures) co
 
 	glActiveTexture(GL_TEXTURE0);
 
-	if (App->model->checkersTexture) {
-		glBindTexture(GL_TEXTURE_2D, App->model->checkTexture.id);
+	if (App->models->checkersTexture) {
+		glBindTexture(GL_TEXTURE_2D, App->models->checkTexture.id);
 	} else {
 		glBindTexture(GL_TEXTURE_2D, textures[materialIndex].id);
 	}

@@ -4,12 +4,12 @@ WindowGuiConsole::WindowGuiConsole() {}
 
 WindowGuiConsole::~WindowGuiConsole() {}
 
-WindowGuiConsole::AddLog(const char* log) {
+void WindowGuiConsole::AddLog(const char* log) {
 	buf.appendf(log);
 	scrollToBottom = true;
 }
 
-WindowGuiConsole::Draw() {
+ void WindowGuiConsole::Draw() {
 	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
 	if (!ImGui::Begin("Log", &enabled)) {
 		ImGui::End();

@@ -5,7 +5,7 @@
 #include "ModuleTextures.h"
 #include "ModulePrograms.h"
 #include "ModuleModel.h"
-#include "glew-2.1.0/include/GL/glew.h"
+#include "GL/glew.h"
 
 ModuleModel::ModuleModel() { }
 

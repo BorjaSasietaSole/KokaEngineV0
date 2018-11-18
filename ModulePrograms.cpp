@@ -4,6 +4,13 @@ ModulePrograms::ModulePrograms(){}
 
 ModulePrograms::~ModulePrograms(){}
 
+bool ModulePrograms::LoadPrograms() {
+	basicProgram = LoadProgram("default.vs", "default.fs");
+	textureProgram = LoadProgram("texture.vs", "texture.fs");
+
+	return (basicProgram != 0 && textureProgram != 0);
+}
+
 unsigned ModulePrograms::LoadProgram(const char* vertShaderPath, const char* fragShaderPath) {
 	unsigned program = 0;
 
@@ -97,4 +104,12 @@ void ModulePrograms::CompileProgram(unsigned programAddress) {
 		glDeleteProgram(programAddress); // Don't leak the program.
 	}
 
+}
+
+bool ModulePrograms::CleanUp() {
+	glDeleteProgram(basicProgram);
+	glDeleteProgram(textureProgram);
+	basicProgram = 0;
+	textureProgram = 0;
+	return true;
 }
