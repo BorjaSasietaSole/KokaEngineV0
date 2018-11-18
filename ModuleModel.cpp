@@ -41,7 +41,7 @@ void ModuleModel::DeleteModels() {
 	models.clear();
 }
 
-void ModuleModel::DrawGUI() {
+void ModuleModel::DrawGui() {
 
 	if (models.size() != 0) {
 
@@ -58,9 +58,6 @@ void ModuleModel::DrawGUI() {
 			if (checkersTexture && checkTexture.id == 0) {
 				checkTexture = App->textures->Load("checkersTexture.jpg");
 			}
-
 		}
-
 	}
-
 }

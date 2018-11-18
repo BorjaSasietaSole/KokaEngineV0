@@ -5,7 +5,6 @@
 #define LOG(format, ...) log(__FILE__, __LINE__, format, __VA_ARGS__);
 
 void log(const char file[], int line, const char* format, ...);
-void PrintConsole(const char* title, bool* p_opened);
 
 enum update_status
 {
@@ -35,10 +34,16 @@ enum update_status
 	 }
 
 // Configuration -----------
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#define SCREEN_WIDTH 1024
+#define SCREEN_HEIGHT 720
 #define FULLSCREEN false
 #define RESIZEABLE true
+#define BORDERLESS false
+#define FULLSCREEN_DESKTOP false
 #define VSYNC true
 #define SCREEN_SIZE 2
 #define TITLE "Koka Engine"
+#define AUTHOR "Borja Sasieta Solé"
+#define DESCRIPTION "C/C++ engine for game development"
+#define REPOSITORY "https://github.com/BorjaSasietaSole/KokaEngineV1"
+#define LICENSE "https://github.com/BorjaSasietaSole/KokaEngineV1/blob/master/LICENSE"

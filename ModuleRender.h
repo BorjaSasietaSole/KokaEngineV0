@@ -3,7 +3,7 @@
 
 #include "Module.h"
 #include "Globals.h"
-#include "ModuleLoader.h"
+#include "ModuleModel.h"
 
 #include "./imgui/imgui.h"
 #include "./imgui/imgui_impl_sdl.h"

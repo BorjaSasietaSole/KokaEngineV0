@@ -68,10 +68,10 @@ bool ModulePrograms::CompileShader(unsigned shaderAddress, const char* shaderCon
 	glGetShaderiv(shaderAddress, GL_COMPILE_STATUS, &compiled);
 
 	if (!compiled) {
-		int infoLogLength = 0.0f;
+		int infoLogLength = 0;
 		glGetShaderiv(shaderAddress, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-		if (infoLogLength > 0.0f) {
+		if (infoLogLength > 0) {
 			GLchar* strInfoLog = new GLchar[infoLogLength + 1];
 			glGetShaderInfoLog(shaderAddress, infoLogLength, nullptr, strInfoLog);
 

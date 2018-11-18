@@ -29,7 +29,7 @@ int Timer::Read() {
 ///Microseconds timer
 void Timer::StartPrecise() {
 	timerPreciseRunning = true;
-	startTimePrecise = SDL_GetPerformanceCounter();
+	startTimePrecise = (double) SDL_GetPerformanceCounter();
 }
 
 double Timer::StopPrecise() {

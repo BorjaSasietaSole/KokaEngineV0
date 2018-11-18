@@ -2,7 +2,6 @@
 #include "ModuleModel.h"
 #include "Model.h"
 #include "Mesh.h"
-#include "ModuleLoader.h"
 #include "ModuleTextures.h"
 
 Mesh::Mesh(aiMesh* mesh) {

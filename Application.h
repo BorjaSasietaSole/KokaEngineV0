@@ -10,7 +10,7 @@ class ModuleWindow;
 class ModuleTextures;
 class ModuleInput;
 class ModulePrograms;
-class ModuleLoader;
+class ModuleModel;
 class ModuleGui;
 class ModuleCamera;
 class ModuleTime;
@@ -30,7 +30,7 @@ public:
 	ModuleWindow* window = nullptr;
 	ModuleTextures* textures = nullptr;
 	ModuleInput* input = nullptr;
-	ModuleLoader* models = nullptr;
+	ModuleModel* models = nullptr;
 	ModulePrograms* programs = nullptr;
 	ModuleGui* options = nullptr;
 	ModuleCamera* camera = nullptr;

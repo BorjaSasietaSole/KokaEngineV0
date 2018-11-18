@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "ModuleModel.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleTextures.h"
@@ -19,11 +20,11 @@ Application::Application()
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(camera = new ModuleCamera());
+	modules.push_back(models = new ModuleModel());
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(programs = new ModulePrograms());
 	modules.push_back(textures = new ModuleTextures());
 	modules.push_back(options = new ModuleGui());
-	modules.push_back(models = new ModuleLoader());
 }
 
 Application::~Application()

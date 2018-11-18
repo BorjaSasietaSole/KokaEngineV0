@@ -23,6 +23,8 @@ public:
 
 	void WindowResized(unsigned width, unsigned height);
 
+	void DrawGui();
+
 	//The window we'll be rendering to
 	SDL_Window* window = nullptr;
 

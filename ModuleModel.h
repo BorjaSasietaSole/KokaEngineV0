@@ -16,7 +16,7 @@ class ModuleModel : public Module
 		void DrawModels();
 		void ApplyTexture(Texture texture);
 		void DeleteModels();
-		void DrawGUI();
+		void DrawGui();
 
 		std::list<Model> models;
 		bool checkersTexture = false;

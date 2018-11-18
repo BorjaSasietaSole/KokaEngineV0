@@ -7,7 +7,7 @@ ModuleTime::~ModuleTime() { }
 
 update_status ModuleTime::PreUpdate() {
 
-	float currentFrame = SDL_GetTicks();
+	float currentFrame = (float) SDL_GetTicks();
 	deltaTime = (currentFrame - lastFrame) * 0.001f;
 	lastFrame = currentFrame;
 
