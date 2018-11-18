@@ -27,7 +27,7 @@ update_status ModuleInput::PreUpdate()
 	mouse_motion = { 0, 0 };
 	memset(windowEvents, false, WE_COUNT * sizeof(bool));
 
-	const Uint8* keys = SDL_GetKeyboardState(NULL);
+	const Uint8* keys = SDL_GetKeyboardState(nullptr);
 
 	for (int i = 0; i < MAX_KEYS; ++i)
 	{

@@ -56,7 +56,7 @@ char* ModulePrograms::ReadShaderFile(const char* shaderPath) {
 bool ModulePrograms::CompileShader(unsigned shaderAddress, const char* shaderContent) {
 	int compiled = GL_FALSE;
 
-	glShaderSource(shaderAddress, 1, &shaderContent, NULL);
+	glShaderSource(shaderAddress, 1, &shaderContent, nullptr);
 	glCompileShader(shaderAddress);
 	glGetShaderiv(shaderAddress, GL_COMPILE_STATUS, &compiled);
 
@@ -66,7 +66,7 @@ bool ModulePrograms::CompileShader(unsigned shaderAddress, const char* shaderCon
 
 		if (infoLogLength > 0.0f) {
 			GLchar* strInfoLog = new GLchar[infoLogLength + 1];
-			glGetShaderInfoLog(shaderAddress, infoLogLength, NULL, strInfoLog);
+			glGetShaderInfoLog(shaderAddress, infoLogLength, nullptr, strInfoLog);
 
 			LOG("Error: Shader failed at %s", strInfoLog);
 
