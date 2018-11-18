@@ -4,7 +4,6 @@
 #include "ModuleTextures.h"
 #include "ModuleInput.h"
 #include "ModulePrograms.h"
-#include "ModuleRenderTriangle.h"
 #include "ModuleGui.h"
 #include "ModuleCamera.h"
 #include "ModuleTime.h"
@@ -62,7 +61,7 @@ update_status Application::Update()
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
 
-	
+	options->AddFPSCount(1 / App->timer->deltaTime);
 
 	return ret;
 }

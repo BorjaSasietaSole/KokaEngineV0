@@ -6,7 +6,7 @@
 class WindowGui
 {
 public:
-	DoWindowGuick();
+	WindowGui();
 	~WindowGui();
 
 	virtual void Draw() {}

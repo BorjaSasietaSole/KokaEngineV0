@@ -134,7 +134,7 @@ void ModuleGui::CreateDockSpace()
 	windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::Begin("DockSpace", NULL, windowFlags);
+	ImGui::Begin("DockSpace", nullptr, windowFlags);
 	ImGui::PopStyleVar(3);
 
 	ImGuiID dockspaceId = ImGui::GetID("DockSpace");
