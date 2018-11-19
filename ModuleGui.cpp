@@ -10,7 +10,7 @@
 #include "GL/glew.h"
 #include "SDL.h"
 
-ModuleGui::ModuleGui() : io(ImGui::GetIO()), glsl_version("#version 130") {
+ModuleGui::ModuleGui() : glsl_version("#version 130") {
 	windowsGui.push_back(console = new WindowGuiConsole());
 	windowsGui.push_back(config = new WindowGuiConfiguration());
 	windowsGui.push_back(scene = new WindowGuiEditScene());
@@ -23,7 +23,8 @@ ModuleGui::~ModuleGui() {
 bool ModuleGui::Init() {
 	// Setup Dear ImGui binding
 	IMGUI_CHECKVERSION();
-	ImGui::CreateContext(); 
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
 	(void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
 

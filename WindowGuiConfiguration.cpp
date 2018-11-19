@@ -9,7 +9,7 @@
 #include "ModuleTextures.h"
 #include "SDL.h"
 
-WindowGuiConfiguration::WindowGuiConfiguration() {}
+WindowGuiConfiguration::WindowGuiConfiguration() : fps(std::vector<float>()) {}
 
 WindowGuiConfiguration::~WindowGuiConfiguration() {}
 
@@ -59,7 +59,7 @@ void WindowGuiConfiguration::AddFps(float fpsValue) {
 
 void WindowGuiConfiguration::DrawFPSgraph() const{
 	float total = 0.0f;
-	for (int i = 0; i < fps.size(); i++) {
+	for (size_t i = 0; i < fps.size(); i++) {
 		total += fps[i];
 	}
 	char avg[32];

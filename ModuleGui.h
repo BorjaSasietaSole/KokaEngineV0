@@ -45,7 +45,6 @@ public:
 	WindowGuiEditScene* scene = nullptr;
 
 private:
-	ImGuiIO& io;
 	const char* glsl_version;
 	std::list<WindowGui*> windowsGui;
 };

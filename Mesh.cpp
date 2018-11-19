@@ -4,9 +4,9 @@
 #include "Mesh.h"
 #include "ModuleTextures.h"
 
-Mesh::Mesh(aiMesh* mesh) {
+Mesh::Mesh(aiMesh* mesh) : vertices(std::vector<math::float3>()), bbox(AABB()){
 	assert(mesh != nullptr);
-
+	
 	// To be able to render in imgui we need a vao
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -63,8 +63,7 @@ Mesh::Mesh(aiMesh* mesh) {
 
 	name = mesh->mName.C_Str();
 
-	bbox.SetNegativeInfinity();
-	bbox.Enclose((float3*)mesh->mVertices, mesh->mNumVertices);
+	bbox.Enclose((float3* const) mesh->mVertices, (int) mesh->mNumVertices);
 
 	numIndices = mesh->mNumFaces * 3;
 	materialIndex = mesh->mMaterialIndex;

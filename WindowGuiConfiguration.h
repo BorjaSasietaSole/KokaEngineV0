@@ -18,6 +18,6 @@ public:
 
 
 private:
-	std::vector<float> fps = std::vector<float>();
+	std::vector<float> fps;
 };
 #endif // __WINDOWGUICONFIGURATION_H__
