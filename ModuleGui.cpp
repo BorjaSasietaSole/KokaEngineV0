@@ -57,9 +57,9 @@ update_status ModuleGui::Update() {
 			if (ImGui::MenuItem("Exit")) {
 				ImGui::EndMenu();
 				ImGui::EndMainMenuBar();
-				ImGui::End();
 				ImGui::EndFrame();
-				ret = UPDATE_ERROR;
+				ImGui::End();
+				ret = UPDATE_STOP;
 			}
 			ImGui::EndMenu();
 		}
