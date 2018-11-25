@@ -43,6 +43,11 @@ public:
 
 	Model* selectedObject = nullptr;
 
+	math::float3 getCameraPos() { return cameraPos; }
+	math::float3 getFront() { return front; }
+	math::float3 getSide() { return side; }
+	math::float3 getUp() { return up; }
+
 private:
 
 	// User attributes
