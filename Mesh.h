@@ -21,10 +21,12 @@ class Mesh
 		const char* name = nullptr;
 		int numIndices = 0;
 		int materialIndex = 0;
+
+	private:
+
 		std::vector<math::float3> vertices;
 		AABB bbox;
 
-	private:
 		unsigned vao = 0u;
 		unsigned vbo = 0u;
 		unsigned ibo = 0u;

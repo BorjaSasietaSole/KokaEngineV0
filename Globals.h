@@ -45,5 +45,5 @@ enum update_status
 #define TITLE "Koka Engine"
 #define AUTHOR "Borja Sasieta Solé"
 #define DESCRIPTION "C/C++ engine for game development"
-#define REPOSITORY "https://github.com/BorjaSasietaSole/KokaEngineV1"
-#define LICENSE "https://github.com/BorjaSasietaSole/KokaEngineV1/blob/master/LICENSE"
+#define REPOSITORY "https://github.com/BorjaSasietaSole/KokaEngineV0"
+#define LICENSE "https://github.com/BorjaSasietaSole/KokaEngineV0/blob/master/LICENSE"
