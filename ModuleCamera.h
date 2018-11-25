@@ -23,7 +23,7 @@ class ModuleCamera : public Module
 
 public:
 
-	ModuleCamera();
+	ModuleCamera(math::float3 front, math::float3 side, math::float3 up, math::float3 cameraPos);
 	~ModuleCamera();
 
 	bool Init();
@@ -43,6 +43,8 @@ public:
 
 	Model* selectedObject = nullptr;
 
+private:
+
 	// User attributes
 	float mouseSensitivity = 65.0f;
 	float rotationSpeed = 65.0f;;
@@ -53,12 +55,12 @@ public:
 	float minFov = 10.0f;
 	float pitch = 0.0f;
 	float yaw = 0.0f;
-	math::float3 cameraPos = math::float3(10.0f, 10.0f, 10.0f);
+	math::float3 cameraPos;
 
 	//ViewMatrix info
-	math::float3 front = math::float3(-0.577350259f, -0.577350259f, -0.577350259f);
+	math::float3 front;
 	math::float3 side;
-	math::float3 up = math::float3(0.0f, 1.0f, 0.0f);
+	math::float3 up;
 
 	// Mouse 
 	bool firstMouse = true;

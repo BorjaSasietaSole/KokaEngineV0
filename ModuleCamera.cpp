@@ -6,7 +6,10 @@
 #include "ModuleCamera.h"
 #include "ModuleTime.h"
 
-ModuleCamera::ModuleCamera() { }
+ModuleCamera::ModuleCamera(math::float3 front, math::float3 side, math::float3 up, math::float3 cameraPos) : 
+	front(math::float3(-0.577350259f, -0.577350259f, -0.577350259f)), 
+	side(math::float3(0.0f,0.0f,0.0f)), 
+	up(math::float3(0.0f, 1.0f, 0.0f)), cameraPos(math::float3(10.0f, 10.0f, 10.0f)){}
 
 ModuleCamera::~ModuleCamera() {}
 

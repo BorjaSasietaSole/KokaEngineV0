@@ -18,11 +18,16 @@ class Mesh
 
 		void Draw(unsigned shaderProgram, const std::vector<Texture>& textures) const;
 
-		const char* name = nullptr;
 		int numIndices = 0;
 		int materialIndex = 0;
 
+		const char* getName() { return name; }
+		std::vector<math::float3> getVerts() { return vertices; }
+		AABB getBbox() { return bbox; }
+
 	private:
+
+		const char* name = nullptr;
 
 		std::vector<math::float3> vertices;
 		AABB bbox;

@@ -61,13 +61,13 @@ void Model::DrawInfo() const {
 
 		for (auto& meshSelected : meshes) {
 
-			if (ImGui::CollapsingHeader(meshSelected.name, ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick)) {
+			if (ImGui::CollapsingHeader(meshSelected.getName, ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick)) {
 
 				if (&meshSelected != nullptr) {
 
 					ImGui::Text("Triangles Count: %d", meshSelected.numIndices / 3);
-					ImGui::Text("Vertices Count: %d", meshSelected.vertices.size());
-					ImGui::Text("Mesh size:\n X: %f | Y: %f | Z: %f", meshSelected.bbox.Size().x, meshSelected.bbox.Size().y, meshSelected.bbox.Size().z);
+					ImGui::Text("Vertices Count: %d", meshSelected.getVerts.size());
+					ImGui::Text("Mesh size:\n X: %f | Y: %f | Z: %f", meshSelected.getBbox.Size().x, meshSelected.getBbox.Size().y, meshSelected.getBbox.Size().z);
 
 				} else {
 					ImGui::Text("No mesh attached");
@@ -123,7 +123,7 @@ void Model::GenerateMaterialData(const aiScene* scene) {
 void Model::GetAABB() {
 
 	for (auto& mesh : meshes) {
-		boundingBox.Enclose(mesh.bbox);
+		boundingBox.Enclose(mesh.getBbox);
 	}
 
 }
