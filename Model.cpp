@@ -59,7 +59,7 @@ void Model::DrawInfo() const {
 	// TODO: this is weird, change collapsing to other imgui element
 	if (ImGui::CollapsingHeader("Meshes loaded")) {
 
-		for (auto meshSelected : meshes) {
+		for (Mesh meshSelected : meshes) {
 
 			if (ImGui::CollapsingHeader(meshSelected.getName(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick)) {
 
