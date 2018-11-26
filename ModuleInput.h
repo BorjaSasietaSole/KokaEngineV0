@@ -33,14 +33,10 @@ public:
 	void DrawGui();
 
 	// Check key states from keyboard
-	KeyState GetKey(int id) const {
-		return keyboard[id];
-	}
+	KeyState GetKey(int id) const { return keyboard[id]; }
 
 	// Check mouse key states
-	KeyState GetMouseButtonDown(int id) const {
-		return mouse_buttons[id - 1];
-	}
+	KeyState GetMouseButtonDown(int id) const { return mouse_buttons[id - 1]; }
 
 	// Check for window events last frame
 	bool GetWindowEvent(EventWindow code) const;

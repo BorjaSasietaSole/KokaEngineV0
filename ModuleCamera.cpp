@@ -6,10 +6,9 @@
 #include "ModuleCamera.h"
 #include "ModuleTime.h"
 
-ModuleCamera::ModuleCamera(math::float3 front, math::float3 side, math::float3 up, math::float3 cameraPos) : 
-	front(math::float3(-0.577350259f, -0.577350259f, -0.577350259f)), 
-	side(math::float3(0.0f,0.0f,0.0f)), 
-	up(math::float3(0.0f, 1.0f, 0.0f)), cameraPos(math::float3(10.0f, 10.0f, 10.0f)){}
+ModuleCamera::ModuleCamera() : front(math::float3(-0.577350259f, -0.577350259f, -0.577350259f)), 
+	side(math::float3(0.0f,0.0f,0.0f)), up(math::float3(0.0f, 1.0f, 0.0f)), 
+	cameraPos(math::float3(10.0f, 10.0f, 10.0f)){}
 
 ModuleCamera::~ModuleCamera() {}
 
@@ -73,7 +72,7 @@ bool ModuleCamera::CleanUp() {
 
 void ModuleCamera::MoveCamera(CameraMovement cameraSide) {
 
-	float normMoveSpeed = cameraSpeed * App->timer->deltaTime;
+	float normMoveSpeed = cameraSpeed * App->timer->getDeltaTime();
 
 	switch (cameraSide) {
 	case Upwards:
@@ -147,7 +146,7 @@ void ModuleCamera::Zooming() {
 
 	const int wheelSlide = App->input->GetMouseWheel();
 	if (wheelSlide != 0) {
-		float zoomValue = App->renderer->frustum.verticalFov + -wheelSlide * 20.0f * App->timer->deltaTime;
+		float zoomValue = App->renderer->frustum.verticalFov + -wheelSlide * 20.0f * App->timer->getDeltaTime();
 		float newAngleFov = math::Clamp(zoomValue, math::DegToRad(minFov), math::DegToRad(maxFov));
 		App->renderer->frustum.verticalFov = newAngleFov;
 		App->renderer->frustum.horizontalFov = 2.0f * atanf(tanf(newAngleFov * 0.5f) * ((float)App->window->width / (float)App->window->height));

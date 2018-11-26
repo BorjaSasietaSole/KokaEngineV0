@@ -10,8 +10,11 @@ public:
 	~ModuleTime();
 
 	update_status PreUpdate() override;
+	
+	float getDeltaTime() { return deltaTime; }
+	float getLastFrame() { return lastFrame; }
 
-public:
+private:
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 };

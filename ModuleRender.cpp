@@ -185,7 +185,7 @@ void ModuleRender::ModelTransform(unsigned programUsed) {
 void ModuleRender::LookAt(math::float3& cameraPos, math::float3& target) {
 	math::float3 front(target - cameraPos); front.Normalize();
 	// We are not implementing roll, so we will calculate the up again mantaining the verticalitiy
-	math::float3 side(front.Cross(App->camera->up)); 
+	math::float3 side(front.Cross(App->camera->getUp())); 
 	side.Normalize();
 	math::float3 up(side.Cross(front));
 

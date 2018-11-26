@@ -23,7 +23,7 @@ class ModuleCamera : public Module
 
 public:
 
-	ModuleCamera(math::float3 front, math::float3 side, math::float3 up, math::float3 cameraPos);
+	ModuleCamera();
 	~ModuleCamera();
 
 	bool Init();

@@ -63,7 +63,7 @@ update_status Application::Update()
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
 
-	options->AddFPSCount(1 / App->timer->deltaTime);
+	options->AddFPSCount(1 / App->timer->getDeltaTime());
 
 	return ret;
 }
