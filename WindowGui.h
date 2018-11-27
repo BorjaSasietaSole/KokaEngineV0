@@ -11,15 +11,11 @@ public:
 
 	virtual void Draw() {}
 
-	bool IsEnabled() const {
-		return enabled;
-	}
+	bool IsEnabled() const { return enabled; }
 
-	void ToggleEnabled() {
-		enabled = !enabled;
-	}
+	void ToggleEnabled() { enabled = !enabled; }
 
-	bool enabled = true;
+	bool enabled;
 };
 
 #endif //__WINDOWGUI_H__

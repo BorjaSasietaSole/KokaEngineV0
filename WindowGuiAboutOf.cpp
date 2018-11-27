@@ -6,9 +6,7 @@
 #include "assimp/version.h"
 #include "GL/glew.h"
 
-WindowGuiAboutOf::WindowGuiAboutOf() {
-	enabled = false;
-}
+WindowGuiAboutOf::WindowGuiAboutOf() { enabled = false; }
 
 WindowGuiAboutOf::~WindowGuiAboutOf(){}
 

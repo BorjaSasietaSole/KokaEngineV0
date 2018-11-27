@@ -1,5 +1,5 @@
 #include "WindowGui.h"
 
-WindowGui::WindowGui(){}
+WindowGui::WindowGui() : enabled(true) {}
 
 WindowGui::~WindowGui() {}
