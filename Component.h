@@ -29,6 +29,8 @@ public:
 	void Remove();
 
 	GameObject* getGoContainer() { return goContainer; }
+	ComponentType getComponentType() { return componentType; }
+	bool getEnabled() { return enabled; }
 
 private:
 	bool enabled = true;

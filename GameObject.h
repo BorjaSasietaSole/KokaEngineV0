@@ -40,6 +40,12 @@ public:
 	math::float4x4 GetGlobalTransform() const;
 	void ModelTransform(unsigned shader) const;
 
+	const char* getName() { return name; }
+	void setName(const char* newName) { name = newName; }
+
+	std::vector<Component*>	getComponents() { return components; }
+	std::list<GameObject*> getGoChilds() { return goChilds; }
+
 private:
 	bool enabled = true;
 	const char*	filePath = nullptr;

@@ -8,6 +8,7 @@
 #include "ModuleGui.h"
 #include "ModuleCamera.h"
 #include "ModuleTime.h"
+#include "ModuleScene.h"
 #include "Model.h"
 #include "Timer.h"
 
@@ -24,6 +25,7 @@ Application::Application()
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(programs = new ModulePrograms());
 	modules.push_back(textures = new ModuleTextures());
+	modules.push_back(scene = new ModuleScene());
 	modules.push_back(options = new ModuleGui());
 }
 

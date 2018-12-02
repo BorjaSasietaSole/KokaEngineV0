@@ -14,6 +14,7 @@ class ModuleModel;
 class ModuleGui;
 class ModuleCamera;
 class ModuleTime;
+class ModuleScene;
 
 class Application
 {
@@ -35,6 +36,7 @@ public:
 	ModuleGui* options = nullptr;
 	ModuleCamera* camera = nullptr;
 	ModuleTime* timer = nullptr;
+	ModuleScene* scene = nullptr;
 
 	float lastTickTime = 0.0f;
 	float auxTimer = 0.0f;
