@@ -19,7 +19,7 @@ bool ModuleTextures::Init() {
 }
 
 // Load new texture from file path
-Texture const ModuleTextures::Load(const char* path) {
+Texture* ModuleTextures::Load(const char* path) {
 	assert(path != nullptr);
 	
 	unsigned textureId = 0u;
