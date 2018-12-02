@@ -52,7 +52,7 @@ private:
 
 	// User attributes
 	float mouseSensitivity = 65.0f;
-	float rotationSpeed = 65.0f;;
+	float rotationSpeed = 65.0f;
 	float cameraSpeed = 17.0f;;
 
 	// Camera specs
