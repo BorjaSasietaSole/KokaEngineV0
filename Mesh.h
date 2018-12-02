@@ -8,7 +8,12 @@
 #include <vector>
 #include "GL/glew.h"
 
-struct Texture;
+struct Texture{
+	int id = 0;
+	int width = 0;
+	int height = 0;
+	Texture(int id, int width, int height) : id(id), width(width), height(height) { }
+};
 
 class Mesh
 {

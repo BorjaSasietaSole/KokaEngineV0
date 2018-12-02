@@ -21,7 +21,7 @@ public:
 	~ModuleTextures();
 
 	bool Init() override;
-	Texture* Load(const char* path);
+	Texture* const Load(const char* path);
 	void DrawGui();
 
 	int pixelDepth = 0;

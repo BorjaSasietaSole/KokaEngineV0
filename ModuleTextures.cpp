@@ -19,7 +19,7 @@ bool ModuleTextures::Init() {
 }
 
 // Load new texture from file path
-Texture* ModuleTextures::Load(const char* path) {
+Texture* const ModuleTextures::Load(const char* path) {
 	assert(path != nullptr);
 	
 	unsigned textureId = 0u;
@@ -59,7 +59,7 @@ Texture* ModuleTextures::Load(const char* path) {
 		// Quit if we failed the conversion
 		if (!success) {
 			LOG("Error: Could not convert the image correctly. %s", iluErrorString(ilGetError()));
-			return Texture(0, 0, 0);
+			return nullptr;
 		}
 
 		// Specify the texture specification
@@ -103,12 +103,12 @@ Texture* ModuleTextures::Load(const char* path) {
 		ilDeleteImages(1, &imageId);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		return Texture(textureId, width, height);
+		return new Texture(textureId, width, height);
 	}
 
 	LOG("Error: Image loading %s", iluErrorString(ilGetError()));
 
-	return Texture(0, 0, 0);
+	return nullptr;
 }
 
 void ModuleTextures::DrawGui() {

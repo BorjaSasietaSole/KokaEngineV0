@@ -13,7 +13,7 @@
 #include "GL/glew.h"
 #include <string>
 
-struct Texture {
+struct Texture{
 	int id = 0;
 	int width = 0;
 	int height = 0;

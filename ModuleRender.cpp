@@ -4,6 +4,7 @@
 #include "ModuleCamera.h"
 #include "ModuleWindow.h"
 #include "ModulePrograms.h"
+#include "ModuleScene.h"
 
 ModuleRender::ModuleRender() { }
 
@@ -21,6 +22,7 @@ bool ModuleRender::Init() {
 
 	App->programs->LoadPrograms();
 	CreateFrameBuffer();
+	CreateUniformBlocks();
 
 	return true;
 }
@@ -39,19 +41,13 @@ update_status ModuleRender::Update() {
 	glClearColor(bgColor[0], bgColor[1], bgColor[2], bgColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glUseProgram(App->programs->textureProgram);
-	ModelTransform(App->programs->textureProgram);
-	ProjectionMatrix(App->programs->textureProgram);
-	ViewMatrix(App->programs->textureProgram);
-	App->models->DrawModels();
+	ProjectionMatrix();
+	ViewMatrix();
 
-	glUseProgram(App->programs->basicProgram);
-	ModelTransform(App->programs->basicProgram);
-	ProjectionMatrix(App->programs->basicProgram);
-	ViewMatrix(App->programs->basicProgram);
 	DrawReferenceDebug();
 
-	glUseProgram(0);
+	App->scene->Draw();
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	return UPDATE_CONTINUE;
@@ -66,6 +62,10 @@ update_status ModuleRender::PostUpdate() {
 }
 
 void ModuleRender::DrawReferenceDebug() {
+
+	glUseProgram(App->programs->basicProgram);
+	math::float4x4 model = math::float4x4::identity;
+	glUniformMatrix4fv(glGetUniformLocation(App->programs->basicProgram, "model"), 1, GL_TRUE, &model[0][0]);
 
 	// White grid
 	int gridColor = glGetUniformLocation(App->programs->basicProgram, "vColor");
@@ -165,14 +165,20 @@ void ModuleRender::CreateFrameBuffer() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void ModuleRender::ViewMatrix(unsigned programUsed) {
-	int viewLocation = glGetUniformLocation(programUsed, "view");
-	glUniformMatrix4fv(viewLocation, 1, GL_TRUE, &viewMatrix[0][0]);
+void ModuleRender::ViewMatrix() {
+	math::float4x4 viewMatrix = LookAt(App->camera->getCameraPos(), App->camera->getCameraPos() + App->camera->getFront());
+	viewMatrix.Transpose();
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(float4x4), sizeof(float4x4), &viewMatrix[0][0]);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void ModuleRender::ProjectionMatrix(unsigned programUsed) {
-	int projLocation = glGetUniformLocation(programUsed, "proj");
-	glUniformMatrix4fv(projLocation, 1, GL_TRUE, &frustum.ProjectionMatrix()[0][0]);
+void ModuleRender::ProjectionMatrix() {
+	float4x4 projection = frustum.ProjectionMatrix();
+	projection.Transpose();
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float4x4), &projection[0][0]);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void ModuleRender::ModelTransform(unsigned programUsed) {
@@ -182,18 +188,20 @@ void ModuleRender::ModelTransform(unsigned programUsed) {
 }
 
 // We avoid the viewMatrix calc if camera not moving
-void ModuleRender::LookAt(math::float3& cameraPos, math::float3& target) {
+math::float4x4 ModuleRender::LookAt(math::float3& cameraPos, math::float3& target) {
 	math::float3 front(target - cameraPos); front.Normalize();
 	// We are not implementing roll, so we will calculate the up again mantaining the verticalitiy
-	math::float3 side(front.Cross(App->camera->getUp())); 
-	side.Normalize();
+	math::float3 side(front.Cross(App->camera->getUp())); side.Normalize();
 	math::float3 up(side.Cross(front));
 
+	math::float4x4 viewMatrix(math::float4x4::zero);
 	viewMatrix[0][0] = side.x; viewMatrix[0][1] = side.y; viewMatrix[0][2] = side.z;
 	viewMatrix[1][0] = up.x; viewMatrix[1][1] = up.y; viewMatrix[1][2] = up.z;
 	viewMatrix[2][0] = -front.x; viewMatrix[2][1] = -front.y; viewMatrix[2][2] = -front.z;
 	viewMatrix[0][3] = -side.Dot(cameraPos); viewMatrix[1][3] = -up.Dot(cameraPos); viewMatrix[2][3] = front.Dot(cameraPos);
 	viewMatrix[3][0] = 0.0f; viewMatrix[3][1] = 0.0f; viewMatrix[3][2] = 0.0f; viewMatrix[3][3] = 1.0f;
+
+	return viewMatrix;
 }
 
 // Initialization
@@ -203,7 +211,7 @@ void ModuleRender::InitFrustum() {
 	frustum.front = -float3::unitZ;
 	frustum.up = float3::unitY;
 	frustum.nearPlaneDistance = 0.1f;
-	frustum.farPlaneDistance = 100.0f;
+	frustum.farPlaneDistance = 1000.0f;
 	frustum.verticalFov = math::pi / 4.0f;
 	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * ((float)App->window->width / (float)App->window->height));
 }
@@ -214,7 +222,8 @@ void ModuleRender::InitSDL() {
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 	context = SDL_GL_CreateContext(App->window->window);
 	SDL_GetWindowSize(App->window->window, &App->window->width, &App->window->height);
@@ -237,4 +246,27 @@ void ModuleRender::DrawGui() {
 
 	ImGui::SliderFloat3("Background color", App->renderer->bgColor, 0.0f, 1.0f);
 
+}
+
+bool ModuleRender::CleanUp() {
+	LOG("Destroying renderer");
+	glDeleteFramebuffers(1, &fbo);
+	glDeleteRenderbuffers(1, &rbo);
+	glDeleteBuffers(1, &ubo);
+	return true;
+}
+
+void ModuleRender::CreateUniformBlocks() {
+	unsigned int uniformBlockIndexDefault = glGetUniformBlockIndex(App->programs->basicProgram, "Matrices");
+	unsigned int uniformBlockIndexTexture = glGetUniformBlockIndex(App->programs->textureProgram, "Matrices");
+
+	glUniformBlockBinding(App->programs->basicProgram, uniformBlockIndexDefault, 0);
+	glUniformBlockBinding(App->programs->textureProgram, uniformBlockIndexTexture, 0);
+
+	glGenBuffers(1, &ubo);
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(float4x4), NULL, GL_STATIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, 0, 2 * sizeof(float4x4));
 }
