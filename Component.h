@@ -28,6 +28,8 @@ public:
 	virtual void Disable() { enabled = false; };
 	void Remove();
 
+	GameObject* getGoContainer() { return goContainer; }
+
 private:
 	bool enabled = true;
 	ComponentType componentType = ComponentType::EMPTY;
