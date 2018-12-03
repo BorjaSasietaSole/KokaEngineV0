@@ -55,7 +55,7 @@ void ModuleModel::DrawGui() {
 
 		if (ImGui::Checkbox("Checkers Texture", &checkersTexture)) {
 
-			if (checkersTexture && checkTexture.id == 0) {
+			if (checkersTexture && checkTexture->id == 0) {
 				checkTexture = App->textures->Load("checkersTexture.jpg");
 			}
 		}

@@ -117,8 +117,8 @@ update_status ModuleInput::PreUpdate() {
 				App->models->Load(fileDroppedPath);
 			}
 			else if (extension == "png" || extension == "dds") {
-				Texture newTexture = App->textures->Load(fileDroppedPath);
-				App->models->ApplyTexture(newTexture);
+				Texture* newTexture = App->textures->Load(fileDroppedPath);
+				App->models->ApplyTexture(*newTexture);
 			}
 			else {
 				SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "The file you are trying to drop is not accepted.", App->window->window);

@@ -91,7 +91,7 @@ void Mesh::Draw(unsigned shaderProgram, const std::vector<Texture>& textures) co
 	glActiveTexture(GL_TEXTURE0);
 
 	if (App->models->checkersTexture) {
-		glBindTexture(GL_TEXTURE_2D, App->models->checkTexture.id);
+		glBindTexture(GL_TEXTURE_2D, App->models->checkTexture->id);
 	} else {
 		glBindTexture(GL_TEXTURE_2D, textures[materialIndex].id);
 	}

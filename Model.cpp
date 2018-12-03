@@ -110,7 +110,7 @@ void Model::GenerateMaterialData(const aiScene* scene) {
 		if (materialSrc->GetTexture(aiTextureType_DIFFUSE, 0, &file, &mapping, 0) == AI_SUCCESS) {
 			std::string pathFile(this->path);
 			pathFile += file.C_Str();
-			textures.push_back(App->textures->Load(pathFile.c_str()));
+			textures.push_back(*App->textures->Load(pathFile.c_str()));
 		} else {
 			LOG("Error: Could not load the %fth material", i);
 		}
