@@ -37,7 +37,9 @@ public:
 	void RenderGUI();
 	bool SceneFocused() const;
 
-	void HandleInputs(SDL_Event* event) const; 
+	void HandleInputs(SDL_Event* event) const;
+	// SDL events
+	void ProcessInputEvent(SDL_Event* event) const;
 
 	WindowGuiAboutOf* about = nullptr;
 	WindowGuiConfiguration* config = nullptr;

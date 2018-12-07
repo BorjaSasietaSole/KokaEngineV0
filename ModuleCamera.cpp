@@ -72,7 +72,7 @@ bool ModuleCamera::CleanUp() {
 
 void ModuleCamera::MoveCamera(CameraMovement cameraSide) {
 
-	float normMoveSpeed = cameraSpeed * App->timer->getDeltaTime();
+	float normMoveSpeed = cameraSpeed * App->timers->getDeltaTime();
 
 	switch (cameraSide) {
 	case Upwards:
@@ -146,7 +146,7 @@ void ModuleCamera::Zooming() {
 
 	const int wheelSlide = App->input->GetMouseWheel();
 	if (wheelSlide != 0) {
-		float zoomValue = App->renderer->frustum.verticalFov + -wheelSlide * 20.0f * App->timer->getDeltaTime();
+		float zoomValue = App->renderer->frustum.verticalFov + -wheelSlide * 20.0f * App->timers->getDeltaTime();
 		float newAngleFov = math::Clamp(zoomValue, math::DegToRad(minFov), math::DegToRad(maxFov));
 		App->renderer->frustum.verticalFov = newAngleFov;
 		App->renderer->frustum.horizontalFov = 2.0f * atanf(tanf(newAngleFov * 0.5f) * ((float)App->window->width / (float)App->window->height));
@@ -155,20 +155,38 @@ void ModuleCamera::Zooming() {
 }
 
 void ModuleCamera::FocusSelectedObject() {
-	// Closest point returns the same point if the selected object is inside
-	while (selectedObject->boundingBox.ClosestPoint(cameraPos).Equals(cameraPos)) {
-		cameraPos = cameraPos.Mul(2.0f);
+	if (selectedObject == nullptr) {
+		front = (cameraPos - math::float3(0.0f, 0.0f, 0.0f)).Normalized();
+	}
+	else {
+		// If GO contains an AABB, push the camera outside if needed and focus its center
+		Component* component = selectedObject->GetComponent(ComponentType::MESH);
+		if (component != nullptr) {
+			ComponentMesh* meshComponent = (ComponentMesh*)component;
+
+			// Closest point returns the same point if the selected object is inside
+			while (meshComponent->getBox().ClosestPoint(cameraPos).Equals(cameraPos)) {
+				cameraPos = cameraPos.Mul(2.0f);
+			}
+
+			front = (meshComponent->getBox().CenterPoint() - cameraPos).Normalized();
+		}
+		else {
+			component = selectedObject->GetComponent(ComponentType::TRANSFORM);
+			if (component != nullptr) {
+				ComponentTransform* transformComponent = (ComponentTransform*)component;
+				front = (transformComponent->getPosition() - cameraPos).Normalized();
+			}
+		}
 	}
 
-	front = (selectedObject->boundingBox.CenterPoint() - cameraPos).Normalized();
-
-	UpdatePitchYaw();
 	App->renderer->LookAt(cameraPos, (cameraPos + front));
+	UpdatePitchYaw();
 }
 
 void ModuleCamera::UpdatePitchYaw() {
-	pitch = -math::RadToDeg((float)SDL_atan(front.y / front.x));
-	yaw = -math::RadToDeg((float)SDL_atan(front.x / front.z));
+	pitch = -math::RadToDeg(sinf(-front.y));
+	yaw = math::RadToDeg(atan2f(front.z, front.x)) + 90.0f;
 
 	if (math::IsNan(pitch))
 		pitch = 0.0f;
@@ -224,6 +242,6 @@ void ModuleCamera::DrawGui() {
 		App->renderer->frustum.horizontalFov = 2.f * atanf(tanf(App->renderer->frustum.verticalFov * 0.5f) * ((float)App->window->width / (float)App->window->height));
 	}
 
-	ImGui::InputFloat("zNear", &App->renderer->frustum.nearPlaneDistance, 1, 10);
-	ImGui::InputFloat("zFar", &App->renderer->frustum.farPlaneDistance, 1, 10);
+	ImGui::InputFloat("zNear", &App->renderer->frustum.nearPlaneDistance, 5, 50);
+	ImGui::InputFloat("zFar", &App->renderer->frustum.farPlaneDistance, 5, 50);
 }

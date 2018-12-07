@@ -1,5 +1,4 @@
 #include "Application.h"
-#include "ModuleModel.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleTextures.h"
@@ -9,7 +8,7 @@
 #include "ModuleCamera.h"
 #include "ModuleTime.h"
 #include "ModuleScene.h"
-#include "Model.h"
+#include "ModuleSceneLoader.h"
 #include "Timer.h"
 
 using namespace std;
@@ -17,16 +16,16 @@ using namespace std;
 Application::Application()
 {
 	// Order matters: they will Init/start/update in this order
-	modules.push_back(timer = new ModuleTime());
+	modules.push_back(timers = new ModuleTime());
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(camera = new ModuleCamera());
-	modules.push_back(models = new ModuleModel());
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(programs = new ModulePrograms());
 	modules.push_back(textures = new ModuleTextures());
 	modules.push_back(scene = new ModuleScene());
 	modules.push_back(options = new ModuleGui());
+	modules.push_back(sceneLoader = new ModuleSceneLoader());
 }
 
 Application::~Application()
@@ -65,7 +64,7 @@ update_status Application::Update()
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
 
-	options->AddFPSCount(1 / App->timer->getDeltaTime());
+	options->AddFPSCount(1 / App->timers->getDeltaTime());
 
 	return ret;
 }

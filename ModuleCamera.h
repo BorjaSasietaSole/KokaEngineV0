@@ -2,7 +2,9 @@
 #define __MODULECAMERA_H_
 
 #include "Module.h"
-#include "Model.h"
+#include "ComponentMesh.h"
+#include "ComponentTransform.h"
+#include "GameObject.h"
 #include "Globals.h"
 #include "Point.h"
 #include "MathGeoLib.h"
@@ -41,7 +43,7 @@ public:
 	void UpdatePitchYaw();
 	void Zooming();
 
-	Model* selectedObject = nullptr;
+	GameObject* selectedObject = nullptr;
 
 	math::float3 getCameraPos() { return cameraPos; }
 	math::float3 getFront() { return front; }

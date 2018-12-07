@@ -3,10 +3,12 @@
 
 #include "Module.h"
 #include "Globals.h"
-#include "ModuleModel.h"
 
 #include "./imgui/imgui.h"
 #include "./imgui/imgui_impl_sdl.h"
+
+#include "MathGeoLib/include/Math/float4x4.h"
+#include "MathGeoLib/include/Geometry/Frustum.h"
 
 #include "SDL.h"
 #include "GL/glew.h"

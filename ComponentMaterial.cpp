@@ -1,7 +1,6 @@
 #include "ComponentMaterial.h"
 #include "ModulePrograms.h"
 #include "Application.h"
-#include "Mesh.h"
 
 ComponentMaterial::ComponentMaterial(GameObject* goContainer) : Component(goContainer, ComponentType::MATERIAL) {
 	shader = App->programs->textureProgram;

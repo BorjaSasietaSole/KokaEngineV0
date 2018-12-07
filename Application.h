@@ -4,6 +4,7 @@
 #include<list>
 #include "Globals.h"
 #include "Module.h"
+#include "Timer.h"
 
 class ModuleRender;
 class ModuleWindow;
@@ -15,6 +16,7 @@ class ModuleGui;
 class ModuleCamera;
 class ModuleTime;
 class ModuleScene;
+class ModuleSceneLoader;
 
 class Application
 {
@@ -31,12 +33,12 @@ public:
 	ModuleWindow* window = nullptr;
 	ModuleTextures* textures = nullptr;
 	ModuleInput* input = nullptr;
-	ModuleModel* models = nullptr;
 	ModulePrograms* programs = nullptr;
 	ModuleGui* options = nullptr;
 	ModuleCamera* camera = nullptr;
-	ModuleTime* timer = nullptr;
+	ModuleTime* timers = nullptr;
 	ModuleScene* scene = nullptr;
+	ModuleSceneLoader* sceneLoader = nullptr;
 
 	float lastTickTime = 0.0f;
 	float auxTimer = 0.0f;
@@ -46,6 +48,7 @@ public:
 private:
 
 	std::list<Module*> modules;
+	Timer timer;
 
 };
 

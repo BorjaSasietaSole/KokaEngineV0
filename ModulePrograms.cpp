@@ -12,7 +12,7 @@ bool ModulePrograms::LoadPrograms() {
 }
 
 unsigned ModulePrograms::LoadProgram(const char* vertShaderPath, const char* fragShaderPath) {
-	unsigned program = 0;
+	unsigned program = 0u;
 
 	unsigned vertShader = glCreateShader(GL_VERTEX_SHADER);
 	unsigned fragShader = glCreateShader(GL_FRAGMENT_SHADER);

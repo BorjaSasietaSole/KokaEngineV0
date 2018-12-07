@@ -3,7 +3,6 @@
 #include "ModuleTime.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
-#include "ModuleModel.h"
 #include "ModuleCamera.h"
 #include "ModuleInput.h"
 #include "ModuleTextures.h"
@@ -37,10 +36,6 @@ void WindowGuiConfiguration::Draw() {
 
 	if (ImGui::CollapsingHeader("Renderer")) {
 		App->renderer->DrawGui();
-	}
-
-	if (ImGui::CollapsingHeader("Models")) {
-		App->models->DrawGui();
 	}
 
 	if (ImGui::CollapsingHeader("Window")) {

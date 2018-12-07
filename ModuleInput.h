@@ -41,6 +41,8 @@ public:
 	// Check for window events last frame
 	bool GetWindowEvent(EventWindow code) const;
 
+	void FileDropped(const char* ev);
+
 	// Get mouse / axis position
 	const fPoint& GetMouseMotion() const;
 	const fPoint& GetMousePosition() const;

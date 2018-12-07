@@ -142,6 +142,10 @@ void ModuleGui::CreateDockSpace()
 	ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 }
 
+void ModuleGui::ProcessInputEvent(SDL_Event* event) const {
+	ImGui_ImplSDL2_ProcessEvent(event);
+}
+
 bool ModuleGui::SceneFocused() const {
 	return scene->IsFocused();
 }
