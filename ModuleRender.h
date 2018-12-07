@@ -47,6 +47,7 @@ public:
 	unsigned rbo = 0u;
 	unsigned ubo = 0u;
 	unsigned renderTexture = 0u;
+	bool vsyncEnabled = false;
 
 private:
 		

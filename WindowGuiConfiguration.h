@@ -13,11 +13,16 @@ public:
 	~WindowGuiConfiguration();
 
 	void Draw();
-	void DrawFPSgraph() const;
-	void AddFps(float fps);
+	void AddFps(float fps, float ms);
 
 
 private:
+	void AddMemory(float mem);
+
 	std::vector<float> fps;
+	std::vector<float> ms;
+	std::vector<float> gameFps;
+	std::vector<float> gameMs;
+	std::vector<float> mem;
 };
 #endif // __WINDOWGUICONFIGURATION_H__

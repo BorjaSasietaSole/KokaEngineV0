@@ -31,7 +31,7 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	void AddFPSCount(float fps) const;
+	void AddFPSCount(float fps, float ms) const;
 	void CreateDockSpace();
 	void PrintDocks();
 	void RenderGUI();

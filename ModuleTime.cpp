@@ -7,9 +7,16 @@ ModuleTime::~ModuleTime() { }
 
 update_status ModuleTime::PreUpdate() {
 
-	float currentFrame = (float) SDL_GetTicks();
-	deltaTime = (currentFrame - lastFrame) * 0.001f;
-	lastFrame = currentFrame;
+	deltaTime = (float)time.Read() / 1000.0f;
+
+	if (!gameModeEnabled || gamePaused) {
+		gameDeltaTime = 0;
+	}
+	else {
+		gameDeltaTime = deltaTime / ((float)gameframerateCap / (float)framerateCap);
+	}
+
+	time.Start();
 
 	return UPDATE_CONTINUE;
 }

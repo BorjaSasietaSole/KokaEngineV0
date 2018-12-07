@@ -21,10 +21,10 @@ Application::Application()
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(camera = new ModuleCamera());
 	modules.push_back(renderer = new ModuleRender());
+	modules.push_back(options = new ModuleGui());
 	modules.push_back(programs = new ModulePrograms());
 	modules.push_back(textures = new ModuleTextures());
 	modules.push_back(scene = new ModuleScene());
-	modules.push_back(options = new ModuleGui());
 	modules.push_back(sceneLoader = new ModuleSceneLoader());
 }
 
@@ -40,14 +40,11 @@ bool Application::Init()
 {
 	bool ret = true;
 
-	Timer timer;
-	timer.Start();
-
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
 
-	LOG("Modules initialized in %d ms", timer.Stop());
-
+	this->timers->time.Start();
+	
 	return ret;
 }
 
@@ -61,10 +58,31 @@ update_status Application::Update()
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->Update();
 
+	if (App->timers->gameModeEnabled && !App->timers->counting) {
+		App->timers->counting = true;
+		timer.Start();
+	}
+
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
 
-	options->AddFPSCount(1 / App->timers->getDeltaTime());
+	int ms_cap = 1000 / App->timers->framerateCap;
+	if (App->timers->time.Read() < ms_cap)
+		SDL_Delay(ms_cap - App->timers->time.Read());
+
+	options->AddFPSCount(1 / App->timers->deltaTime, App->timers->deltaTime * 1000);
+
+	if (!App->timers->gameModeEnabled || App->timers->gamePaused) {
+		App->options->AddFPSCount(0, 0);
+	}
+	else {
+		App->options->AddFPSCount(1 / App->timers->gameDeltaTime, App->timers->gameDeltaTime * 1000);
+	}
+
+	if (!App->timers->gameModeEnabled && App->timers->counting) {
+		timer.Stop();
+		App->timers->counting = false;
+	}
 
 	return ret;
 }

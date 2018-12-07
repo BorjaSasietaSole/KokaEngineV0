@@ -14,7 +14,7 @@ ModuleSceneLoader::~ModuleSceneLoader() { }
 
 bool ModuleSceneLoader::Init() {
 	// TODO: Here we will call the basic scene read to be loaded
-	LoadFile(filepath);
+	LoadFile("Models/BakerHouse/BakerHouse.fbx");
 	return true;
 }
 

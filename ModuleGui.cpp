@@ -150,6 +150,6 @@ bool ModuleGui::SceneFocused() const {
 	return scene->IsFocused();
 }
 
-void ModuleGui::AddFPSCount(float fps) const {
-	config->AddFps(fps);
+void ModuleGui::AddFPSCount(float fps, float ms) const {
+	config->AddFps(fps, ms);
 }

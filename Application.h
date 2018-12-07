@@ -40,11 +40,6 @@ public:
 	ModuleScene* scene = nullptr;
 	ModuleSceneLoader* sceneLoader = nullptr;
 
-	float lastTickTime = 0.0f;
-	float auxTimer = 0.0f;
-	int frameCounter = 0;
-	int FPS = 0;
-
 private:
 
 	std::list<Module*> modules;
