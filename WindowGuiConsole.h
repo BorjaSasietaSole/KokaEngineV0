@@ -9,9 +9,9 @@ public:
 	WindowGuiConsole();
 	~WindowGuiConsole();
 
-	void Clear() { buf.clear(); lineOffsets.clear(); }
+	void Clear();
 	void AddLog(const char* log);
-	void Draw();
+	void Draw() override;
 
 private:
 	ImGuiTextBuffer buf;
@@ -19,4 +19,4 @@ private:
 	bool scrollToBottom = true;
 };
 
-#endif __WINDOWGUICONSOLE_H__
+#endif

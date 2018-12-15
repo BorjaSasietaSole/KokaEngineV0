@@ -8,8 +8,8 @@ public:
 	WindowGuiAboutOf();
 	~WindowGuiAboutOf();
 
-	void Draw();
+	void Draw() override;
 
 };
 
-#endif //__WINDOWGUIABOUTOF_H__
+#endif

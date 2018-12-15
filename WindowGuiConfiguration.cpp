@@ -6,7 +6,6 @@
 #include "ModuleCamera.h"
 #include "ModuleInput.h"
 #include "ModuleTextures.h"
-#include "SDL.h"
 
 #include "mmgr/mmgr.h"
 
@@ -92,6 +91,19 @@ void WindowGuiConfiguration::AddFps(float fpsValue, float msValue) {
 	}
 	if (ms.size() > NUMFPS) {
 		ms.pop_back();
+	}
+}
+
+void WindowGuiConfiguration::AddGameFps(float fpsVal, float msVal) {
+	gameFps.insert(gameFps.begin(), fpsVal);
+	gameMs.insert(gameMs.begin(), msVal);
+
+	if (gameFps.size() > NUMFPS) {
+		gameFps.pop_back();
+	}
+
+	if (gameMs.size() > NUMFPS) {
+		gameMs.pop_back();
 	}
 }
 

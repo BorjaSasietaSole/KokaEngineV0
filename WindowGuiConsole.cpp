@@ -4,6 +4,11 @@ WindowGuiConsole::WindowGuiConsole() {}
 
 WindowGuiConsole::~WindowGuiConsole() {}
 
+void WindowGuiConsole::Clear() { 
+	buf.clear(); 
+	lineOffsets.clear(); 
+}
+
 void WindowGuiConsole::AddLog(const char* log) {
 	buf.appendf(log);
 	scrollToBottom = true;

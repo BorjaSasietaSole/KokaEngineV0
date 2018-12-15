@@ -12,10 +12,13 @@ public:
 	virtual void Draw() {}
 
 	bool IsEnabled() const { return enabled; }
+	void ToggleEnabled();
+	bool IsFocused() const { return focused; }
+	void ToggleFocused();
 
-	void ToggleEnabled() { enabled = !enabled; }
-
+protected:
 	bool enabled;
+	bool focused;
 };
 
-#endif //__WINDOWGUI_H__
+#endif

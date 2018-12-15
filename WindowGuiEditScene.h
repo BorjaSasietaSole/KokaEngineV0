@@ -12,10 +12,11 @@ public:
 	WindowGuiEditScene();
 	~WindowGuiEditScene();
 
-	void Draw();
+	void Draw() override;
 	bool IsFocused() const;
 
+private:
 	bool focus = false;
 };
 
-#endif // __WINDOWGUIEDITSCENE_H__
+#endif

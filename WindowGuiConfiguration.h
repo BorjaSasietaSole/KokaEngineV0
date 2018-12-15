@@ -12,9 +12,9 @@ public:
 	WindowGuiConfiguration();
 	~WindowGuiConfiguration();
 
-	void Draw();
+	void Draw() override;
 	void AddFps(float fps, float ms);
-
+	void AddGameFps(float fpsVal, float msVal);
 
 private:
 	void AddMemory(float mem);
@@ -25,4 +25,4 @@ private:
 	std::vector<float> gameMs;
 	std::vector<float> mem;
 };
-#endif // __WINDOWGUICONFIGURATION_H__
+#endif
