@@ -4,27 +4,26 @@
 class Timer
 {
 public:
-	Timer();
-	~Timer();
+	Timer() {};
+	~Timer() {};
 
-	// Timer in miliseconds
 	void Start();
-	int Read();
-	int Stop();
 
-	int startTime = 0;
-	int timeSpent = 0;
-	bool timerRunning = false;
+	float Read();
 
-	// Timer in microseconds
-	void StartPrecise();
-	double ReadPrecise();
-	double StopPrecise();
+	float ReadSeconds();
 
-	double startTimePrecise = 0.0;
-	double timeSpentPrecise = 0.0;
-	bool timerPreciseRunning = false;
+	void Pause();
 
+	void Stop();
+
+	void Reset();
+
+private:
+	float time = 0.0f;		// Time in milliseconds
+	Uint32 startTicks = 0;
+	Uint32 skippedTime = 0;
+	bool running = false;
 };
 
 #endif // __TIMER_H__

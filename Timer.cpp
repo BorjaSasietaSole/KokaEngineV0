@@ -7,42 +7,32 @@ Timer::~Timer() { }
 
 ///Miliseconds timer
 void Timer::Start() {
-	timerRunning = true;
-	startTime = SDL_GetTicks();
+	startTicks = SDL_GetTicks();
+	running = true;
 }
 
-int Timer::Stop() {
-	timerRunning = false;
-	timeSpent = SDL_GetTicks() - startTime;
-	return timeSpent;
+void Timer::Stop() {
+	running = false;
 }
 
-int Timer::Read() {
-	if (timerRunning) {
-		return SDL_GetTicks() - startTime;
-	}
-	else {
-		return timeSpent;
-	}
+float Timer::Read() {
+	if (running)
+		time = (SDL_GetTicks() - startTicks + skippedTime);
+	return time;
 }
 
-///Microseconds timer
-void Timer::StartPrecise() {
-	timerPreciseRunning = true;
-	startTimePrecise = (double) SDL_GetPerformanceCounter();
+float Timer::ReadSeconds() {
+	if (running)
+		time = (SDL_GetTicks() - startTicks + skippedTime) / 1000.0f;
+	return time;
 }
 
-double Timer::StopPrecise() {
-	timerPreciseRunning = false;
-	timeSpentPrecise = ((double)(SDL_GetPerformanceCounter() - startTimePrecise) * 1000) / (double)SDL_GetPerformanceFrequency();
-	return timeSpentPrecise;
+void Timer::Pause() {
+	skippedTime += (SDL_GetTicks() - startTicks);
+	running = false;
 }
 
-double Timer::ReadPrecise() {
-	if (timerPreciseRunning) {
-		return ((double)(SDL_GetPerformanceCounter() - startTimePrecise) * 1000) / (double)SDL_GetPerformanceFrequency();
-	}
-	else {
-		return timeSpentPrecise;
-	}
+void Timer::Reset() {
+	startTicks = SDL_GetTicks();
+	skippedTime = 0;
 }

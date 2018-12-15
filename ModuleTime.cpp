@@ -1,22 +1,73 @@
 #include "ModuleTime.h"
-#include "SDL.h"
+#include "Application.h"
+#include "ModuleGui.h"
 
 ModuleTime::ModuleTime() { }
 
 ModuleTime::~ModuleTime() { }
 
-update_status ModuleTime::PreUpdate() {
+bool ModuleTime::Init() {
+	gameDeltaTime = 0.0f;
+	frameTimer.Start();
+	fpsTimer.Start();
+	return true;
+}
 
-	deltaTime = (float)time.Read() / 1000.0f;
+update_status ModuleTime::Update() {
+	++frameCount;
+	++realFrameCount;
 
-	if (!gameModeEnabled || gamePaused) {
-		gameDeltaTime = 0;
+	// Time update
+	realDeltaTime = frameTimer.ReadSeconds();
+	realTime += realDeltaTime;
+
+	App->options->AddFPSCount(FPS, realDeltaTime * 1000.0f);
+
+	if (gameState == GameState::RUN) {
+		App->options->AddGameFPSCount(FPS, gameDeltaTime * gameTimeScale * 1000.0f);
+		++totalFrames;
+		gameDeltaTime = frameTimer.ReadSeconds();
+		gameTime += gameDeltaTime * gameTimeScale;
 	}
-	else {
-		gameDeltaTime = deltaTime / ((float)gameframerateCap / (float)framerateCap);
-	}
+	frameTimer.Reset();
 
-	time.Start();
+	// Frames per second
+	if (fpsTimer.ReadSeconds() >= 1.0f) {
+		FPS = frameCount;
+		frameCount = 0u;
+		fpsTimer.Reset();
+	}
 
 	return UPDATE_CONTINUE;
+}
+
+bool ModuleTime::CleanUp() {
+	frameTimer.Stop();
+	fpsTimer.Stop();
+	return true;
+}
+
+void ModuleTime::StartGameClock() {
+	gameState = GameState::RUN;
+}
+
+void ModuleTime::PauseGameClock(bool pause) {
+	if (pause) {
+		gameState = GameState::PAUSE;
+		gameDeltaTime = 0.0f;
+	}
+	else {
+		gameState = GameState::RUN;
+	}
+}
+
+void ModuleTime::StopGameClock() {
+	gameState = GameState::STOP;
+	gameDeltaTime = 0.0f;
+	gameTime = 0.0f;
+	totalFrames = 0u;
+}
+
+void ModuleTime::Step() {
+	nextFrame = true;
 }
