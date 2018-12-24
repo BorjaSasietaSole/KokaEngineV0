@@ -8,12 +8,14 @@
 #include "Imgui/imgui.h"
 #include "ModuleTextures.h"
 #include "assimp/material.h"
+#include "Math/float4.h"
 
 class ComponentMaterial : public Component
 {
 public:
 	ComponentMaterial(GameObject* goContainer);
 	ComponentMaterial(GameObject* goContainer, const aiMaterial* material);
+	ComponentMaterial(const ComponentMaterial& duplicatedComponent);
 	~ComponentMaterial();
 
 	void ComputeMaterial(const aiMaterial* material);
@@ -21,13 +23,15 @@ public:
 
 	Texture* GetTexture() const { return texture; }
 	unsigned GetShader() const { return shader; }
+	math::float4 getColor() { return color; }
 
 	void DrawProperties() override;
+	Component* Duplicate() override;
 
 private:
 	unsigned shader = 0u;
 	Texture* texture = nullptr;
-
+	math::float4 color = math::float4::one;
 };
 
 #endif

@@ -8,7 +8,7 @@ ComponentCamera::ComponentCamera(GameObject* goParent) : Component(goParent, Com
 	InitFrustum();
 	CreateFrameBuffer();
 	if (goParent != nullptr) {
-		frustum.pos = goParent->bbox.CenterPoint();
+		frustum.pos = goParent->ComputeBBox().CenterPoint();
 	}
 }
 
@@ -42,11 +42,12 @@ void ComponentCamera::InitFrustum() {
 }
 
 void ComponentCamera::Update() {
+	GameObject* Go = getGoContainer();
 	//TODO: Set up a bool to see if the transform is edited to recalculate the frustum
-	if (goContainer == nullptr) return;
-	if (goContainer->transform == nullptr) return;
+	if (Go == nullptr) return;
+	if (Go->GetLocalTransform == nullptr) return;
 
-	math::float4x4 transform = goContainer->GetGlobalTransform();
+	math::float4x4 transform = Go->GetGlobalTransform();
 	frustum.pos = transform.TranslatePart();
 	frustum.front = transform.RotatePart().Mul(math::float3::unitZ).Normalized();
 	frustum.up = transform.RotatePart().Mul(math::float3::unitY).Normalized();
@@ -150,9 +151,9 @@ void ComponentCamera::Rotate(float dx, float dy) {
 
 void ComponentCamera::Orbit(float dx, float dy) {
 	// TODO: set up the orbit when no GO is selected in front of the camera
-	if (App->scene->goSelected == nullptr) return;
+	if (App->scene->getGoSelect() == nullptr) return;
 
-	AABB& bbox = App->scene->goSelected->bbox;
+	AABB& bbox = App->scene->getGoSelect()->ComputeBBox();
 	math::float3 center = bbox.CenterPoint();
 
 	if (dx != 0) {

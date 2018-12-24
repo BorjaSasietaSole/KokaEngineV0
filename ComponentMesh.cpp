@@ -1,4 +1,5 @@
 #include "ComponentMesh.h"
+#include "par_shapes.h"
 #include "Application.h"
 
 ComponentMesh::ComponentMesh(GameObject* goContainer, aiMesh* mesh) : Component(goContainer, ComponentType::MESH) {
@@ -9,8 +10,18 @@ ComponentMesh::ComponentMesh(GameObject* goContainer, aiMesh* mesh) : Component(
 
 }
 
+ComponentMesh::ComponentMesh(const ComponentMesh& duplicatedComponent) : Component(duplicatedComponent), vao(duplicatedComponent.vao), vbo(duplicatedComponent.vbo),
+ibo(duplicatedComponent.ibo), materialIndex(duplicatedComponent.materialIndex), numIndices(duplicatedComponent.numIndices), bbox(duplicatedComponent.bbox){
+	vertices.reserve(duplicatedComponent.vertices.capacity());
+	vertices = duplicatedComponent.vertices;
+}
+
 ComponentMesh::~ComponentMesh() {
 	CleanUp();
+}
+
+Component* ComponentMesh::Duplicate() {
+	return new ComponentMesh(*this);
 }
 
 void ComponentMesh::ComputeMesh(aiMesh* mesh) {
@@ -75,7 +86,76 @@ void ComponentMesh::ComputeMesh(aiMesh* mesh) {
 
 	numIndices = mesh->mNumFaces * 3;
 	materialIndex = mesh->mMaterialIndex;
+}
 
+void ComponentMesh::ComputeMesh(par_shapes_mesh_s* mesh) {
+	assert(mesh != nullptr);
+
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	unsigned offsetAcc = sizeof(math::float3);
+	unsigned normalsOffset = 0;
+
+	if (mesh->normals) {
+		normalsOffset = offsetAcc;
+		offsetAcc += sizeof(math::float3);
+	}
+
+	glBufferData(GL_ARRAY_BUFFER, offsetAcc*mesh->npoints, nullptr, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float3)*mesh->npoints, mesh->points);
+
+	// Normals
+	if (mesh->normals) {
+		glBufferSubData(GL_ARRAY_BUFFER, normalsOffset*mesh->npoints, sizeof(math::float3)*mesh->npoints, mesh->normals);
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	// Indexes
+	glGenBuffers(1, &ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned)*mesh->ntriangles * 3, nullptr, GL_STATIC_DRAW);
+
+	unsigned* indices = (unsigned*)glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(unsigned)*mesh->ntriangles * 3, GL_MAP_WRITE_BIT);
+
+	for (unsigned i = 0; i< unsigned(mesh->ntriangles * 3); ++i) {
+		*(indices++) = mesh->triangles[i];
+	}
+
+	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	if (normalsOffset != 0) {
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)(normalsOffset*mesh->npoints));
+	}
+
+	glBindVertexArray(0);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	vertices.reserve(mesh->npoints);
+	for (unsigned i = 0u; i < mesh->npoints; i++) {
+		vertices.push_back(float3((float *)&mesh->points[i]));
+	}
+
+	numIndices = mesh->ntriangles * 3;
+	materialIndex = mesh->npoints;
 }
 
 void ComponentMesh::CleanUp() {
@@ -125,5 +205,8 @@ void ComponentMesh::DrawProperties() {
 		ImGui::Separator();
 	}
 	ImGui::PopID();
+}
 
+const unsigned ComponentMesh::MaterialIndex() {
+	return materialIndex;
 }

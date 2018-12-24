@@ -11,17 +11,23 @@
 #include <vector>
 #include "GL/glew.h"
 
+struct par_shapes_mesh_s;
+
 class ComponentMesh : public Component
 {
 public:
 	ComponentMesh(GameObject* goContainer, aiMesh* mesh);
+	ComponentMesh(const ComponentMesh& duplicatedComponent);
 	~ComponentMesh();
 
 	void ComputeMesh(aiMesh* mesh);
+	void ComputeMesh(par_shapes_mesh_s* mesh);
+	const unsigned MaterialIndex();
 
 	void CleanUp();
 	void Draw(unsigned shaderProgram, const Texture* textures) const;
 	void DrawProperties() override;
+	Component* Duplicate() override;
 
 	std::vector<math::float3> getVertices() { return vertices; }
 	AABB getBox() { return bbox; }
