@@ -9,7 +9,8 @@
 #include "ModuleTime.h"
 #include "ModuleScene.h"
 #include "ModuleSceneLoader.h"
-#include "Timer.h"
+#include "ModuleResourceManager.h"
+#include "ModuleDebugDraw.h"
 
 using namespace std;
 
@@ -26,6 +27,8 @@ Application::Application()
 	modules.push_back(textures = new ModuleTextures());
 	modules.push_back(scene = new ModuleScene());
 	modules.push_back(sceneLoader = new ModuleSceneLoader());
+	modules.push_back(debugDraw = new ModuleDebugDraw());
+	modules.push_back(resourceManager = new ModuleResourceManager());
 }
 
 Application::~Application()

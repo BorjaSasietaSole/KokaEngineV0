@@ -10,12 +10,13 @@ class ModuleWindow;
 class ModuleTextures;
 class ModuleInput;
 class ModulePrograms;
-class ModuleModel;
 class ModuleGui;
 class ModuleCamera;
 class ModuleTime;
 class ModuleScene;
 class ModuleSceneLoader;
+class ModuleResourceManager;
+class ModuleDebugDraw;
 
 class Application
 {
@@ -38,6 +39,8 @@ public:
 	ModuleTime* timers = nullptr;
 	ModuleScene* scene = nullptr;
 	ModuleSceneLoader* sceneLoader = nullptr;
+	ModuleResourceManager* resourceManager = nullptr;
+	ModuleDebugDraw* debugDraw = nullptr;
 
 private:
 
@@ -47,4 +50,4 @@ private:
 
 extern Application* App;
 
-#endif // __Application_H__
+#endif
