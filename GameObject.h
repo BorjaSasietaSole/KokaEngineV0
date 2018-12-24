@@ -29,6 +29,7 @@ public:
 	void CleanUp();
 	void DrawProperties() const;
 	void DrawHierarchy(GameObject* goSelected);
+	void DrawBBox() const;
 	std::string	GetFileFolder() const;
 
 	Component* AddComponent(ComponentType type);

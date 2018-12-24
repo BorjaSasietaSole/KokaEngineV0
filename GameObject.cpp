@@ -43,6 +43,34 @@ GameObject::GameObject(const char* goName, const aiMatrix4x4& transform, GameObj
 	}
 }
 
+GameObject::GameObject(const GameObject& duplicateGameObject) {
+
+	uuid = App->resourceManager->NewGuuid();
+	parentUuid = duplicateGameObject.parentUuid;
+	char* copyName = new char[strlen(duplicateGameObject.name)];
+	strcpy(copyName, duplicateGameObject.name);
+	name = copyName;
+	filePath = duplicateGameObject.filePath;
+	bbox = duplicateGameObject.bbox;
+
+	for (const auto &component : duplicateGameObject.components) {
+		Component* duplicatedComponent = component->Duplicate();
+		components.push_back(duplicatedComponent);
+		duplicatedComponent->goContainer = this;
+		duplicatedComponent->parentUuid = uuid;
+		if (duplicatedComponent->componentType == ComponentType::TRANSFORM) {
+			transform = (ComponentTransform*)duplicatedComponent;
+		}
+	}
+
+	for (const auto &child : duplicateGameObject.goChilds) {
+		GameObject* duplicatedChild = new GameObject(*child);
+		duplicatedChild->parent = this;
+		duplicatedChild->parentUuid = uuid;
+		goChilds.push_back(duplicatedChild);
+	}
+}
+
 // TODO: this is not being called
 GameObject::~GameObject() {
 
