@@ -1,10 +1,6 @@
 #include "Timer.h"
 #include "SDL.h"
 
-Timer::Timer() { }
-
-Timer::~Timer() { }
-
 ///Miliseconds timer
 void Timer::Start() {
 	startTicks = SDL_GetTicks();
@@ -17,7 +13,7 @@ void Timer::Stop() {
 
 float Timer::Read() {
 	if (running)
-		time = (SDL_GetTicks() - startTicks + skippedTime);
+		time = ((float) SDL_GetTicks() - startTicks + skippedTime);
 	return time;
 }
 

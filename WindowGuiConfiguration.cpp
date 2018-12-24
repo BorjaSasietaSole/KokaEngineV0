@@ -22,9 +22,9 @@ void WindowGuiConfiguration::Draw() {
 
 	if (ImGui::CollapsingHeader("Application")) {
 		ImGui::PushItemWidth(200.0f);
-		static int framerateCap = App->timers->framerateCap;
+		static int framerateCap = App->timers->getFrameCount();
 		if (ImGui::SliderInt("MaxFPS", &framerateCap, 1, 120)) {
-			App->timers->framerateCap = framerateCap;
+			App->timers->setFrameCount(framerateCap);
 		}
 		ImGui::PopItemWidth();
 

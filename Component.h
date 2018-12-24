@@ -18,10 +18,12 @@ class Component{
 
 public:
 	Component(GameObject* goContainer, ComponentType type);
+	Component(const Component& duplicateComponent);
 	virtual ~Component();
 
 	bool DrawComponentState();
 	virtual void DrawProperties() { };
+	virtual Component*	Duplicate() { return nullptr; };
 
 	virtual void Enable() { enabled = true; };
 	virtual void Update();
@@ -35,6 +37,8 @@ public:
 private:
 	bool enabled = true;
 	ComponentType componentType = ComponentType::EMPTY;
+	std::string	uuid = "";
+	std::string	parentUuid = "";
 	GameObject* goContainer = nullptr;
 };
 

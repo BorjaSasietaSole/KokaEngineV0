@@ -40,4 +40,4 @@ public:
 	bool borderless = false;
 };
 
-#endif // __ModuleWindow_H__
+#endif

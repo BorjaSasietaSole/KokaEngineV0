@@ -32,8 +32,9 @@ Application::~Application()
 {
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)
     {
-		RELEASE(*it);
+		delete(*it);
     }
+	modules.clear();
 }
 
 bool Application::Init()
@@ -43,8 +44,6 @@ bool Application::Init()
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
 
-	this->timers->time.Start();
-	
 	return ret;
 }
 
@@ -58,31 +57,12 @@ update_status Application::Update()
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->Update();
 
-	if (App->timers->gameModeEnabled && !App->timers->counting) {
-		App->timers->counting = true;
-		timer.Start();
-	}
-
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
 
-	int ms_cap = 1000 / App->timers->framerateCap;
-	if (App->timers->time.Read() < ms_cap)
-		SDL_Delay(ms_cap - App->timers->time.Read());
-
-	options->AddFPSCount(1 / App->timers->deltaTime, App->timers->deltaTime * 1000);
-
-	if (!App->timers->gameModeEnabled || App->timers->gamePaused) {
-		App->options->AddFPSCount(0, 0);
-	}
-	else {
-		App->options->AddFPSCount(1 / App->timers->gameDeltaTime, App->timers->gameDeltaTime * 1000);
-	}
-
-	if (!App->timers->gameModeEnabled && App->timers->counting) {
-		timer.Stop();
-		App->timers->counting = false;
-	}
+	int ms_cap = 1000 / App->timers->maxFps;
+	if (App->timers->frameTimer.Read() < ms_cap)
+		SDL_Delay((Uint32) (ms_cap - App->timers->frameTimer.Read()));
 
 	return ret;
 }
@@ -94,8 +74,6 @@ bool Application::CleanUp()
 
 	for(list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
 		ret = (*it)->CleanUp();
-
-	LOG("Cleaned modules in %d ms", timerOff.Stop());
 
 	return ret;
 }

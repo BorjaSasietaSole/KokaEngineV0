@@ -72,7 +72,7 @@ bool ModuleCamera::CleanUp() {
 
 void ModuleCamera::MoveCamera(CameraMovement cameraSide) {
 
-	float normMoveSpeed = cameraSpeed * App->timers->getDeltaTime();
+	float normMoveSpeed = cameraSpeed * App->timers->getRealDeltaTime();
 
 	switch (cameraSide) {
 	case Upwards:
@@ -146,7 +146,7 @@ void ModuleCamera::Zooming() {
 
 	const int wheelSlide = App->input->GetMouseWheel();
 	if (wheelSlide != 0) {
-		float zoomValue = App->renderer->frustum.verticalFov + -wheelSlide * 20.0f * App->timers->getDeltaTime();
+		float zoomValue = App->renderer->frustum.verticalFov + -wheelSlide * 20.0f * App->timers->getRealDeltaTime();
 		float newAngleFov = math::Clamp(zoomValue, math::DegToRad(minFov), math::DegToRad(maxFov));
 		App->renderer->frustum.verticalFov = newAngleFov;
 		App->renderer->frustum.horizontalFov = 2.0f * atanf(tanf(newAngleFov * 0.5f) * ((float)App->window->width / (float)App->window->height));

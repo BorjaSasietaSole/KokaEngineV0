@@ -21,10 +21,12 @@ public:
 	GameObject();
 	GameObject(const char* goName, const aiMatrix4x4& transform, const char* fileLocation);
 	GameObject(const char* goName, const aiMatrix4x4& transform, GameObject* goParent, const char* fileLocation);
+	GameObject(const GameObject& duplicateGameObject);
 	~GameObject();
 
 	void Update();
 	void Draw() const;
+	void CleanUp();
 	void DrawProperties() const;
 	void DrawHierarchy(GameObject* goSelected);
 	std::string	GetFileFolder() const;
@@ -47,15 +49,25 @@ public:
 	std::list<GameObject*> getGoChilds() { return goChilds; }
 
 private:
-	bool enabled = true;
-	const char*	filePath = nullptr;
-	const char* name = "GameObject";
-	GameObject* parent = nullptr;
+	std::string				uuid = "";
+	std::string				parentUuid = "";
+	bool					enabled = true;
+	bool					drawGOBBox = false;
+	bool					drawChildsBBox = false;
+	bool					duplicating = false;
+	const char*				filePath = nullptr;
+	const char*				name = DEFAULT_GO_NAME;
+	GameObject*				parent = nullptr;
 	std::vector<Component*>	components;
-	std::list<GameObject*> goChilds;
+	std::list<GameObject*>	goChilds;
 
-	ComponentTransform* transform = nullptr;
-	AABB& bbox = AABB();
+	ComponentTransform*		transform = nullptr;
+	AABB&					bbox = AABB();
+
+	bool					toBeDeleted = false;
+	bool					toBeCopied = false;
+	bool					moveGOUp = false;
+	bool					moveGODown = false;
 };
 
 #endif

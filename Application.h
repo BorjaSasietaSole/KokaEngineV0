@@ -2,9 +2,8 @@
 #define __Application_H__
 
 #include<list>
-#include "Globals.h"
 #include "Module.h"
-#include "Timer.h"
+#include "Globals.h"
 
 class ModuleRender;
 class ModuleWindow;
@@ -43,7 +42,6 @@ public:
 private:
 
 	std::list<Module*> modules;
-	Timer timer;
 
 };
 

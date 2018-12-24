@@ -19,10 +19,15 @@ public:
 
 	void Reset();
 
+	float getTime() { return time; }
+	int getStartTicks() { return startTicks; }
+	int getSkippedTime() { return skippedTime; }
+	bool getRunning() { return running; }
+
 private:
 	float time = 0.0f;		// Time in milliseconds
-	Uint32 startTicks = 0;
-	Uint32 skippedTime = 0;
+	int startTicks = 0;
+	int skippedTime = 0;
 	bool running = false;
 };
 

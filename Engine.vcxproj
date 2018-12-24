@@ -260,6 +260,9 @@
     <ClInclude Include="WindowGuiConfiguration.h" />
     <ClInclude Include="WindowGuiConsole.h" />
     <ClInclude Include="WindowGuiEditScene.h" />
+    <ClInclude Include="WindowGuiHierarchy.h" />
+    <ClInclude Include="WindowGuiInspector.h" />
+    <ClInclude Include="WindowGuiTime.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -326,6 +329,9 @@
     <ClCompile Include="WindowGuiConfiguration.cpp" />
     <ClCompile Include="WindowGuiConsole.cpp" />
     <ClCompile Include="WindowGuiEditScene.cpp" />
+    <ClCompile Include="WindowGuiHierarchy.cpp" />
+    <ClCompile Include="WindowGuiInspector.cpp" />
+    <ClCompile Include="WindowGuiTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Game\default.fs" />

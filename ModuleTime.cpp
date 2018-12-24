@@ -33,11 +33,10 @@ update_status ModuleTime::Update() {
 
 	// Frames per second
 	if (fpsTimer.ReadSeconds() >= 1.0f) {
-		FPS = frameCount;
+		FPS = (float) frameCount;
 		frameCount = 0u;
 		fpsTimer.Reset();
 	}
-
 	return UPDATE_CONTINUE;
 }
 
@@ -70,4 +69,9 @@ void ModuleTime::StopGameClock() {
 
 void ModuleTime::Step() {
 	nextFrame = true;
+}
+
+void ModuleTime::setFrameCount(int count)
+{
+	frameCount = count;
 }

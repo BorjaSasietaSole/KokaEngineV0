@@ -3,7 +3,6 @@
 
 #include "Module.h"
 #include "Timer.h"
-#include "Globals.h"
 
 enum class GameState { RUN, PAUSE, STOP };
 
@@ -26,8 +25,12 @@ public:
 	float getGameTime() { return gameTime; }
 	float getRealDeltaTime() { return realDeltaTime; }
 	float getRealTime() { return realTime; }
+	int getRealFrameCount() { return realFrameCount; }
+	int getFrameCount() { return frameCount; }
 
-	int FPS = 0;
+	void setFrameCount(int count);
+
+	float FPS = 0.0f;
 	bool nextFrame = false;
 	unsigned maxFps = 144u;
 	unsigned totalFrames = 0u;
@@ -52,4 +55,4 @@ private:
 	unsigned frameCount = 0u;
 };
 
-#endif //__MODULETIME_H__
+#endif
