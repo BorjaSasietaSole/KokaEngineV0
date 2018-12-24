@@ -1,9 +1,7 @@
 #ifndef __COMPONENT_H__
 #define __COMPONENT_H__
 
-#include "GameObject.h"
-
-class GameObject;
+#include "GameObject.h";
 
 enum class ComponentType {
 	EMPTY,

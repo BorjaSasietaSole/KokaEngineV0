@@ -1,6 +1,11 @@
 #include "Component.h"
+#include "Application.h"
+#include "ModuleResourceManager.h"
 
 Component::Component(GameObject* gameObject, ComponentType type) : goContainer(gameObject), componentType(type) {}
+
+Component::Component(const Component& duplicateComponent) : parentUuid(duplicateComponent.parentUuid), goContainer(duplicateComponent.goContainer),
+	componentType(duplicateComponent.componentType), enabled(duplicateComponent.enabled), uuid(App->resourceManager->NewGuuid()){}
 
 Component::~Component() { }
 
