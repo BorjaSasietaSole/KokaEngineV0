@@ -27,3 +27,11 @@ bool Component::DrawComponentState() {
 void Component::Remove() {
 	goContainer->RemoveComponent(this);
 }
+
+void Component::setGoContainer(GameObject* newContainer) {
+	goContainer = newContainer;
+}
+
+void Component::setParentUuid(std::string newParentUuid) {
+	uuid = newParentUuid;
+}

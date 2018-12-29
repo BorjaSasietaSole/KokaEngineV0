@@ -28,9 +28,13 @@ public:
 	virtual void Disable() { enabled = false; };
 	void Remove();
 
+	void setGoContainer(GameObject* newContainer);
+	void setParentUuid(std::string newParentUuid);
+
 	GameObject* getGoContainer() { return goContainer; }
 	ComponentType getComponentType() { return componentType; }
 	bool getEnabled() { return enabled; }
+
 
 private:
 	bool enabled = true;

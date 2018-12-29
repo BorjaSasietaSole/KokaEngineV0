@@ -4,13 +4,12 @@
 #include "ComponentMaterial.h"
 #include "ComponentMesh.h"
 #include "ComponentTransform.h"
+#include "ModuleResourceManager.h"
 
 /// CARE Creating this without father could lead to memory leak
 GameObject::GameObject() { }
 
-GameObject::GameObject(const char* goName, const aiMatrix4x4& transform, const char* fileLocation) {
-
-	name = goName;
+GameObject::GameObject(const char* goName, const aiMatrix4x4& transform, const char* fileLocation) : name(goName) {
 
 	if (fileLocation != nullptr) {
 		filePath = fileLocation;
@@ -22,9 +21,7 @@ GameObject::GameObject(const char* goName, const aiMatrix4x4& transform, const c
 	App->scene->getRoot()->goChilds.push_back(this);
 }
 
-GameObject::GameObject(const char* goName, const aiMatrix4x4& transform, GameObject* goParent, const char* fileLocation) {
-
-	name = goName;
+GameObject::GameObject(const char* goName, const aiMatrix4x4& transform, GameObject* goParent, const char* fileLocation) : name(goName) {
 
 	if (goParent != nullptr) {
 		this->parent = goParent;
@@ -56,9 +53,9 @@ GameObject::GameObject(const GameObject& duplicateGameObject) {
 	for (const auto &component : duplicateGameObject.components) {
 		Component* duplicatedComponent = component->Duplicate();
 		components.push_back(duplicatedComponent);
-		duplicatedComponent->goContainer = this;
-		duplicatedComponent->parentUuid = uuid;
-		if (duplicatedComponent->componentType == ComponentType::TRANSFORM) {
+		duplicatedComponent->setGoContainer(this);
+		duplicatedComponent->setParentUuid(uuid);
+		if (duplicatedComponent->getComponentType() == ComponentType::TRANSFORM) {
 			transform = (ComponentTransform*)duplicatedComponent;
 		}
 	}
