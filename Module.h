@@ -1,16 +1,12 @@
-#pragma once
-
+#ifndef __MODULE_H__
+#define __MODULE_H__
 #include "Globals.h"
-
-class Application;
 
 class Module
 {
 public:
 
-	Module()
-	{
-	}
+	Module(){}
 
 	virtual bool Init() { return true; }
 
@@ -22,3 +18,4 @@ public:
 
 	virtual bool CleanUp() { return true; }
 };
+#endif

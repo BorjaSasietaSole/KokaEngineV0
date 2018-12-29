@@ -4,10 +4,10 @@
 #include "Module.h"
 #include "ComponentMesh.h"
 #include "ComponentTransform.h"
+#include "ComponentCamera.h"
 #include "GameObject.h"
 #include "Globals.h"
 #include "Point.h"
-#include "MathGeoLib.h"
 #include "GL/glew.h"
 #include "SDL.h"
 
@@ -30,44 +30,49 @@ public:
 
 	bool Init();
 	update_status PreUpdate() override;
+	update_status Update() override;
 	bool CleanUp() override;
 	void DrawGui();
 
 	// Movement
-	void CameraMovementKeyboard();
-	void RotateCamera(const fPoint& mousePosition, bool orbit = false);
-	void MoveCamera(CameraMovement cameraSide);
+	void Move();
+	void MovementSpeed();
 
 	//Helper
 	void FocusSelectedObject();
-	void UpdatePitchYaw();
 	void Zooming();
 
-	GameObject* selectedObject = nullptr;
+	void SetScreenNewScreenSize(unsigned newWidth, unsigned newHeight);
 
-	math::float3 getCameraPos() { return cameraPos; }
-	math::float3 getFront() { return front; }
-	math::float3 getSide() { return side; }
-	math::float3 getUp() { return up; }
+	void setSceneCamera(ComponentCamera* newCamera);
+	void setSelectedCamera(ComponentCamera* newCamera);
+
+	ComponentCamera* getSceneCamera() { return sceneCamera; }
+	ComponentCamera* getSelectedCamera() { return selectedCamera; }
+	std::vector<ComponentCamera*> getGameCameras() { return gameCameras; }
+
+	float getCameraSpeed() { return cameraSpeed; }
+	float getRotationSpeed() { return rotationSpeed; }
+	float getMouseSensitivity() { return mouseSensitivity; }
+
+	bool getFirstMouse() { return firstMouse; }
+	float getLastX() { return lastX; }
+	float getLastY() { return lastY; }
+
+	GameObject* getSelectedObject() { return selectedObject; }
 
 private:
+
+	GameObject* selectedObject = nullptr;
 
 	// User attributes
 	float mouseSensitivity = 65.0f;
 	float rotationSpeed = 65.0f;
 	float cameraSpeed = 17.0f;;
 
-	// Camera specs
-	float maxFov = 100.0f;
-	float minFov = 10.0f;
-	float pitch = 0.0f;
-	float yaw = 0.0f;
-	math::float3 cameraPos;
-
-	//ViewMatrix info
-	math::float3 front;
-	math::float3 side;
-	math::float3 up;
+	ComponentCamera* sceneCamera = nullptr;
+	ComponentCamera* selectedCamera = nullptr;
+	std::vector<ComponentCamera*> gameCameras;
 
 	// Mouse 
 	bool firstMouse = true;

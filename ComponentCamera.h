@@ -4,42 +4,58 @@
 #include "Globals.h"
 #include "Component.h"
 #include "GameObject.h"
-#include "MathGeoLib/include/Math/Quat.h"
-#include "MathGeoLib/include/Math/float3.h"
-#include "MathGeoLib/include/Math/float4x4.h"
-#include "MathGeoLib/include/Math/MathFunc.h"
-#include "MathGeoLib/include/Geometry/Frustum.h"
-#include "MathGeoLib/include/Geometry/AABB.h"
+#include "MathGeoLib.h"
 #include "imgui/imgui.h"
 #include "glew-2.1.0/include/GL/glew.h"
 
 class ComponentCamera : public Component
 {
-	public:
-		ComponentCamera(GameObject* goParent);
-		~ComponentCamera();
+public:
+	ComponentCamera(GameObject* goParent);
+	~ComponentCamera();
 
-		void DrawProperties() override;
-		Component* Duplicate() override;
-		void Update();
+	void DrawProperties() override;
+	Component* Duplicate() override;
+	void Update();
 
-		void InitFrustum();
+	void InitFrustum();
 
-		void LookAt(math::float3 target);
-		math::float4x4 GetViewMatrix();
-		math::float4x4 GetProjectionMatrix();
+	void LookAt(math::float3 target);
+	math::float4x4 GetViewMatrix();
+	math::float4x4 GetProjectionMatrix();
 
-		void Rotate(float dx, float dy);
-		void Orbit(float dx, float dy);
+	void Rotate(float dx, float dy);
+	void Orbit(float dx, float dy);
 
-		void SetScreenNewScreenSize(unsigned newWidth, unsigned newHeight);
-		void SetHorizontalFOV(float fovXDegrees);
-		void SetVerticalFOV(float fovYDegrees);
+	void SetScreenNewScreenSize(unsigned newWidth, unsigned newHeight);
+	void SetHorizontalFOV(float fovXDegrees);
+	void SetVerticalFOV(float fovYDegrees);
 
-		void CreateFrameBuffer();
+	void setCameraPosition(const math::float3 newPosition);
+	void setCameraFront(const math::float3 newPosition);
+	void setCameraUp(const math::float3 newPosition);
+
+	void setCameraSpeed(const float newSpeed);
+	void setRotationSpeed(const float newSpeed);
+
+	math::Frustum frustum;
+
+	math::float3 getCameraPosition() { return cameraPosition; }
+	math::float3 getCameraFront() { return cameraFront; }
+	math::float3 getCameraUp() { return cameraUp; }
+
+	float getMaxFov() { return maxFov; }
+	float getMinFov() { return minFov; }
+	float getPitch() { return pitch; }
+	float getYaw() { return yaw; }
+	float getCameraSpeed() { return cameraSpeed; }
+	float getRotationSpeed() { return rotationSpeed; }
+
+	bool debugDraw = false;
+
+	void CreateFrameBuffer();
 
 	private:
-		math::Frustum frustum;
 
 		math::float3 cameraPosition = math::float3(0.0f, 3.0f, 20.0f);
 		math::float3 cameraFront = math::float3(0.0f, 0.0f, -1.0f);
@@ -50,8 +66,6 @@ class ComponentCamera : public Component
 		float minFov = 10.0f;
 		float pitch = 0.0f;
 		float yaw = 0.0f;
-
-		bool debugDraw = false;
 
 		unsigned screenWidth = SCREEN_WIDTH;
 		unsigned screenHeight = SCREEN_HEIGHT;

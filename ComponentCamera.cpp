@@ -18,12 +18,12 @@ ComponentCamera::~ComponentCamera() {
 	glDeleteRenderbuffers(1, &rbo);
 	glDeleteTextures(1, &renderTexture);
 
-	for (std::vector<ComponentCamera*>::iterator it = App->camera->gameCameras.begin(); it != App->camera->gameCameras.end(); ++it) {
+	for (std::vector<ComponentCamera*>::iterator it = App->camera->getGameCameras().begin(); it != App->camera->getGameCameras().end(); ++it) {
 		if ((*it) == this) {
-			if (App->camera->selectedCamera == this) {
-				App->camera->selectedCamera = nullptr;
+			if (App->camera->getSelectedCamera() == this) {
+				App->camera->setSelectedCamera(nullptr);
 			}
-			App->camera->gameCameras.erase(it);
+			App->camera->getGameCameras().erase(it);
 			return;
 		}
 	}
@@ -88,13 +88,13 @@ void ComponentCamera::DrawProperties() {
 		ImGui::InputFloat("zNear", &frustum.nearPlaneDistance, 5, 50);
 		ImGui::InputFloat("zFar", &frustum.farPlaneDistance, 5, 50);
 
-		if (App->camera->selectedCamera == this) {
+		if (App->camera->getSelectedCamera() == this) {
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
 			ImGui::Button("Current camera");
 			ImGui::PopStyleVar();
 		} else {
 			if (ImGui::Button("Set camera")) {
-				App->camera->selectedCamera = this;
+				App->camera->setSelectedCamera(this);
 			}
 		}
 		ImGui::Separator();
@@ -202,4 +202,24 @@ void ComponentCamera::CreateFrameBuffer() {
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void ComponentCamera::setCameraPosition(const math::float3 newPosition) {
+	cameraPosition = newPosition;
+}
+
+void ComponentCamera::setCameraFront(const math::float3 newPosition) {
+	cameraFront = newPosition;
+}
+
+void ComponentCamera::setCameraUp(const math::float3 newPosition) {
+	cameraUp = newPosition;
+}
+
+void ComponentCamera::setCameraSpeed(const float newSpeed) {
+	cameraSpeed = newSpeed;
+}
+
+void ComponentCamera::setRotationSpeed(const float newSpeed) {
+	cameraSpeed = newSpeed;
 }
