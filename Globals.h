@@ -26,7 +26,6 @@ enum update_status
 #define BORDERLESS false
 #define FULLSCREEN_DESKTOP false
 #define VSYNC true
-#define SCREEN_SIZE 2
 #define DEFAULT_GO_NAME "GameObject"
 #define DEFAULT_CAMERA_NAME "Camera"
 #define TITLE "Koka Engine"

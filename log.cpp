@@ -1,13 +1,6 @@
+#include "Globals.h"
 #include "Application.h"
 #include "ModuleGui.h"
-
-ImGuiTextBuffer	Buf;
-ImVector<int> LineOffsets;// Index to lines offset
-bool ScrollToBottom;
-
-void Clear() { 
-	Buf.clear(); 
-}
 
 void log(const char file[], int line, const char* format, ...) {
 	assert(format != nullptr);
@@ -25,4 +18,5 @@ void log(const char file[], int line, const char* format, ...) {
 		sprintf_s(tmpStr, 4096, "%s \n", tmpStr);
 		App->options->console->AddLog(tmpStr);
 	}
+
 }
