@@ -1,7 +1,6 @@
 #ifndef __WINDOWGUIEDITSCENE_H__
 #define __WINDOWGUIEDITSCENE_H__
 
-
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
@@ -13,10 +12,9 @@ public:
 	~WindowGuiEditScene();
 
 	void Draw() override;
-	bool IsFocused() const;
+	bool IsFocused() const { return focus; }
 
 private:
 	bool focus = false;
 };
-
 #endif

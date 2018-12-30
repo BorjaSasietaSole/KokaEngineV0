@@ -26,6 +26,10 @@ void WindowGuiInspector::Draw() {
 		if (ImGui::BeginPopup("AddComponentPopup")) {
 			ImGui::Text("Components");
 			ImGui::Separator();
+			if (ImGui::Selectable("Camera")) {
+				App->scene->getGoSelect()->AddComponent(ComponentType::CAMERA);
+			}
+			ImGui::Separator();
 			if (ImGui::Selectable("Mesh")) {
 				App->scene->getGoSelect()->AddComponent(ComponentType::MESH);
 			}
