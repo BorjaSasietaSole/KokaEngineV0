@@ -80,6 +80,10 @@ void ModuleRender::DrawDebugData(ComponentCamera* camera) const {
 
 	if (camera->debugDraw == false) return;
 
+	if (App->camera->getSelectedCamera() != nullptr) {
+		dd::frustum((App->camera->getSelectedCamera()->frustum.ProjectionMatrix() * App->camera->getSelectedCamera()->frustum.ViewMatrix()).Inverted(), dd::colors::Crimson);
+	}
+
 	if (showGrid) {
 		dd::xzSquareGrid(-1000.0f, 1000.0f, 0.0f, 1.0f, math::float3(0.65f, 0.65f, 0.65f));
 	}

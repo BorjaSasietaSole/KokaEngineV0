@@ -10,6 +10,7 @@
 #include "ComponentMaterial.h"
 #include "ComponentTransform.h"
 #include "ComponentLight.h"
+#include "ComponentCamera.h"
 
 enum class ComponentType;
 

@@ -295,3 +295,7 @@ void GameObject::CleanUp() {
 	}
 
 }
+
+void GameObject::setTransform(ComponentTransform* newTransform) {
+	transform = newTransform;
+}

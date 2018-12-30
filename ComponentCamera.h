@@ -52,7 +52,7 @@ public:
 	unsigned getRenderTexture() { return renderTexture; }
 	unsigned getFbo() { return fbo; }
 
-	bool debugDraw = false;
+	bool debugDraw = true;
 
 	void CreateFrameBuffer();
 

@@ -68,6 +68,10 @@ GameObject* ModuleScene::CreateCamera(GameObject* goParent, const math::float4x4
 	GameObject* gameObject = nullptr;
 
 	gameObject = new GameObject(DEFAULT_CAMERA_NAME, transform, goParent, nullptr);
+
+	ComponentTransform* goTrans = (ComponentTransform*)gameObject->GetComponent(ComponentType::TRANSFORM);
+	goTrans->SetPosition(math::float3(0.0f, 2.5f, 10.0f));
+	gameObject->setTransform(goTrans);
 	gameObject->AddComponent(ComponentType::CAMERA);
 
 	return gameObject;

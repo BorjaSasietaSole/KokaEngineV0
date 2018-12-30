@@ -51,6 +51,8 @@ public:
 
 	ComponentTransform* getTransform() { return transform; }
 
+	void setTransform(ComponentTransform* newTransform);
+
 private:
 	std::string uuid = "";
 	std::string	parentUuid = "";
