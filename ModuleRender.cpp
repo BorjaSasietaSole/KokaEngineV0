@@ -1,4 +1,11 @@
 #include "ModuleRender.h"
+#include "ModuleDebugDraw.h"
+#include "ModuleScene.h"
+#include "ModuleRender.h"
+#include "ModuleGui.h"
+#include "ModuleCamera.h"
+#include "ModuleWindow.h"
+#include "ModulePrograms.h"
 
 ModuleRender::ModuleRender() { }
 

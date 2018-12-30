@@ -4,20 +4,11 @@
 #include "Module.h"
 #include "Globals.h"
 #include "Application.h"
-#include "ModuleScene.h"
-#include "ModuleRender.h"
-#include "ModuleGui.h"
-#include "ModuleCamera.h"
-#include "ModuleWindow.h"
-#include "ModulePrograms.h"
-#include "ModuleDebugDraw.h"
 #include "ComponentCamera.h"
 #include "SDL.h"
 #include "GL/glew.h"
 #include "debugdraw.h"
 #include "Math/float4x4.h"
-
-class ComponentCamera;
 
 class ModuleRender : public Module
 {
@@ -29,7 +20,6 @@ public:
 	update_status PreUpdate() override;
 	update_status Update() override;
 	update_status PostUpdate() override;
-	void DrawGui();
 	bool CleanUp();
 
 	void InitSDL();
@@ -39,14 +29,13 @@ public:
 	void DrawDebugData(ComponentCamera* camera) const;
 	void GenerateBlockUniforms();
 
-	bool getVsyncEnable() { return vsyncEnabled; }
+	bool vsyncEnabled = false;
 	void* getContext() { return context; }
 	bool getShowAxis() { return showAxis; }
 	bool getShowGrid() { return showGrid; }
 
 protected:
 
-	bool vsyncEnabled = false;
 	void* context = nullptr;
 	unsigned ubo = 0u;
 	bool showAxis = true;

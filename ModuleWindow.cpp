@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "ModuleRender.h"
+#include "ModuleCamera.h"
 #include "ModuleWindow.h"
 
 ModuleWindow::ModuleWindow() { }
@@ -65,7 +66,7 @@ bool ModuleWindow::CleanUp() {
 void ModuleWindow::WindowResized(unsigned width, unsigned height) {
 	this->width = width;
 	this->height = height;
-	App->camera->getSceneCamera->SetScreenNewScreenSize(width, height);
+	App->camera->getSceneCamera()->SetScreenNewScreenSize(width, height);
 }
 
 void ModuleWindow::DrawGui() {

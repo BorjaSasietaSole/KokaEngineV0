@@ -73,7 +73,7 @@ void WindowGuiConfiguration::Draw() {
 	}
 
 	if (ImGui::CollapsingHeader("Renderer")) {
-		App->renderer->DrawGui();
+		//App->renderer->DrawGui();
 	}
 
 	if (ImGui::CollapsingHeader("Window")) {

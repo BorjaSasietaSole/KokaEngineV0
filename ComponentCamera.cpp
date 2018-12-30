@@ -43,9 +43,8 @@ void ComponentCamera::InitFrustum() {
 
 void ComponentCamera::Update() {
 	GameObject* Go = getGoContainer();
-	//TODO: Set up a bool to see if the transform is edited to recalculate the frustum
 	if (Go == nullptr) return;
-	if (Go->GetLocalTransform == nullptr) return;
+	if (Go->getTransform() == nullptr) return;
 
 	math::float4x4 transform = Go->GetGlobalTransform();
 	frustum.pos = transform.TranslatePart();
@@ -150,7 +149,6 @@ void ComponentCamera::Rotate(float dx, float dy) {
 }
 
 void ComponentCamera::Orbit(float dx, float dy) {
-	// TODO: set up the orbit when no GO is selected in front of the camera
 	if (App->scene->getGoSelect() == nullptr) return;
 
 	AABB& bbox = App->scene->getGoSelect()->ComputeBBox();

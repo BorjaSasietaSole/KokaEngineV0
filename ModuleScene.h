@@ -5,14 +5,11 @@
 #include "Module.h"
 #include "GameObject.h"
 #include "assimp/matrix4x4.h"
-#include "Application.h"
 #include "ComponentMesh.h"
 #include "ModulePrograms.h"
 #include "ComponentMaterial.h"
 #include "ComponentTransform.h"
-
-#define PAR_SHAPES_IMPLEMENTATION
-#include "par_shapes.h"
+#include "ComponentLight.h"
 
 enum class ComponentType;
 

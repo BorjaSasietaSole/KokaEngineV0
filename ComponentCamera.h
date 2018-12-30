@@ -1,9 +1,7 @@
 #ifndef __COMPONENTCAMERA_H__
 #define __COMPONENTCAMERA_H__
 
-#include "Globals.h"
 #include "Component.h"
-#include "GameObject.h"
 #include "MathGeoLib.h"
 #include "imgui/imgui.h"
 #include "glew-2.1.0/include/GL/glew.h"

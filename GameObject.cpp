@@ -190,7 +190,7 @@ Component* GameObject::AddComponent(ComponentType type) {
 	case ComponentType::CAMERA:
 		break;
 	case ComponentType::TRANSFORM:
-		component = new ComponentTransform(this, aiMatrix4x4());
+		component = new ComponentTransform(this, math::float4x4());
 		transform = (ComponentTransform*)component;
 		break;
 	case  ComponentType::MESH:

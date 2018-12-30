@@ -6,7 +6,6 @@
 #include "ComponentTransform.h"
 #include "ComponentCamera.h"
 #include "GameObject.h"
-#include "Globals.h"
 #include "Point.h"
 #include "GL/glew.h"
 #include "SDL.h"

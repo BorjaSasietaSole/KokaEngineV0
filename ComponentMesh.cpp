@@ -1,6 +1,7 @@
 #include "ComponentMesh.h"
-#include "par_shapes.h"
 #include "Application.h"
+#include "ModuleScene.h"
+#include "par_shapes.h"
 
 ComponentMesh::ComponentMesh(GameObject* goContainer, aiMesh* mesh) : Component(goContainer, ComponentType::MESH) {
 

@@ -1,4 +1,8 @@
 #include "ModuleScene.h"
+#include "Application.h"
+
+#define PAR_SHAPES_IMPLEMENTATION
+#include "par_shapes.h"
 #pragma warning(pop)
 
 ModuleScene::ModuleScene() { }
@@ -125,4 +129,8 @@ GameObject* ModuleScene::GenerateTorus(GameObject* goParent, const math::float3&
 
 	LOG("Error: par_shape_mesh cylinder error");
 	return nullptr;
+}
+
+void ModuleScene::setGoSelected(GameObject* selected) {
+	goSelected = selected;
 }

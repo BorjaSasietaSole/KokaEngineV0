@@ -1,5 +1,4 @@
 #include "Globals.h"
-#include "Application.h"
 
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
@@ -35,7 +34,7 @@ bool ModuleGui::Init() {
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
 
-	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
+	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->getContext());
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	// Setup style
@@ -91,10 +90,10 @@ update_status ModuleGui::Update() {
 					new GameObject(DEFAULT_GO_NAME, math::float4x4().identity, nullptr, nullptr);
 				}
 				if (ImGui::MenuItem("Sphere")) {
-					App->scene->GenerateSphere(App->scene->goSelected, 20, 20, math::float3::zero, math::Quat::identity, 1.0f, math::float4(50.0f, 100.0f, 0.0f, 1.0f));
+					App->scene->GenerateSphere(App->scene->getGoSelect(), 20, 20, math::float3::zero, math::Quat::identity, 1.0f, math::float4(50.0f, 100.0f, 0.0f, 1.0f));
 				}
 				if (ImGui::MenuItem("Torus")) {
-					App->scene->GenerateTorus(App->scene->goSelected, math::float3::zero, math::Quat::identity, 0.5f, 0.67f, 30, 30, math::float4(50.0f, 100.0f, 0.0f, 1.0f));
+					App->scene->GenerateTorus(App->scene->getGoSelect(), math::float3::zero, math::Quat::identity, 0.5f, 0.67f, 30, 30, math::float4(50.0f, 100.0f, 0.0f, 1.0f));
 				}
 				ImGui::EndMenu();
 			}

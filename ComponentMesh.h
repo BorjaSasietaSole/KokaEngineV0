@@ -12,6 +12,7 @@
 #include "GL/glew.h"
 
 struct par_shapes_mesh_s;
+class ComponentMaterial;
 
 class ComponentMesh : public Component
 {
