@@ -3,7 +3,7 @@
 
 #include "WindowGui.h"
 
-class WindowGuiHierarchy : WindowGui {
+class WindowGuiHierarchy : public WindowGui {
 
 public:
 	WindowGuiHierarchy();

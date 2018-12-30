@@ -50,25 +50,25 @@ public:
 	std::list<GameObject*> getGoChilds() { return goChilds; }
 
 private:
-	std::string				uuid = "";
-	std::string				parentUuid = "";
-	bool					enabled = true;
-	bool					drawGOBBox = false;
-	bool					drawChildsBBox = false;
-	bool					duplicating = false;
-	const char*				filePath = nullptr;
-	const char*				name = DEFAULT_GO_NAME;
-	GameObject*				parent = nullptr;
-	std::vector<Component*>	components;
-	std::list<GameObject*>	goChilds;
+	std::string uuid = "";
+	std::string	parentUuid = "";
+	bool enabled = true;
+	bool drawGOBBox = false;
+	bool drawChildsBBox = false;
+	bool duplicating = false;
+	const char* filePath = nullptr;
+	const char*	name = DEFAULT_GO_NAME;
+	GameObject*	parent = nullptr;
+	std::vector<Component*> components;
+	std::list<GameObject*> goChilds;
 
-	ComponentTransform*		transform = nullptr;
-	AABB&					bbox = AABB();
+	ComponentTransform* transform = nullptr;
+	AABB& bbox = AABB();
 
-	bool					toBeDeleted = false;
-	bool					toBeCopied = false;
-	bool					moveGOUp = false;
-	bool					moveGODown = false;
+	bool toBeDeleted = false;
+	bool toBeCopied = false;
+	bool moveGOUp = false;
+	bool moveGODown = false;
 };
 
 #endif

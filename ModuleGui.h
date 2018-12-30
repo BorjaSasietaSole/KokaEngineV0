@@ -2,12 +2,16 @@
 #define __ModuleGui_H__
 
 #include "Globals.h"
+#include "Module.h"
 
 #include "WindowGui.h"
 #include "WindowGuiAboutOf.h"
 #include "WindowGuiConfiguration.h"
 #include "WindowGuiConsole.h"
 #include "WindowGuiEditScene.h"
+#include "WindowGuiHierarchy.h"
+#include "WindowGuiInspector.h"
+#include "WindowGuiTime.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -18,6 +22,9 @@ class WindowGui;
 class WindowGuiConfiguration;
 class WindowGuiConsole;
 class WindowGuiEditScene;
+class WindowGuiHierarchy;
+class WindowGuiInspector;
+class WindowGuiTime;
 
 class ModuleGui : public Module 
 {
@@ -46,6 +53,9 @@ public:
 	WindowGuiConfiguration* config = nullptr;
 	WindowGuiConsole* console = nullptr;
 	WindowGuiEditScene* scene = nullptr;
+	WindowGuiHierarchy* hierarchy = nullptr;
+	WindowGuiInspector* inspector = nullptr;
+	WindowGuiTime* time = nullptr;
 
 private:
 	const char* glsl_version;

@@ -6,8 +6,12 @@
 #include "ComponentTransform.h"
 #include "ModuleResourceManager.h"
 
-/// CARE Creating this without father could lead to memory leak
-GameObject::GameObject() { }
+#include "SDL/include/SDL_mouse.h"
+#include "debugdraw.h"
+
+GameObject::GameObject() { 
+	uuid = App->resourceManager->NewGuuid();
+}
 
 GameObject::GameObject(const char* goName, const aiMatrix4x4& transform, const char* fileLocation) : name(goName) {
 
@@ -22,6 +26,8 @@ GameObject::GameObject(const char* goName, const aiMatrix4x4& transform, const c
 }
 
 GameObject::GameObject(const char* goName, const aiMatrix4x4& transform, GameObject* goParent, const char* fileLocation) : name(goName) {
+
+	uuid = App->resourceManager->NewGuuid();
 
 	if (goParent != nullptr) {
 		this->parent = goParent;
@@ -68,7 +74,6 @@ GameObject::GameObject(const GameObject& duplicateGameObject) {
 	}
 }
 
-// TODO: this is not being called
 GameObject::~GameObject() {
 
 	for (auto &component : components) {
@@ -268,4 +273,23 @@ AABB& GameObject::ComputeBBox() const {
 	}
 
 	return bbox;
+}
+
+void GameObject::DrawBBox() const {
+
+	math::AABB bbox = ComputeBBox();
+
+	Component* mesh = GetComponent(ComponentType::MESH);
+	if (mesh != nullptr) {
+		dd::aabb(bbox.minPoint, bbox.maxPoint, math::float3(0.0f, 1.0f, 0.0f), true);
+	}
+
+}
+
+void GameObject::CleanUp() {
+
+	for (auto &child : goChilds) {
+		child->CleanUp();
+	}
+
 }

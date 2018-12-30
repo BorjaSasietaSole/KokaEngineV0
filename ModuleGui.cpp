@@ -1,11 +1,13 @@
 #include "Globals.h"
-
 #include "Application.h"
+
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
 #include "ModuleTextures.h"
 #include "ModuleGui.h"
 #include "ModuleCamera.h"
+#include "ModuleScene.h"
+#include "GameObject.h"
 
 #include "GL/glew.h"
 #include "SDL.h"
@@ -15,6 +17,9 @@ ModuleGui::ModuleGui() : glsl_version("#version 130") {
 	windowsGui.push_back(config = new WindowGuiConfiguration());
 	windowsGui.push_back(scene = new WindowGuiEditScene());
 	windowsGui.push_back(about = new WindowGuiAboutOf());
+	windowsGui.push_back(hierarchy = new WindowGuiHierarchy());
+	windowsGui.push_back(inspector = new WindowGuiInspector());
+	windowsGui.push_back(time = new WindowGuiTime());
 }
 
 ModuleGui::~ModuleGui() {
@@ -27,6 +32,7 @@ bool ModuleGui::Init() {
 	ImGuiIO& io = ImGui::GetIO();
 	(void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
@@ -49,10 +55,9 @@ update_status ModuleGui::PreUpdate() {
 
 update_status ModuleGui::Update() {
 
-	update_status ret = UPDATE_CONTINUE;
 	if (ImGui::BeginMainMenuBar()) {
 
-		if (ImGui::BeginMenu("File")) {
+		if (ImGui::BeginMenu("App")) {
 
 			if (ImGui::MenuItem("Exit")) {
 				ImGui::EndMenu();
@@ -63,15 +68,60 @@ update_status ModuleGui::Update() {
 			}
 			ImGui::EndMenu();
 		}
+
+		if (ImGui::BeginMenu("Scene")) {
+
+			if (ImGui::BeginMenu("Select camera in")) {
+				if (App->camera->getGameCameras().size() == 0) {
+					ImGui::Text("No game cameras availables");
+				}
+				else {
+					for (auto& camera : App->camera->getGameCameras()) {
+						if (ImGui::MenuItem(camera->getGoContainer()->getName(), NULL, App->camera->getSelectedCamera() == camera)) {
+							App->camera->setSelectedCamera(camera);
+						}
+					}
+				}
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Add new")) {
+				if (ImGui::MenuItem("Empty GameObject")) {
+					new GameObject(DEFAULT_GO_NAME, math::float4x4().identity, nullptr, nullptr);
+				}
+				if (ImGui::MenuItem("Sphere")) {
+					App->scene->GenerateSphere(App->scene->goSelected, 20, 20, math::float3::zero, math::Quat::identity, 1.0f, math::float4(50.0f, 100.0f, 0.0f, 1.0f));
+				}
+				if (ImGui::MenuItem("Torus")) {
+					App->scene->GenerateTorus(App->scene->goSelected, math::float3::zero, math::Quat::identity, 0.5f, 0.67f, 30, 30, math::float4(50.0f, 100.0f, 0.0f, 1.0f));
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+
 		if (ImGui::BeginMenu("Window")) {
 
-			if (ImGui::MenuItem("Scene", nullptr, scene->IsEnabled())) {
+			if (ImGui::MenuItem("Scene", NULL, scene->IsEnabled())) {
 				scene->ToggleEnabled();
 			}
 
-			if (ImGui::MenuItem("Logs", nullptr, console->IsEnabled())) {
+			if (ImGui::MenuItem("Game", NULL, camera->IsEnabled())) {
+				camera->ToggleEnabled();
+			}
+
+			if (ImGui::MenuItem("Hierarchy", NULL, hierarchy->IsEnabled())) {
+				hierarchy->ToggleEnabled();
+			}
+
+			if (ImGui::MenuItem("Time", NULL, time->IsEnabled())) {
+				time->ToggleEnabled();
+			}
+
+			if (ImGui::MenuItem("Logs", NULL, console->IsEnabled())) {
 				console->ToggleEnabled();
 			}
+
 
 			ImGui::EndMenu();
 		}
@@ -86,7 +136,7 @@ update_status ModuleGui::Update() {
 
 	PrintDocks();
 
-	return ret;
+	return UPDATE_CONTINUE;
 }
 
 update_status ModuleGui::PostUpdate() {
