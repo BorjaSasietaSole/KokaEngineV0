@@ -65,7 +65,7 @@ bool ModuleWindow::CleanUp() {
 void ModuleWindow::WindowResized(unsigned width, unsigned height) {
 	this->width = width;
 	this->height = height;
-	App->renderer->SetScreenNewScreenSize();
+	App->camera->getSceneCamera->SetScreenNewScreenSize(width, height);
 }
 
 void ModuleWindow::DrawGui() {
