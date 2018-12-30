@@ -20,6 +20,7 @@ ModuleGui::ModuleGui() : glsl_version("#version 130") {
 	windowsGui.push_back(hierarchy = new WindowGuiHierarchy());
 	windowsGui.push_back(inspector = new WindowGuiInspector());
 	windowsGui.push_back(time = new WindowGuiTime());
+	windowsGui.push_back(camera = new WindowGuiCamera());
 }
 
 ModuleGui::~ModuleGui() {

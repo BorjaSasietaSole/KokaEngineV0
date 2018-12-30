@@ -41,6 +41,9 @@ void WindowGuiAboutOf::Draw() {
 		ImGui::BulletText("MathGeoLib (version 1.5)");
 		ImGui::BulletText("Glew (version %s)", glewGetString(GLEW_VERSION));
 		ImGui::BulletText("Assimp (version %d.%d.%d)", aiGetVersionMajor(), aiGetVersionMinor(), aiGetVersionRevision());
+		ImGui::BulletText("mmgr (version 1.0)");
+		ImGui::BulletText("Crossguid (version 0.2.2)");
+		ImGui::BulletText("DebugDraw (version 2017)");
 		ImGui::TreePop();
 	}
 

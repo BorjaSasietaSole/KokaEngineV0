@@ -12,6 +12,7 @@
 #include "WindowGuiHierarchy.h"
 #include "WindowGuiInspector.h"
 #include "WindowGuiTime.h"
+#include "WindowGuiCamera.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -25,6 +26,7 @@ class WindowGuiEditScene;
 class WindowGuiHierarchy;
 class WindowGuiInspector;
 class WindowGuiTime;
+class WindowGuiCamera;
 
 class ModuleGui : public Module 
 {
@@ -56,6 +58,7 @@ public:
 	WindowGuiHierarchy* hierarchy = nullptr;
 	WindowGuiInspector* inspector = nullptr;
 	WindowGuiTime* time = nullptr;
+	WindowGuiCamera* camera = nullptr;
 
 private:
 	const char* glsl_version;

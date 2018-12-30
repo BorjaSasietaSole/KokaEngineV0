@@ -51,6 +51,8 @@ public:
 	float getCameraSpeed() { return cameraSpeed; }
 	float getRotationSpeed() { return rotationSpeed; }
 
+	unsigned getRenderTexture() { return renderTexture; }
+
 	bool debugDraw = false;
 
 	void CreateFrameBuffer();
