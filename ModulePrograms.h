@@ -2,6 +2,7 @@
 #define __ModulePrograms_h__
 
 #include "Module.h"
+#include "assert.h"
 #include "GL/glew.h"
 
 class ModulePrograms : public Module
@@ -24,4 +25,4 @@ private:
 	bool CompileShader(unsigned shaderAddress, const char* shaderContent);
 	void CompileProgram(unsigned programAddress);
 };
-#endif // __ModulePrograms_h__
+#endif

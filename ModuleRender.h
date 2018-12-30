@@ -3,19 +3,21 @@
 
 #include "Module.h"
 #include "Globals.h"
-
-#include "./imgui/imgui.h"
-#include "./imgui/imgui_impl_sdl.h"
-
-#include "MathGeoLib/include/Math/float4x4.h"
-#include "MathGeoLib/include/Geometry/Frustum.h"
-
+#include "Application.h"
+#include "ModuleScene.h"
+#include "ModuleRender.h"
+#include "ModuleGui.h"
+#include "ModuleCamera.h"
+#include "ModuleWindow.h"
+#include "ModulePrograms.h"
+#include "ModuleDebugDraw.h"
+#include "ComponentCamera.h"
 #include "SDL.h"
 #include "GL/glew.h"
+#include "debugdraw.h"
+#include "Math/float4x4.h"
 
-struct SDL_Texture;
-struct SDL_Renderer;
-struct SDL_Rect;
+class ComponentCamera;
 
 class ModuleRender : public Module
 {
@@ -30,29 +32,25 @@ public:
 	void DrawGui();
 	bool CleanUp();
 
-	void InitFrustum();
 	void InitSDL();
-	void InitOpenGL();
-	void ViewMatrix();
-	void ProjectionMatrix();
-	void ModelTransform(unsigned programUsed);
-	math::float4x4 LookAt(math::float3& cameraPos, math::float3& target);
-	void SetScreenNewScreenSize();
+	void InitOpenGL() const;
+	void SetViewMatrix(ComponentCamera* camera) const;
+	void SetProjectionMatrix(ComponentCamera* camera) const;
+	void DrawDebugData(ComponentCamera* camera) const;
+	void GenerateBlockUniforms();
 
-	float bgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	Frustum frustum;
-	math::float4x4 viewMatrix;
-	void* context = nullptr;
-	unsigned fbo = 0u;
-	unsigned rbo = 0u;
-	unsigned ubo = 0u;
-	unsigned renderTexture = 0u;
+	bool getVsyncEnable() { return vsyncEnabled; }
+	void* getContext() { return context; }
+	bool getShowAxis() { return showAxis; }
+	bool getShowGrid() { return showGrid; }
+
+protected:
+
 	bool vsyncEnabled = false;
+	void* context = nullptr;
+	unsigned ubo = 0u;
+	bool showAxis = true;
+	bool showGrid = true;
 
-private:
-		
-	void DrawReferenceDebug();
-	void CreateFrameBuffer();
-	void CreateUniformBlocks();
 };
 #endif

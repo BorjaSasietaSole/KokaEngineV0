@@ -52,6 +52,7 @@ public:
 	float getRotationSpeed() { return rotationSpeed; }
 
 	unsigned getRenderTexture() { return renderTexture; }
+	unsigned getFbo() { return fbo; }
 
 	bool debugDraw = false;
 

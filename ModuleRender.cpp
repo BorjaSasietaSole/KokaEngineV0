@@ -1,10 +1,4 @@
-#include "Application.h"
 #include "ModuleRender.h"
-#include "ModuleGui.h"
-#include "ModuleCamera.h"
-#include "ModuleWindow.h"
-#include "ModulePrograms.h"
-#include "ModuleScene.h"
 
 ModuleRender::ModuleRender() { }
 
@@ -18,11 +12,13 @@ bool ModuleRender::Init() {
 	InitSDL();
 	glewInit();
 	InitOpenGL();
-	InitFrustum();
+
+	if (vsyncEnabled && SDL_GL_SetSwapInterval(1) < 0) {
+		LOG("Error: VSync couldn't be enabled \n %s", SDL_GetError());
+	}
 
 	App->programs->LoadPrograms();
-	CreateFrameBuffer();
-	CreateUniformBlocks();
+	GenerateBlockUniforms();
 
 	return true;
 }
@@ -36,20 +32,32 @@ update_status ModuleRender::PreUpdate() {
 // Called every draw update
 update_status ModuleRender::Update() {
 
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	// TODO: this should affect only the window
-	glClearColor(bgColor[0], bgColor[1], bgColor[2], bgColor[3]);
+	glBindFramebuffer(GL_FRAMEBUFFER, App->camera->getSceneCamera()->getFbo());
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	ProjectionMatrix();
-	ViewMatrix();
-
-	DrawReferenceDebug();
+	SetProjectionMatrix(App->camera->getSceneCamera());
+	SetViewMatrix(App->camera->getSceneCamera());
 
 	App->scene->Draw();
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	DrawDebugData(App->camera->getSceneCamera());
 
+	if (App->camera->getSelectedCamera() != nullptr) {
+		glBindFramebuffer(GL_FRAMEBUFFER, App->camera->getSelectedCamera()->getFbo());
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		SetProjectionMatrix(App->camera->getSelectedCamera());
+		SetViewMatrix(App->camera->getSelectedCamera());
+
+		// TODO: we will send the frustum to do the culling in the GOs
+		App->scene->Draw();
+
+		DrawDebugData(App->camera->getSelectedCamera());
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return UPDATE_CONTINUE;
 }
 
@@ -61,159 +69,46 @@ update_status ModuleRender::PostUpdate() {
 	return UPDATE_CONTINUE;
 }
 
-void ModuleRender::DrawReferenceDebug() {
+void ModuleRender::DrawDebugData(ComponentCamera* camera) const {
 
-	glUseProgram(App->programs->basicProgram);
-	math::float4x4 model = math::float4x4::identity;
-	glUniformMatrix4fv(glGetUniformLocation(App->programs->basicProgram, "model"), 1, GL_TRUE, &model[0][0]);
+	if (camera->debugDraw == false) return;
 
-	// White grid
-	int gridColor = glGetUniformLocation(App->programs->basicProgram, "vColor");
-	float white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glUniform4fv(gridColor, 1, white);
-
-	glLineWidth(1.0f);
-	float d = 200.0f;
-	glBegin(GL_LINES);
-	for (float i = -d; i <= d; i += 1.0f) {
-		glVertex3f(i, 0.0f, -d);
-		glVertex3f(i, 0.0f, d);
-		glVertex3f(-d, 0.0f, i);
-		glVertex3f(d, 0.0f, i);
-	}
-	glEnd();
-
-	/// AXIS X Y Z
-	glLineWidth(2.0f);
-
-	// red X
-	int xAxis = glGetUniformLocation(App->programs->basicProgram, "vColor");
-	float red[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
-	glUniform4fv(xAxis, 1, red);
-
-	glBegin(GL_LINES);
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
-	glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
-	glEnd();
-
-	// green Y
-	int yAxis = glGetUniformLocation(App->programs->basicProgram, "vColor");
-	float green[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
-	glUniform4fv(yAxis, 1, green);
-
-	glBegin(GL_LINES);
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-	glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-	glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
-	glEnd();
-
-	// blue Z
-	int zAxis = glGetUniformLocation(App->programs->basicProgram, "vColor");
-	float blue[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
-	glUniform4fv(zAxis, 1, blue);
-
-	glBegin(GL_LINES);
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
-	glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
-	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
-	glEnd();
-
-	glLineWidth(1.0f);
-
-	glUseProgram(0);
-}
-
-void ModuleRender::SetScreenNewScreenSize() {
-	glViewport(0, 0, App->window->width, App->window->height);
-	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * ((float)App->window->width / (float)App->window->height));
-	CreateFrameBuffer();
-}
-
-void ModuleRender::CreateFrameBuffer() {
-	glDeleteFramebuffers(1, &fbo);
-	glDeleteRenderbuffers(1, &rbo);
-
-	glGenFramebuffers(1, &fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-	glGenTextures(1, &renderTexture);
-	glBindTexture(GL_TEXTURE_2D, renderTexture);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, App->window->width, App->window->height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glGenRenderbuffers(1, &rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, App->window->width, App->window->height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		LOG("Error: Framebuffer issue");
+	if (showGrid) {
+		dd::xzSquareGrid(-1000.0f, 1000.0f, 0.0f, 1.0f, math::float3(0.65f, 0.65f, 0.65f));
 	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	if (showAxis) {
+		dd::axisTriad(math::float4x4::identity, 0.1f, 1.0f, 0, true);
+	}
+
+	App->debugDraw->Draw(camera, camera->getFbo(), App->window->height, App->window->width);
 }
 
-void ModuleRender::ViewMatrix() {
-	math::float4x4 viewMatrix = LookAt(App->camera->getCameraPos(), App->camera->getCameraPos() + App->camera->getFront());
-	viewMatrix.Transpose();
+void ModuleRender::SetViewMatrix(ComponentCamera* camera) const {
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(float4x4), sizeof(float4x4), &viewMatrix[0][0]);
+	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(math::float4x4), sizeof(math::float4x4), &camera->GetViewMatrix()[0][0]);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void ModuleRender::ProjectionMatrix() {
-	float4x4 projection = frustum.ProjectionMatrix();
-	projection.Transpose();
+void ModuleRender::SetProjectionMatrix(ComponentCamera* camera) const {
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float4x4), &projection[0][0]);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(math::float4x4), &camera->GetProjectionMatrix()[0][0]);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void ModuleRender::ModelTransform(unsigned programUsed) {
-	math::float4x4 model = math::float4x4::identity;
-	int modelLocation = glGetUniformLocation(programUsed, "model");
-	glUniformMatrix4fv(modelLocation, 1, GL_TRUE, &model[0][0]);
-}
+void ModuleRender::GenerateBlockUniforms() {
+	unsigned uniformBlockIndexDefault = glGetUniformBlockIndex(App->programs->basicProgram, "Matrices");
+	unsigned uniformBlockIndexTexture = glGetUniformBlockIndex(App->programs->textureProgram, "Matrices");
 
-// We avoid the viewMatrix calc if camera not moving
-math::float4x4 ModuleRender::LookAt(math::float3& cameraPos, math::float3& target) {
-	math::float3 front(target - cameraPos); front.Normalize();
-	// We are not implementing roll, so we will calculate the up again mantaining the verticalitiy
-	math::float3 side(front.Cross(App->camera->getUp())); side.Normalize();
-	math::float3 up(side.Cross(front));
+	glUniformBlockBinding(App->programs->basicProgram, uniformBlockIndexDefault, 0);
+	glUniformBlockBinding(App->programs->textureProgram, uniformBlockIndexTexture, 0);
 
-	math::float4x4 viewMatrix(math::float4x4::zero);
-	viewMatrix[0][0] = side.x; viewMatrix[0][1] = side.y; viewMatrix[0][2] = side.z;
-	viewMatrix[1][0] = up.x; viewMatrix[1][1] = up.y; viewMatrix[1][2] = up.z;
-	viewMatrix[2][0] = -front.x; viewMatrix[2][1] = -front.y; viewMatrix[2][2] = -front.z;
-	viewMatrix[0][3] = -side.Dot(cameraPos); viewMatrix[1][3] = -up.Dot(cameraPos); viewMatrix[2][3] = front.Dot(cameraPos);
-	viewMatrix[3][0] = 0.0f; viewMatrix[3][1] = 0.0f; viewMatrix[3][2] = 0.0f; viewMatrix[3][3] = 1.0f;
+	glGenBuffers(1, &ubo);
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(math::float4x4), nullptr, GL_STATIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-	return viewMatrix;
-}
-
-// Initialization
-void ModuleRender::InitFrustum() {
-	frustum.type = FrustumType::PerspectiveFrustum;
-	frustum.pos = float3::zero;
-	frustum.front = -float3::unitZ;
-	frustum.up = float3::unitY;
-	frustum.nearPlaneDistance = 0.1f;
-	frustum.farPlaneDistance = 1000.0f;
-	frustum.verticalFov = math::pi / 4.0f;
-	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * ((float)App->window->width / (float)App->window->height));
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, 0, 2 * sizeof(math::float4x4));
 }
 
 void ModuleRender::InitSDL() {
@@ -229,7 +124,7 @@ void ModuleRender::InitSDL() {
 	SDL_GetWindowSize(App->window->window, &App->window->width, &App->window->height);
 }
 
-void ModuleRender::InitOpenGL() {
+void ModuleRender::InitOpenGL() const {
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
@@ -238,35 +133,11 @@ void ModuleRender::InitOpenGL() {
 	glEnable(GL_TEXTURE_2D);
 
 	glClearDepth(1.0f);
-	glClearColor(bgColor[0], bgColor[1], bgColor[2], bgColor[3]);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glViewport(0, 0, App->window->width, App->window->height);
 }
 
-void ModuleRender::DrawGui() {
-
-	ImGui::SliderFloat3("Background color", App->renderer->bgColor, 0.0f, 1.0f);
-
-}
-
 bool ModuleRender::CleanUp() {
-	LOG("Destroying renderer");
-	glDeleteFramebuffers(1, &fbo);
-	glDeleteRenderbuffers(1, &rbo);
 	glDeleteBuffers(1, &ubo);
 	return true;
-}
-
-void ModuleRender::CreateUniformBlocks() {
-	unsigned int uniformBlockIndexDefault = glGetUniformBlockIndex(App->programs->basicProgram, "Matrices");
-	unsigned int uniformBlockIndexTexture = glGetUniformBlockIndex(App->programs->textureProgram, "Matrices");
-
-	glUniformBlockBinding(App->programs->basicProgram, uniformBlockIndexDefault, 0);
-	glUniformBlockBinding(App->programs->textureProgram, uniformBlockIndexTexture, 0);
-
-	glGenBuffers(1, &ubo);
-	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(float4x4), NULL, GL_STATIC_DRAW);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-	glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, 0, 2 * sizeof(float4x4));
 }

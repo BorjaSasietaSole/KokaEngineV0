@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __MODULEINPUT_H__
+#define __MODULEINPUT_H__
+
 #include "Module.h"
 #include "Point.h"
 #include "SDL_scancode.h"
@@ -56,3 +58,4 @@ private:
 	fPoint mouse_motion;
 	fPoint mouse;
 };
+#endif

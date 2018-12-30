@@ -6,6 +6,7 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleSceneLoader.h"
+#include "ModuleCamera.h"
 #include "SDL.h"
 
 #define MAX_KEYS 300
@@ -90,7 +91,7 @@ update_status ModuleInput::PreUpdate() {
 				windowEvents[WE_HIDE] = true;
 				break;
 
-				//case SDL_WINDOWEVENT_ENTER:
+			case SDL_WINDOWEVENT_ENTER:
 			case SDL_WINDOWEVENT_SHOWN:
 			case SDL_WINDOWEVENT_FOCUS_GAINED:
 			case SDL_WINDOWEVENT_MAXIMIZED:
@@ -163,7 +164,6 @@ void ModuleInput::FileDropped(const char* fileDroppedPath) {
 	}
 }
 
-// ---------
 bool ModuleInput::GetWindowEvent(EventWindow ev) const {
 	return windowEvents[ev];
 }

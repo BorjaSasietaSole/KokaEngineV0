@@ -12,6 +12,9 @@ bool ModulePrograms::LoadPrograms() {
 }
 
 unsigned ModulePrograms::LoadProgram(const char* vertShaderPath, const char* fragShaderPath) {
+	assert(vertShaderPath != nullptr);
+	assert(fragShaderPath != nullptr);
+
 	unsigned program = 0u;
 
 	unsigned vertShader = glCreateShader(GL_VERTEX_SHADER);
@@ -37,30 +40,40 @@ unsigned ModulePrograms::LoadProgram(const char* vertShaderPath, const char* fra
 	// Remove shaders, we wont need them anymore if they are loaded correctly into Program
 	glDeleteShader(vertShader);
 	glDeleteShader(fragShader);
+	vertShaderStr = nullptr;
+	fragShaderStr = nullptr;
 
 	return program;
 }
 
 char* ModulePrograms::ReadShaderFile(const char* shaderPath) {
-	FILE* file;
-	errno_t err = fopen_s(&file, shaderPath, "rb");
-	if (file)
-	{
+	FILE* file = nullptr;
+	char* shaderData = nullptr;
+	int err = fopen_s(&file, shaderPath, "rb");
+	if (file) {
 		fseek(file, 0, SEEK_END);
 		int size = ftell(file);
 		rewind(file);
-		char* shaderData = (char*)malloc(size + 1);
-		fread(shaderData, 1, size, file);
+		shaderData = (char*)malloc(size + 1);
+		int res = fread(shaderData, 1, size, file);
 		shaderData[size] = 0;
+		if (res != size) {
+			LOG("Error: Shader not loaded correctly");
+			shaderData = nullptr;
+		}
 		fclose(file);
-		return shaderData;
+	}
+	else {
+		LOG("Error: Shader reading failed with %s", shaderPath);
+		shaderData = nullptr;
 	}
 
-	LOG("Error: Shader reading failed with %s", shaderPath);
-	return nullptr;
+	return shaderData;
 }
 
 bool ModulePrograms::CompileShader(unsigned shaderAddress, const char* shaderContent) {
+	assert(shaderContent != nullptr);
+
 	int compiled = GL_FALSE;
 
 	glShaderSource(shaderAddress, 1, &shaderContent, nullptr);
@@ -100,6 +113,7 @@ void ModulePrograms::CompileProgram(unsigned programAddress) {
 		LOG("Error: Program failed at %s", strInfoLog);
 
 		delete[] strInfoLog;
+		strInfoLog = nullptr;
 
 		glDeleteProgram(programAddress); // Don't leak the program.
 	}
