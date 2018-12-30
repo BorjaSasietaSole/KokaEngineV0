@@ -35,6 +35,8 @@ public:
 	const int getMaterialIndex() { return materialIndex; }
 	const int getIndex() { return numIndices; }
 
+	void setName(const char* newName);
+
 private:
 	const char*	name = nullptr;
 	int	numIndices = 0;

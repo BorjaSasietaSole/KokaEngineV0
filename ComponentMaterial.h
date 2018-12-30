@@ -28,6 +28,10 @@ public:
 	void DrawProperties() override;
 	Component* Duplicate() override;
 
+	void setShader(const unsigned newShader);
+	void setTexture(Texture* newTexture);
+	void setColor(math::float4 newColor);
+
 private:
 	unsigned shader = 0u;
 	Texture* texture = nullptr;

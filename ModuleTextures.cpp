@@ -21,12 +21,18 @@ bool ModuleTextures::Init() {
 Texture* const ModuleTextures::Load(const char* path) {
 	assert(path != nullptr);
 	
-	unsigned textureId = 0u;
+	ILuint imageId = 0u;
 
 	ilGenImages(1, &imageId);
 	ilBindImage(imageId);
 
 	if (ilLoadImage(path)) {
+		unsigned textureId = 0u;
+		ILinfo imageInfo;
+		int pixelDepth = 0;
+		int format = 0;
+		int height = 0;
+		int width = 0;
 
 		// Generate a new texture
 		glGenTextures(1, &textureId);
@@ -34,7 +40,6 @@ Texture* const ModuleTextures::Load(const char* path) {
 		// Bind the texture to a name
 		glBindTexture(GL_TEXTURE_2D, textureId);
 
-		ILinfo imageInfo;
 		iluGetImageInfo(&imageInfo);
 
 		if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT) {
@@ -68,33 +73,15 @@ Texture* const ModuleTextures::Load(const char* path) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterType);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterType);
 
-		switch (wrapMode) {
-
-		case 0:
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-			break;
-		case 1:
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-			break;
-		case 2:
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			break;
-		case 3:
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-			break;
-		default:
-			LOG("Warning: wrong texture wrap mode %d", wrapMode);
-			break;
+		if (wrapMode != NULL) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 		}
 
 		// TODO: Set linear or nearest mipmap
 		if (mipmaping) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mipMapMode);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipMapMode);
 			glGenerateMipmap(GL_TEXTURE_2D);
 			glGenerateTextureMipmap(textureId);
 		}
@@ -110,10 +97,23 @@ Texture* const ModuleTextures::Load(const char* path) {
 	return nullptr;
 }
 
+void ModuleTextures::LoadDefaulTextures() {
+	defaultTexture = Load("checkers.jpg");
+	noCameraSelectedTexture = Load("nocamselected.jpg");
+}
+
 void ModuleTextures::DrawGui() {
 	ImGui::Text("This will be applied only to the next loaded models");
 	ImGui::Text("Filter type:");
 	ImGui::RadioButton("Linear", &filterType, GL_LINEAR); ImGui::SameLine();
 	ImGui::RadioButton("Nearest", &filterType, GL_NEAREST);
-	if (ImGui::Checkbox("Mipmap", &mipmaping)) {};
+	ImGui::Text("Fill type:");
+	ImGui::RadioButton("Clamp", &wrapMode, GL_CLAMP); ImGui::SameLine();
+	ImGui::RadioButton("Clamp to border", &wrapMode, GL_CLAMP_TO_BORDER); ImGui::SameLine();
+	ImGui::RadioButton("Repeat", &wrapMode, GL_REPEAT); ImGui::SameLine();
+	ImGui::RadioButton("Mirrored repeat", &wrapMode, GL_MIRRORED_REPEAT);
+	if (ImGui::Checkbox("Mipmap", &mipmaping)) {
+		ImGui::RadioButton("Nearest", &mipMapMode, GL_NEAREST_MIPMAP_NEAREST); ImGui::SameLine();
+		ImGui::RadioButton("Linear", &mipMapMode, GL_NEAREST_MIPMAP_LINEAR);
+	}
 }

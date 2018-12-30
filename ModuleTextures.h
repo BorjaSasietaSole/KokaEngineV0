@@ -22,6 +22,7 @@ public:
 
 	bool Init() override;
 	Texture* const Load(const char* path);
+	void LoadDefaulTextures();
 	void DrawGui();
 
 	int pixelDepth = 0;
@@ -29,11 +30,12 @@ public:
 	int format = 0;
 	int width = 0;
 
-	bool anisotropic_filter = false;
-	int filterType = GL_LINEAR;
 	bool mipmaping = false;
-	int wrapMode = 0;
-	ILuint imageId = 0u;
+	int filterType = GL_LINEAR;
+	int mipMapMode = GL_NEAREST_MIPMAP_NEAREST;
+	int wrapMode = GL_CLAMP;
+	Texture* defaultTexture = nullptr;
+	Texture* noCameraSelectedTexture = nullptr;
 };
 
-#endif //__MODULETEXTURES_H__
+#endif

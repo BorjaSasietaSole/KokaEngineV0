@@ -210,3 +210,7 @@ void ComponentMesh::DrawProperties() {
 const unsigned ComponentMesh::MaterialIndex() {
 	return materialIndex;
 }
+
+void ComponentMesh::setName(const char* newName) {
+	name = newName;
+}

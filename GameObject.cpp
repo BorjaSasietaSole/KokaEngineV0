@@ -13,7 +13,7 @@ GameObject::GameObject() {
 	uuid = App->resourceManager->NewGuuid();
 }
 
-GameObject::GameObject(const char* goName, const aiMatrix4x4& transform, const char* fileLocation) : name(goName) {
+GameObject::GameObject(const char* goName, const math::float4x4& transform, const char* fileLocation) : name(goName) {
 
 	if (fileLocation != nullptr) {
 		filePath = fileLocation;
@@ -25,16 +25,18 @@ GameObject::GameObject(const char* goName, const aiMatrix4x4& transform, const c
 	App->scene->getRoot()->goChilds.push_back(this);
 }
 
-GameObject::GameObject(const char* goName, const aiMatrix4x4& transform, GameObject* goParent, const char* fileLocation) : name(goName) {
+GameObject::GameObject(const char* goName, const math::float4x4& transform, GameObject* goParent, const char* fileLocation) : name(goName) {
 
 	uuid = App->resourceManager->NewGuuid();
 
 	if (goParent != nullptr) {
-		this->parent = goParent;
+		parent = goParent;
+		parentUuid = goParent->uuid;
 		goParent->goChilds.push_back(this);
 	}
 	else {
-		this->parent = App->scene->getRoot();
+		parent = App->scene->getRoot();
+		parentUuid = App->scene->getRoot()->uuid;
 		App->scene->getRoot()->goChilds.push_back(this);
 	}
 

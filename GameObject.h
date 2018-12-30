@@ -19,8 +19,8 @@ class GameObject
 {
 public:
 	GameObject();
-	GameObject(const char* goName, const aiMatrix4x4& transform, const char* fileLocation);
-	GameObject(const char* goName, const aiMatrix4x4& transform, GameObject* goParent, const char* fileLocation);
+	GameObject(const char* goName, const math::float4x4& transform, const char* fileLocation);
+	GameObject(const char* goName, const math::float4x4& transform, GameObject* goParent, const char* fileLocation);
 	GameObject(const GameObject& duplicateGameObject);
 	~GameObject();
 
@@ -34,7 +34,7 @@ public:
 
 	Component* AddComponent(ComponentType type);
 	void RemoveComponent(Component* component);
-	Component*	GetComponent(ComponentType type) const;
+	Component* GetComponent(ComponentType type) const;
 	std::vector<Component*> GetComponents(ComponentType type) const;
 
 	AABB& ComputeBBox() const;
@@ -48,6 +48,8 @@ public:
 
 	std::vector<Component*>	getComponents() { return components; }
 	std::list<GameObject*> getGoChilds() { return goChilds; }
+
+	ComponentTransform* getTransform() { return transform; }
 
 private:
 	std::string uuid = "";

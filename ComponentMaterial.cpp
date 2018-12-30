@@ -66,3 +66,15 @@ void ComponentMaterial::DrawProperties() {
 	}
 	ImGui::PopID();
 }
+
+void ComponentMaterial::setShader(const unsigned newShader) {
+	shader = newShader;
+}
+
+void ComponentMaterial::setTexture(Texture* newTexture) {
+	texture = newTexture;
+}
+
+void ComponentMaterial::setColor(math::float4 newColor) {
+	color = newColor;
+}
