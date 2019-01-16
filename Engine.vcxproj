@@ -82,7 +82,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>./glew-2.1.0/lib/Release/Win32;DevIL/lib/x86/Release;assimp/lib/x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>./glew-2.1.0/lib/Release/Win32;DevIL/lib/x86/Release;assimp/lib/x86;D:\Desktop\Master\KokaEngineV1\rapidjson-1.1.0\include\rapidjson</AdditionalLibraryDirectories>
       <AdditionalDependencies>glew32.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/DYNAMICBASE "assimp.lib" "DevIL.lib" "ILU.lib" "ILut.lib" "glew32.lib" "opengl32.lib" "kernel32.lib" "user32.lib" "gdi32.lib" "winspool.lib" "comdlg32.lib" "advapi32.lib" "shell32.lib" "ole32.lib" "oleaut32.lib" "uuid.lib" "odbc32.lib" "odbccp32.lib" %(AdditionalOptions)</AdditionalOptions>
       <EntryPointSymbol>
@@ -238,12 +238,14 @@
     <ClInclude Include="Assimp\include\assimp\version.h" />
     <ClInclude Include="Assimp\include\assimp\Vertex.h" />
     <ClInclude Include="Assimp\include\assimp\XMLTools.h" />
+    <ClInclude Include="Brofiler\include\Brofiler.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentCamera.h" />
     <ClInclude Include="ComponentLight.h" />
     <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="ComponentTransform.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Crossguid\crossguid\guid.hpp" />
     <ClInclude Include="debugdraw.h" />
     <ClInclude Include="debug_draw.hpp" />
@@ -256,6 +258,7 @@
     <ClInclude Include="glew-2.1.0\include\GL\wglew.h" />
     <ClInclude Include="glew-2.1.0\include\KHR\khrplatform.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_opengl3.h" />
@@ -343,7 +346,43 @@
     <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="par_shapes.h" />
+    <ClInclude Include="physicsFS\include\physfs.h" />
     <ClInclude Include="Point.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\allocators.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\document.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\encodedstream.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\encodings.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\error\en.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\error\error.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\filereadstream.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\filewritestream.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\fwd.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\internal\biginteger.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\internal\diyfp.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\internal\dtoa.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\internal\ieee754.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\internal\itoa.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\internal\meta.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\internal\pow10.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\internal\regex.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\internal\stack.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\internal\strfunc.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\internal\strtod.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\internal\swap.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\istreamwrapper.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\memorybuffer.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\memorystream.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\msinttypes\inttypes.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\msinttypes\stdint.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\ostreamwrapper.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\pointer.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\prettywriter.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\rapidjson.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\reader.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\schema.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\stream.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\stringbuffer.h" />
+    <ClInclude Include="rapidjson-1.1.0\include\rapidjson\writer.h" />
     <ClInclude Include="SDL\include\begin_code.h" />
     <ClInclude Include="SDL\include\close_code.h" />
     <ClInclude Include="SDL\include\SDL.h" />
@@ -449,6 +488,7 @@
     <ClCompile Include="Crossguid\guid.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="glew-2.1.0\src\gl3w.cpp" />
+    <ClCompile Include="ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -523,10 +563,22 @@
     <None Include="Assimp\include\assimp\SmoothingGroups.inl" />
     <None Include="Assimp\include\assimp\vector2.inl" />
     <None Include="Assimp\include\assimp\vector3.inl" />
-    <None Include="Game\default.fs" />
-    <None Include="Game\default.vs" />
-    <None Include="Game\texture.fs" />
-    <None Include="Game\texture.vs" />
+    <None Include="Game\Shaders\blinn.fs" />
+    <None Include="Game\Shaders\blinn.vs" />
+    <None Include="Game\Shaders\color.fs" />
+    <None Include="Game\Shaders\color.vs" />
+    <None Include="Game\Shaders\texture.fs" />
+    <None Include="Game\Shaders\texture.vs" />
+    <None Include="glew-2.1.0\doc\advanced.html" />
+    <None Include="glew-2.1.0\doc\basic.html" />
+    <None Include="glew-2.1.0\doc\build.html" />
+    <None Include="glew-2.1.0\doc\credits.html" />
+    <None Include="glew-2.1.0\doc\glew.html" />
+    <None Include="glew-2.1.0\doc\glxew.html" />
+    <None Include="glew-2.1.0\doc\index.html" />
+    <None Include="glew-2.1.0\doc\install.html" />
+    <None Include="glew-2.1.0\doc\log.html" />
+    <None Include="glew-2.1.0\doc\wglew.html" />
     <None Include="MathGeoLib\include\Geometry\KDTree.inl" />
     <None Include="MathGeoLib\include\Geometry\QuadTree.inl" />
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_AVX.inl" />
