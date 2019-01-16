@@ -1,7 +1,10 @@
+#include "Config.h"
+#include "GameObject.h"
 #include "Application.h"
 #include "ModuleScene.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
+#include "ModuleRender.h"
 #include "ComponentCamera.h"
 
 ComponentCamera::ComponentCamera(GameObject* goParent) : Component(goParent, ComponentType::CAMERA) {
@@ -64,11 +67,11 @@ void ComponentCamera::SetVerticalFOV(float fovYDegrees) {
 	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * ((float)screenWidth / (float)screenHeight));
 }
 
-void ComponentCamera::DrawProperties() {
+void ComponentCamera::DrawProperties(bool enabled) {
 
 	ImGui::PushID(this);
 	if (ImGui::CollapsingHeader("Camera properties")) {
-		bool removed = Component::DrawComponentState(); 
+		bool removed = Component::DrawComponentState();
 		if (removed) {
 			ImGui::PopID();
 			return;
@@ -76,22 +79,24 @@ void ComponentCamera::DrawProperties() {
 
 		ImGui::Checkbox("Debug", &debugDraw);
 
+		ImGui::RadioButton("Wireframe", &wireFrame, GL_LINE); ImGui::SameLine();
+		ImGui::RadioButton("Fill", &wireFrame, GL_FILL);
+
 		ImGui::Separator();
-		ImGui::Text("Pitch: %.2f", pitch, ImGuiInputTextFlags_ReadOnly); ImGui::SameLine();
-		ImGui::Text("Yaw: %.2f", yaw, ImGuiInputTextFlags_ReadOnly);
 
 		if (ImGui::SliderFloat("FOV", &fovY, 40, 120)) {
 			SetVerticalFOV(fovY);
 		}
 
-		ImGui::InputFloat("zNear", &frustum.nearPlaneDistance, 5, 50);
-		ImGui::InputFloat("zFar", &frustum.farPlaneDistance, 5, 50);
+		ImGui::SliderFloat("zNear", &frustum.nearPlaneDistance, 5.0f, frustum.farPlaneDistance);
+		ImGui::SliderFloat("zFar", &frustum.farPlaneDistance, frustum.nearPlaneDistance, 100000.0f);
 
 		if (App->camera->getSelectedCamera() == this) {
-			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
-			ImGui::Button("Current camera");
-			ImGui::PopStyleVar();
-		} else {
+			if (ImGui::Button("Deselect camera")) {
+				App->camera->setSelectedCamera(nullptr);
+			}
+		}
+		else {
 			if (ImGui::Button("Set camera")) {
 				App->camera->setSelectedCamera(this);
 			}
@@ -220,4 +225,35 @@ void ComponentCamera::setCameraSpeed(const float newSpeed) {
 
 void ComponentCamera::setRotationSpeed(const float newSpeed) {
 	cameraSpeed = newSpeed;
+}
+
+void ComponentCamera::Save(Config* config) {
+	config->StartObject();
+
+	config->AddComponentType("componentType", getComponentType());
+
+	if (getGoContainer() != nullptr) {
+		config->AddString("goContainer", getGoContainer()->getUuid());
+	}
+
+	//TODO: we are not moving the camera anymore, we are moving his goContainer
+	config->AddFloat("frustum.nearPlaneDistance", frustum.nearPlaneDistance);
+	config->AddFloat("frustum.farPlaneDistance", frustum.farPlaneDistance);
+	config->AddFloat3("frustum.pos", frustum.pos);
+	config->AddFloat3("frustum.front", frustum.front);
+	config->AddFloat3("frustum.up", frustum.up);
+	config->AddBool("debugDraw", debugDraw);
+	config->AddInt("wireFrame", GL_FILL);
+
+	config->EndObject();
+}
+
+void ComponentCamera::Load(Config* config, rapidjson::Value& value) {
+	frustum.nearPlaneDistance = config->GetFloat("frustum.nearPlaneDistance", value);
+	frustum.farPlaneDistance = config->GetFloat("frustum.farPlaneDistance", value);
+	frustum.pos = config->GetFloat3("frustum.pos", value);
+	frustum.front = config->GetFloat3("frustum.front", value);
+	frustum.up = config->GetFloat3("frustum.up", value);
+	debugDraw = config->GetBool("debugDraw", value);
+	wireFrame = config->GetInt("wireFrame", value);
 }

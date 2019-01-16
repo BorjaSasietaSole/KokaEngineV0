@@ -1,14 +1,20 @@
 #ifndef __COMPONENTTMATERIAL_H__
 #define __COMPONENTTMATERIAL_H__
 
-#include "assert.h"
-#include "GL/glew.h"
-#include "Component.h"
 #include "Component.h"
 #include "Imgui/imgui.h"
-#include "ModuleTextures.h"
-#include "assimp/material.h"
 #include "Math/float4.h"
+#include "assimp/material.h"
+
+enum class MaterialType {
+	NO_TYPE_SELECTED = 0,
+	OCCLUSION_MAP,
+	DIFFUSE_MAP,
+	SPECULAR_MAP,
+	EMISSIVE_MAP
+};
+
+class GameObject;
 
 class ComponentMaterial : public Component
 {
@@ -18,24 +24,25 @@ public:
 	ComponentMaterial(const ComponentMaterial& duplicatedComponent);
 	~ComponentMaterial();
 
-	void ComputeMaterial(const aiMaterial* material);
-	void DeleteTexture();
+	void UnloadMaterial();
 
-	Texture* GetTexture() const { return texture; }
-	unsigned GetShader() const { return shader; }
-	math::float4 getColor() { return color; }
-
-	void DrawProperties() override;
+	void DrawProperties(bool enabled) override;
 	Component* Duplicate() override;
 
-	void setShader(const unsigned newShader);
-	void setTexture(Texture* newTexture);
-	void setColor(math::float4 newColor);
+	void Save(Config* config) override;
+	void Load(Config* config, rapidjson::Value& value) override;
 
 private:
-	unsigned shader = 0u;
-	Texture* texture = nullptr;
-	math::float4 color = math::float4::one;
+	void DeleteTexture(unsigned id);
+	void DeselectMap(MaterialType matSelected, std::string& mapSelected);
+	void DrawComboBoxMaterials(const char* id, MaterialType matType, static std::string& labelCurrentFileTextureSelected);
+
+private:
+	std::string diffuseSelected;
+	std::string occlusionSelected;
+	std::string specularSelected;
+	std::string emissiveSelected;
+	Material material;
 };
 
 #endif

@@ -12,7 +12,7 @@ public:
 	ComponentCamera(GameObject* goParent);
 	~ComponentCamera();
 
-	void DrawProperties() override;
+	void DrawProperties(bool enabled) override;
 	Component* Duplicate() override;
 	void Update();
 
@@ -56,6 +56,9 @@ public:
 
 	void CreateFrameBuffer();
 
+	void Load(Config* config, rapidjson::Value& value) override;
+	void Save(Config* config) override;
+
 	private:
 
 		math::float3 cameraPosition = math::float3(0.0f, 3.0f, 20.0f);
@@ -84,6 +87,14 @@ public:
 		unsigned fbo = 0u;
 		unsigned rbo = 0u;
 		unsigned renderTexture = 0u;
+
+		//Camera debug settings
+		bool debugDraw = true;
+		int	wireFrame = GL_FILL;
+
+		void zCreateFrameBuffer(float winWidth, float winHeight);
+		void SetHorizontalFOV(float fovXDegrees);
+		void SetVerticalFOV(float fovYDegrees);
 };
 
 #endif
