@@ -68,6 +68,9 @@ public:
 	bool getMoveGODown() { return moveGODown; }
 	bool getStaticGo() { return staticGo; }
 
+	const char* getUuid() { return uuid; }
+	const char* getParentUuid() { return parentUuid; }
+
 private:
 	char uuid[37];
 	char parentUuid[37];
