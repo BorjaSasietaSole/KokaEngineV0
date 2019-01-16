@@ -36,7 +36,7 @@ void QuadTreeKoka::InitQuadTree(const math::AABB& aabb, bool clearAllGameObjects
 }
 
 void QuadTreeKoka::Insert(GameObject* gameObject, bool addQuadList) {
-	if (gameObject->bbox.Intersects(root->aabb)) {
+	if (gameObject->ComputeBBox().Intersects(root->aabb)) {
 		if (addQuadList) {
 			goList.push_back(gameObject);
 		}

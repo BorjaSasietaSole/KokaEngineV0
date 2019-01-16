@@ -4,19 +4,21 @@
 #include<list>
 #include "Module.h"
 #include "Globals.h"
+#include "Brofiler.h"
 
 class ModuleRender;
 class ModuleWindow;
 class ModuleTextures;
-class ModuleInput;
-class ModulePrograms;
-class ModuleGui;
+class ModuleEditor;
 class ModuleCamera;
+class ModuleInput;
+class ModuleScene;
+class ModulePrograms;
 class ModuleTime;
 class ModuleScene;
-class ModuleSceneLoader;
-class ModuleResourceManager;
 class ModuleDebugDraw;
+class ModuleFileSystem;
+class ModuleLibrary;
 
 class Application
 {
@@ -38,9 +40,9 @@ public:
 	ModuleCamera* camera = nullptr;
 	ModuleTime* timers = nullptr;
 	ModuleScene* scene = nullptr;
-	ModuleSceneLoader* sceneLoader = nullptr;
-	ModuleResourceManager* resourceManager = nullptr;
 	ModuleDebugDraw* debugDraw = nullptr;
+	ModuleFileSystem* fileSystem = nullptr;
+	ModuleLibrary* library = nullptr;
 
 private:
 
