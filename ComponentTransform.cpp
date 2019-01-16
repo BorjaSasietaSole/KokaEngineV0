@@ -1,15 +1,21 @@
-#include "Component.h"
-#include "imgui.h"
-#include "Math/MathFunc.h"
+#include "Config.h"
+#include "GameObject.h"
+#include "Application.h"
+#include "ModuleRender.h"
+#include "ModuleScene.h"
+#include "imgui_internal.h"
 #include "ComponentTransform.h"
-
 
 ComponentTransform::ComponentTransform(GameObject* goContainer, const math::float4x4& transform) : Component(goContainer, ComponentType::TRANSFORM) {
 	AddTransform(transform);
 }
 
-ComponentTransform::ComponentTransform(const ComponentTransform& duplicatedTransform) : Component(duplicatedTransform), position(duplicatedTransform.position),
-rotation(duplicatedTransform.rotation), scale(duplicatedTransform.scale), eulerRotation(duplicatedTransform.eulerRotation){}
+ComponentTransform::ComponentTransform(const ComponentTransform& duplicatedTransform) : Component(duplicatedTransform) {
+	position = duplicatedTransform.position;
+	rotation = duplicatedTransform.rotation;
+	scale = duplicatedTransform.scale;
+	eulerRotation = duplicatedTransform.eulerRotation;
+}
 
 ComponentTransform::~ComponentTransform() { }
 
@@ -20,12 +26,12 @@ Component* ComponentTransform::Duplicate() {
 void ComponentTransform::AddTransform(const math::float4x4& transform) {
 	math::float3 translation;
 	math::float3 scaling;
-	math::Quat airotation;
-	transform.Decompose(scaling, airotation, translation);
+	math::Quat aiRotation;
+	transform.Decompose(translation, aiRotation, scaling);
 
 	position = { translation.x, translation.y, translation.z };
 	scale = { scaling.x, scaling.y, scaling.z };
-	rotation = Quat(airotation.x, airotation.y, airotation.z, airotation.w);
+	rotation = math::Quat(aiRotation.x, aiRotation.y, aiRotation.z, aiRotation.w);
 	RotationToEuler();
 }
 
@@ -41,7 +47,7 @@ void ComponentTransform::RotationToEuler() {
 	eulerRotation.z = math::RadToDeg(eulerRotation.z);
 }
 
-void ComponentTransform::SetPosition(const float3& pos) {
+void ComponentTransform::SetPosition(const math::float3& pos) {
 	position = pos;
 }
 
@@ -58,17 +64,105 @@ void ComponentTransform::SetWorldToLocal(const math::float4x4& parentTrans) {
 	RotationToEuler();
 }
 
-void ComponentTransform::DrawProperties() {
-	if (ImGui::CollapsingHeader("Local Transformation")) {
-		ImGui::DragFloat3("Position", (float*)&position, 0.1f, -1000.f, 1000.f);
+math::float4x4 ComponentTransform::GetLocalTransform() const {
+	return math::float4x4::FromTRS(position, rotation, scale);
+}
 
-		ImGui::DragFloat3("Rotation", (float*)&eulerRotation, 0.5f, -180, 180.f);
+math::float4x4 ComponentTransform::GetGlobalTransform() const {
+	if (goContainer->getParent() != nullptr && goContainer->getParent()->getTransform() != nullptr) {
+		return goContainer->getParent()->getTransform()->GetGlobalTransform() * goContainer->getTransform()->GetLocalTransform();
+	}
 
-		rotation = rotation.FromEulerXYZ(math::DegToRad(eulerRotation.x),
-			math::DegToRad(eulerRotation.y), math::DegToRad(eulerRotation.z));
+	return GetLocalTransform();
+}
 
-		ImGui::DragFloat3("Scale", (float*)&scale, 0.1f, 0.01f, 100.f);
+void ComponentTransform::SetGlobalTransform(const math::float4x4& global) {
+	SetLocalToWorld(global);
+	math::float4x4 parentglobal = math::float4x4::identity;
+
+	if (goContainer->getParent() != nullptr && goContainer->getParent()->getTransform() != nullptr) {
+		parentglobal = goContainer->getParent()->getTransform()->GetGlobalTransform();
+	}
+	SetWorldToLocal(parentglobal);
+	goContainer->ComputeBBox();
+}
+
+void ComponentTransform::DrawProperties(bool staticGo) {
+
+	if (ImGui::CollapsingHeader("Local Transform")) {
+
+		if (staticGo) {
+			ImGui::PushItemFlag({ ImGuiButtonFlags_Disabled | ImGuiItemFlags_Disabled | ImGuiSelectableFlags_Disabled }, true);
+			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+		}
+
+		if (ImGui::DragFloat3("Position", (float*)&position, 0.001f * App->scene->scaleFactor, -100.0f * App->scene->scaleFactor, 100.f * App->scene->scaleFactor)) {
+			edited = true;
+		}
+
+		if (ImGui::DragFloat3("Rotation", (float*)&eulerRotation, 0.5f, -360, 360.f)) {
+			edited = true;
+		}
+
+		if (ImGui::DragFloat3("Scale", (float*)&scale, 0.1f, 0.1f, 100.f)) {
+			edited = true;
+		}
+
+		rotation = rotation.FromEulerXYZ(math::DegToRad(eulerRotation.x), math::DegToRad(eulerRotation.y), math::DegToRad(eulerRotation.z));
+
+		ImGui::Text("Select one to edit the GO");
+		if (ImGui::Button("Trans")) {
+			App->renderer->imGuizmoOp = ImGuizmo::TRANSLATE;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Rotate")) {
+			App->renderer->imGuizmoOp = ImGuizmo::ROTATE;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Scale")) {
+			App->renderer->imGuizmoOp = ImGuizmo::SCALE;
+			App->renderer->imGuizmoMode = ImGuizmo::LOCAL;
+		}
+
+		if (App->renderer->imGuizmoOp != ImGuizmo::SCALE) {
+			ImGui::RadioButton("Local", &App->renderer->imGuizmoMode, ImGuizmo::LOCAL); ImGui::SameLine();
+			ImGui::RadioButton("Global", &App->renderer->imGuizmoMode, ImGuizmo::WORLD);
+		}
+
+		if (edited) {
+			getGoContainer()->ComputeBBox();
+			edited = false;
+		}
+
+		if (staticGo) {
+			ImGui::PopItemFlag();
+			ImGui::PopStyleVar();
+		}
 
 		ImGui::Separator();
 	}
+}
+
+/* RapidJson storage */
+void ComponentTransform::Save(Config* config) {
+	config->StartObject();
+
+	config->AddComponentType("componentType", getComponentType());
+	config->AddString("parentUuid", getParentUuid());
+	config->AddString("uuid", getUuid());
+	config->AddFloat3("position", position);
+	config->AddQuat("rotation", rotation);
+	config->AddFloat3("eulerRotation", eulerRotation);
+	config->AddFloat3("scale", scale);
+
+	config->EndObject();
+}
+
+void ComponentTransform::Load(Config* config, rapidjson::Value& value) {
+	printf_s(getUuid(), config->GetString("uuid", value));
+	printf_s(getParentUuid(), config->GetString("parentUuid", value));
+	position = config->GetFloat3("position", value);
+	eulerRotation = config->GetFloat3("eulerRotation", value);
+	scale = config->GetFloat3("scale", value);
+	rotation = config->GetQuat("rotation", value);
 }

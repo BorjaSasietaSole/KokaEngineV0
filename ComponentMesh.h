@@ -1,53 +1,43 @@
 #ifndef __COMPONENTMESH_H__
 #define __COMPONENTMESH_H__
 
-#include "assert.h"
-#include "Component.h"
-#include "ModuleTextures.h"
-#include "Geometry/AABB.h"
-#include "Math/float3.h"
-#include "Math/Quat.h"
-#include <assimp/mesh.h>
 #include <vector>
-#include "GL/glew.h"
+#include <assimp/mesh.h>
+#include "Component.h"
+#include "Math/float3.h"
+#include "ModuleTextures.h"
 
 struct par_shapes_mesh_s;
 class ComponentMaterial;
+class GameObject;
 
 class ComponentMesh : public Component
 {
 public:
-	ComponentMesh(GameObject* goContainer, aiMesh* mesh);
+	ComponentMesh(GameObject* goContainer);
 	ComponentMesh(const ComponentMesh& duplicatedComponent);
 	~ComponentMesh();
 
-	void ComputeMesh(aiMesh* mesh);
-	void ComputeMesh(par_shapes_mesh_s* mesh);
-	const unsigned MaterialIndex();
-
 	void CleanUp();
-	void Draw(unsigned shaderProgram, const Texture* textures) const;
-	void DrawProperties() override;
+
+	void ComputeMesh();
+	void ComputeMesh(par_shapes_mesh_s* parMesh);
+	void Draw(unsigned shaderProgram, const ComponentMaterial* material) const;
+	void DrawProperties(bool enabled) override;
+	void LoadMesh(const char* name);
 	Component* Duplicate() override;
+	
+	void Save(Config* config) override;
+	void Load(Config* config, rapidjson::Value& value) override;
 
-	std::vector<math::float3> getVertices() { return vertices; }
-	AABB getBox() { return bbox; }
-
-	const int getMaterialIndex() { return materialIndex; }
-	const int getIndex() { return numIndices; }
-
-	void setName(const char* newName);
+	Mesh getMesh() { return mesh; }
+	std::vector<std::string> getFileMeshesList() { return fileMeshesList; }
+	std::string getCurrentMesh() { return currentMesh; }
 
 private:
-	const char*	name = nullptr;
-	int	numIndices = 0;
-	int	materialIndex = 0;
-	std::vector<math::float3> vertices;
-	AABB bbox;
-
-	unsigned vao = 0u;
-	unsigned vbo = 0u;
-	unsigned ibo = 0u;
+	Mesh mesh;
+	std::vector<std::string> fileMeshesList;
+	std::string currentMesh;
 };
 
 #endif

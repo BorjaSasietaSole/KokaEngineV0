@@ -8,6 +8,8 @@
 #include "Math/Quat.h"
 #include <assimp/scene.h> 
 
+class GameObject;
+
 class ComponentTransform : public Component
 {
 public:
@@ -17,25 +19,35 @@ public:
 
 	void AddTransform(const math::float4x4& transform);
 	void SetRotation(const math::Quat& rot);
-	void SetPosition(const float3& pos);
+	void SetPosition(const math::float3& pos);
 	void RotationToEuler();
 
 	void SetLocalToWorld(const math::float4x4& localTrans);
 	void SetWorldToLocal(const math::float4x4& parentTrans);
+	void SetGlobalTransform(const math::float4x4& global);
 
-	void DrawProperties() override;
+
+	math::float4x4 GetLocalTransform() const;
+	math::float4x4 GetGlobalTransform() const;
+
+
+	void DrawProperties(bool enabled) override;
 	Component* Duplicate() override;
 
+	void Save(Config* config) override;
+	void Load(Config* config, rapidjson::Value& value) override;
+
 	math::float3 getPosition() { return position; }
-	math::Quat getRotation() { return rotation; }
 	math::float3 getEulerRotation() { return eulerRotation; }
 	math::float3 getScale() { return scale; }
+	math::Quat getRotation() { return rotation; }
 
 private:
 	math::float3 position = math::float3::zero;
 	math::Quat rotation = math::Quat::identity;
 	math::float3 eulerRotation = math::float3::zero;
 	math::float3 scale = math::float3::zero;
+	bool edited = false;
 };
 
 #endif

@@ -70,6 +70,8 @@ public:
 
 	const char* getUuid() { return uuid; }
 	const char* getParentUuid() { return parentUuid; }
+	
+	GameObject* getParent() { return parent; }
 
 private:
 	char uuid[37];

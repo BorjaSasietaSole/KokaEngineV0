@@ -32,6 +32,8 @@ public:
 	void Save(Config* config) override;
 	void Load(Config* config, rapidjson::Value& value) override;
 
+	Material material;
+
 private:
 	void DeleteTexture(unsigned id);
 	void DeselectMap(MaterialType matSelected, std::string& mapSelected);
@@ -42,7 +44,7 @@ private:
 	std::string occlusionSelected;
 	std::string specularSelected;
 	std::string emissiveSelected;
-	Material material;
+	
 };
 
 #endif

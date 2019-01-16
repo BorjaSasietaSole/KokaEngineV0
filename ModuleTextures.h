@@ -34,6 +34,27 @@ struct Material {
 	math::float4	color = math::float4::one;
 };
 
+struct Mesh {
+	unsigned vao = 0u;
+	unsigned vbo = 0u;
+	unsigned ibo = 0u;
+
+	float*		normals = nullptr;
+	float*		colors = nullptr;
+	float*		uvs = nullptr;
+	unsigned	verticesNumber = 0u;
+	float*		vertices = nullptr;
+	unsigned	indicesNumber = 0u;
+	unsigned*	indices = nullptr;
+
+	unsigned normalsOffset = 0u;
+	unsigned texturesOffset = 0u;
+	unsigned vertexSize = 0u;
+
+	math::AABB	bbox;
+};
+
+
 struct Texture {
 	int id = 0;
 	int width = 0;

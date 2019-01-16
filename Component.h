@@ -39,7 +39,8 @@ public:
 	
 	const char* getUuid() { return uuid; }
 	const char* getParentUuid() { return parentUuid; }
-	GameObject*	getGoContainer() { return goContainer; }
+	const GameObject* getGoContainer() { return goContainer; }
+	GameObject*	goContainer = nullptr;
 
 private:
 	bool toBeDeleted = false;
@@ -47,8 +48,6 @@ private:
 	ComponentType componentType = ComponentType::EMPTY;
 	char uuid[37];
 	char parentUuid[37];
-	GameObject*	goContainer = nullptr;
-
 };
 
 #endif
