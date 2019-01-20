@@ -1,6 +1,6 @@
 #include "WindowGui.h"
 
-WindowGui::WindowGui() : enabled(true) {}
+WindowGui::WindowGui() : enabled(true), focused(false) {}
 
 WindowGui::~WindowGui() {}
 

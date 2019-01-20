@@ -44,10 +44,15 @@ void WindowGuiAboutOf::Draw() {
 		ImGui::BulletText("mmgr (version 1.0)");
 		ImGui::BulletText("Crossguid (version 0.2.2)");
 		ImGui::BulletText("DebugDraw (version 2017)");
+		ImGui::BulletText("PhysicsFS (version 3.0.1)");
+		ImGui::BulletText("RapidJson (version 1.1.0)");
+		ImGui::BulletText("ImGuizmo (version 1.53)");
+		ImGui::BulletText("Brofiler (version 1.1.2)");
 		ImGui::TreePop();
 	}
 
 	ImGui::Separator();
+	ImGui::Text("This engine is licensed under the Public Domain, see LICENSE for more information");
 	if (ImGui::SmallButton("License")) {
 		ShellExecuteA(nullptr, "open", LICENSE, nullptr, nullptr, SW_SHOWNORMAL);
 	};

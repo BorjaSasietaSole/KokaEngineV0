@@ -7,7 +7,7 @@ class WindowGui
 {
 public:
 	WindowGui();
-	~WindowGui();
+	virtual ~WindowGui();
 
 	virtual void Draw() {}
 
