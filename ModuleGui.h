@@ -13,6 +13,9 @@
 #include "WindowGuiInspector.h"
 #include "WindowGuiTime.h"
 #include "WindowGuiCamera.h"
+#include "WindowGuiAssets.h"
+#include "WindowGuiLight.h"
+#include "WindowGuiQuad.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -27,6 +30,9 @@ class WindowGuiHierarchy;
 class WindowGuiInspector;
 class WindowGuiTime;
 class WindowGuiCamera;
+class WindowGuiAssets;
+class WindowGuiLight;
+class WindowGuiQuad;
 
 class ModuleGui : public Module 
 {
@@ -35,19 +41,16 @@ public:
 	~ModuleGui();
 
 	bool Init();
-	update_status PreUpdate();
-	update_status Update();
-	update_status PostUpdate();
-	bool CleanUp();
+	update_status PreUpdate() override;
+	update_status Update() override;
 
 	void AddFPSCount(float fps, float ms) const;
 	void AddGameFPSCount(float fps, float ms) const;
 	void CreateDockSpace();
 	void PrintDocks();
-	void RenderGUI();
+	void RenderGUI() const;
 	bool SceneFocused() const;
 
-	void HandleInputs(SDL_Event* event) const;
 	// SDL events
 	void ProcessInputEvent(SDL_Event* event) const;
 
@@ -59,6 +62,11 @@ public:
 	WindowGuiInspector* inspector = nullptr;
 	WindowGuiTime* time = nullptr;
 	WindowGuiCamera* camera = nullptr;
+	WindowGuiAssets* assets = nullptr;
+	WindowGuiLight* light = nullptr;
+	WindowGuiQuad* quad = nullptr;
+
+	const std::string FilePickerID = "###FilePicker";
 
 private:
 	const char* glsl_version;
