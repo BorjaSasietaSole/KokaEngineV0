@@ -2,6 +2,7 @@
 #define __MODULETIME_H__
 
 #include "Module.h"
+#include "Globals.h"
 #include "Timer.h"
 
 enum class GameState { RUN, PAUSE, STOP };
