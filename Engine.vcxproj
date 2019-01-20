@@ -599,6 +599,11 @@
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_CPP.inl" />
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="MathGeoLib\include\Math\Matrix.inl" />
+    <None Include="physicsFS\lib\physfs.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="Brofiler\lib\ProfilerCore32.lib" />
+    <Library Include="physicsFS\lib\physfs.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
