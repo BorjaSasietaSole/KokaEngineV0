@@ -13,14 +13,13 @@ public:
 
 	bool CleanUp() override;
 	bool LoadPrograms();
-	unsigned LoadProgram(const char* vertShaderPath, const char* fragShaderPath);
 
-	unsigned basicProgram = 0u;
-	unsigned textureProgram = 0u;
-	unsigned vertShader = 0u;
-	unsigned fragShader = 0u;
+	unsigned	colorProgram = 0u;
+	unsigned	textureProgram = 0u;
+	unsigned	blinnProgram = 0u;
 
 private:
+	unsigned LoadProgram(const char* vertShaderPath, const char* fragShaderPath);
 	char* ReadShaderFile(const char* shaderPath);
 	bool CompileShader(unsigned shaderAddress, const char* shaderContent);
 	void CompileProgram(unsigned programAddress);

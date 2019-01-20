@@ -2,13 +2,16 @@
 
 ModulePrograms::ModulePrograms(){}
 
-ModulePrograms::~ModulePrograms(){}
+ModulePrograms::~ModulePrograms(){
+	CleanUp();
+}
 
 bool ModulePrograms::LoadPrograms() {
-	basicProgram = LoadProgram("default.vs", "default.fs");
-	textureProgram = LoadProgram("texture.vs", "texture.fs");
+	colorProgram = LoadProgram("./Shaders/color.vs", "./Shaders/color.fs");
+	textureProgram = LoadProgram("./Shaders/texture.vs", "./Shaders/texture.fs");
+	blinnProgram = LoadProgram("./Shaders/blinn.vs", "./Shaders/blinn.fs");
 
-	return (basicProgram != 0 && textureProgram != 0);
+	return (colorProgram != 0 && textureProgram != 0 && blinnProgram != 0);
 }
 
 unsigned ModulePrograms::LoadProgram(const char* vertShaderPath, const char* fragShaderPath) {
@@ -35,11 +38,12 @@ unsigned ModulePrograms::LoadProgram(const char* vertShaderPath, const char* fra
 		CompileProgram(program);
 	}
 
-	delete[] vertShaderStr;
-	delete[] fragShaderStr;
-	// Remove shaders, we wont need them anymore if they are loaded correctly into Program
 	glDeleteShader(vertShader);
 	glDeleteShader(fragShader);
+	// Remove shaders, we wont need them anymore if they are loaded correctly into Program
+	delete[] vertShaderStr;
+	delete[] fragShaderStr;
+	
 	vertShaderStr = nullptr;
 	fragShaderStr = nullptr;
 
@@ -106,9 +110,8 @@ void ModulePrograms::CompileProgram(unsigned programAddress) {
 	glGetProgramiv(programAddress, GL_COMPILE_STATUS, &errorLength);
 
 	if (errorLength > 0) {
-		int written = 0;
 		GLchar* strInfoLog = new GLchar[errorLength + 1];
-		glGetProgramInfoLog(programAddress, errorLength, &written, strInfoLog);
+		glGetProgramInfoLog(programAddress, errorLength, NULL, strInfoLog);
 
 		LOG("Error: Program failed at %s", strInfoLog);
 
@@ -121,9 +124,11 @@ void ModulePrograms::CompileProgram(unsigned programAddress) {
 }
 
 bool ModulePrograms::CleanUp() {
-	glDeleteProgram(basicProgram);
+	glDeleteProgram(colorProgram);
 	glDeleteProgram(textureProgram);
-	basicProgram = 0;
-	textureProgram = 0;
+	glDeleteProgram(blinnProgram);
+	colorProgram = 0u;
+	textureProgram = 0u;
+	blinnProgram = 0u;
 	return true;
 }
