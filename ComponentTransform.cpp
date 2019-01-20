@@ -130,7 +130,7 @@ void ComponentTransform::DrawProperties(bool staticGo) {
 		}
 
 		if (edited) {
-			getGoContainer()->ComputeBBox();
+			goContainer->ComputeBBox();
 			edited = false;
 		}
 

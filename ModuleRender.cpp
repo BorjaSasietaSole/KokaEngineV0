@@ -89,7 +89,7 @@ update_status ModuleRender::Update() {
 
 		SetProjectionMatrix(App->camera->getQuadCamera());
 		SetViewMatrix(App->camera->getQuadCamera());
-		PrintQuadNode(App->scene->quadTree->root);
+		PrintQuadNode(App->scene->getQuadTree()->root);
 		App->debugDraw->Draw(App->camera->getQuadCamera(), App->camera->getQuadCamera()->fbo, App->camera->getQuadCamera()->screenWidth, App->camera->getQuadCamera()->screenHeight);
 	}
 
@@ -125,7 +125,7 @@ void ModuleRender::DrawDebugData(ComponentCamera* camera) const {
 	}
 
 	if (showQuad) {
-		PrintQuadNode(App->scene->quadTree->root);
+		PrintQuadNode(App->scene->getQuadTree()->root);
 	}
 
 	if (showRayCast) {
@@ -253,7 +253,7 @@ void ModuleRender::CullingFromFrustum(ComponentCamera* camera, ComponentMesh* me
 
 void ModuleRender::CullingFromQuadTree(ComponentCamera* camera, ComponentMesh* mesh) {
 	quadGOCollided.clear();
-	App->scene->quadTree->CollectIntersections(quadGOCollided, camera->frustum);
+	App->scene->getQuadTree()->CollectIntersections(quadGOCollided, camera->frustum);
 
 	for (std::list<ComponentMesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
 		if (!(*it)->goContainer->getStaticGo() && (*it)->getMesh().verticesNumber > 0 && camera->frustum.Intersects((*it)->goContainer->ComputeBBox())) {

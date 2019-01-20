@@ -25,11 +25,11 @@ void QuadTreeKoka::InitQuadTree(const math::AABB& aabb, bool clearAllGameObjects
 		Clear();
 	}
 
-	if (App->camera->quadCamera != nullptr) {
-		App->camera->quadCamera->frustum.pos.y = aabb.maxPoint.y + 0.01f * App->scene->scaleFactor;
-		App->camera->quadCamera->frustum.farPlaneDistance = App->camera->quadCamera->frustum.pos.y + aabb.Size().y;
-		App->camera->quadCamera->frustum.orthographicHeight = aabb.Size().x + 0.5f * App->scene->scaleFactor;
-		App->camera->quadCamera->frustum.orthographicWidth = App->camera->quadCamera->frustum.orthographicHeight;
+	if (App->camera->getQuadCamera() != nullptr) {
+		App->camera->getQuadCamera()->frustum.pos.y = aabb.maxPoint.y + 0.01f * App->scene->scaleFactor;
+		App->camera->getQuadCamera()->frustum.farPlaneDistance = App->camera->getQuadCamera()->frustum.pos.y + aabb.Size().y;
+		App->camera->getQuadCamera()->frustum.orthographicHeight = aabb.Size().x + 0.5f * App->scene->scaleFactor;
+		App->camera->getQuadCamera()->frustum.orthographicWidth = App->camera->getQuadCamera()->frustum.orthographicHeight;
 	}
 
 	root = new QuadTreeNode(aabb);
@@ -152,7 +152,7 @@ void QuadTreeNode::RecalculateSpace() {
 		for (int i = 0; i < 4; ++i) {
 			ComponentMesh* componentMesh = (ComponentMesh*)(gameObject)->GetComponent(ComponentType::MESH);
 			if (componentMesh != nullptr) {
-				intersects[i] = childs[i]->aabb.Intersects(gameObject->bbox);
+				intersects[i] = childs[i]->aabb.Intersects(gameObject->ComputeBBox());
 			}
 		}
 

@@ -39,7 +39,6 @@ private:
 	void DeselectMap(MaterialType matSelected, std::string& mapSelected);
 	void DrawComboBoxMaterials(const char* id, MaterialType matType, static std::string& labelCurrentFileTextureSelected);
 
-private:
 	std::string diffuseSelected;
 	std::string occlusionSelected;
 	std::string specularSelected;

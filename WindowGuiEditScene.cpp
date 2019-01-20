@@ -21,10 +21,10 @@ void WindowGuiEditScene::Draw() {
 	viewport.x = ImGui::GetCursorPosX() + pos.x;
 	viewport.y = ImGui::GetCursorPosY() + pos.y;
 
-	ImGui::Image((ImTextureID)App->camera->getSceneCamera()->getRenderTexture(), winSize, { 0,1 }, { 1,0 });
+	ImGui::Image((ImTextureID)App->camera->getSceneCamera()->renderTexture, winSize, { 0,1 }, { 1,0 });
 	App->renderer->DrawImGuizmo(winSize.x, winSize.y, pos.x, pos.y);
 
-	App->camera->sceneFocused = ImGui::IsMouseHoveringWindow();
+	App->camera->setSceneFocus(ImGui::IsMouseHoveringWindow());
 
 	focus = ImGui::IsWindowFocused();
 	ImGui::End();

@@ -11,6 +11,8 @@ public:
 
 	void Draw() override;
 	bool IsFocused() const { return focus; }
+	ImVec2 getWinSize() { return winSize; }
+	math::float2 getViewport() { return viewport; }
 
 private:
 	bool focus;

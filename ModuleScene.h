@@ -31,7 +31,6 @@ public:
 	update_status Update() override;
 
 	void DrawHierarchy();
-	GameObject* CreateGameObject(const char* goName, GameObject* goParent, const math::float4x4& transform = math::float4x4(), const char* fileLocation = nullptr);
 	GameObject*	CreateGameObject(const char* goName = nullptr, GameObject* goParent = nullptr, const math::float4x4& transform = math::float4x4().identity);
 	GameObject*	CreateCamera(GameObject* goParent = nullptr, const math::float4x4& transform = math::float4x4().identity);
 	void LoadGeometry(GameObject* goParent, GeometryType geometryType);

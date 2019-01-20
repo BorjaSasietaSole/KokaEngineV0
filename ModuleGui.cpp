@@ -175,22 +175,22 @@ update_status ModuleGui::Update() {
 					new GameObject(DEFAULT_GO_NAME, math::float4x4().identity, nullptr);
 				}
 				if (ImGui::MenuItem("Sphere")) {
-					GameObject* sphereGO = new GameObject("Sphere", math::float4x4().identity, App->scene->goSelected);
+					GameObject* sphereGO = new GameObject("Sphere", math::float4x4().identity, App->scene->getGoSelect());
 					App->scene->LoadGeometry(sphereGO, GeometryType::SPHERE);
 					App->scene->setGoSelected(sphereGO);
 				}
 				if (ImGui::MenuItem("Torus")) {
-					GameObject* torusGO = new GameObject("Torus", math::float4x4().identity, App->scene->goSelected);
+					GameObject* torusGO = new GameObject("Torus", math::float4x4().identity, App->scene->getGoSelect());
 					App->scene->LoadGeometry(torusGO, GeometryType::TORUS);
 					App->scene->setGoSelected(torusGO);
 				}
 				if (ImGui::MenuItem("Cube")) {
-					GameObject* cubeGO = new GameObject("Cube", math::float4x4().identity, App->scene->goSelected);
+					GameObject* cubeGO = new GameObject("Cube", math::float4x4().identity, App->scene->getGoSelect());
 					App->scene->LoadGeometry(cubeGO, GeometryType::CUBE);
 					App->scene->setGoSelected(cubeGO);
 				}
 				if (ImGui::MenuItem("Plane")) {
-					GameObject* planeGO = new GameObject("Plane", math::float4x4().identity, App->scene->goSelected);
+					GameObject* planeGO = new GameObject("Plane", math::float4x4().identity, App->scene->getGoSelect());
 					App->scene->LoadGeometry(planeGO, GeometryType::PLANE);
 					App->scene->setGoSelected(planeGO);
 				}

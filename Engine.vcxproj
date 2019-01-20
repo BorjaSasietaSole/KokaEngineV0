@@ -77,7 +77,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>./glew-2.1.0/include;./SDL/include;MathGeoLib/include;DevIL/include;assimp/include;imgui/;rapidjson-1.1.0/include/rapidjson;Brofiler/include;ImGuizmo</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./glew-2.1.0/include;./SDL/include;MathGeoLib/include;DevIL/include;assimp/include;imgui/;rapidjson-1.1.0/include/rapidjson;Brofiler/include;ImGuizmo;physicsFS/include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -342,9 +342,7 @@
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
     <ClInclude Include="ModuleRender.h" />
-    <ClInclude Include="ModuleResourceManager.h" />
     <ClInclude Include="ModuleScene.h" />
-    <ClInclude Include="ModuleSceneLoader.h" />
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="ModuleWindow.h" />
@@ -548,9 +546,7 @@
     <ClCompile Include="ModuleLibrary.cpp" />
     <ClCompile Include="ModulePrograms.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
-    <ClCompile Include="ModuleResourceManager.cpp" />
     <ClCompile Include="ModuleScene.cpp" />
-    <ClCompile Include="ModuleSceneLoader.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="ModuleTime.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />

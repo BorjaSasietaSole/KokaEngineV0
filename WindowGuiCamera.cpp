@@ -18,7 +18,7 @@ void WindowGuiCamera::Draw() {
 	}
 
 	if (App->camera->getSelectedCamera() != nullptr && App->camera->getSelectedCamera()->getEnabled() == true) {
-		ImGui::Image((ImTextureID)App->camera->getSelectedCamera()->getRenderTexture(), { (float)App->window->width, (float)App->window->height }, { 0,1 }, { 1,0 });
+		ImGui::Image((ImTextureID)App->camera->getSelectedCamera()->renderTexture, { (float)App->window->width, (float)App->window->height }, { 0,1 }, { 1,0 });
 	}
 	else {
 		ImGui::Image((ImTextureID)App->textures->noCameraSelectedTexture->id, { (float)App->window->width, (float)App->window->height }, { 0,1 }, { 1,0 });

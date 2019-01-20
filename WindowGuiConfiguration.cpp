@@ -83,7 +83,7 @@ void WindowGuiConfiguration::Draw() {
 	}
 
 	if (ImGui::CollapsingHeader("Textures")) {
-		App->textures->DrawGui();
+		App->textures->DrawGUI();
 	}
 
 	if (ImGui::CollapsingHeader("Window")) {

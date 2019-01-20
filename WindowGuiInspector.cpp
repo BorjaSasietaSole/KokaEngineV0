@@ -1,6 +1,8 @@
 #include "WindowGuiInspector.h"
 #include "Application.h"
 #include "ModuleScene.h"
+#include "Component.h"
+#include "GameObject.h"
 
 WindowGuiInspector::WindowGuiInspector(): focus(false) {}
 WindowGuiInspector::~WindowGuiInspector() {}

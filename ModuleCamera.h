@@ -61,6 +61,7 @@ public:
 
 	math::LineSegment getRayCast() { return rayCast; }
 	bool getSceneFocus() { return sceneFocused; }
+	void setSceneFocus(bool newFocus);
 
 	bool getFirstMouse() { return firstMouse; }
 	float getLastX() { return lastX; }
@@ -73,11 +74,11 @@ private:
 	ComponentCamera* selectedCamera = nullptr;
 	std::vector<ComponentCamera*> gameCameras;
 
-	GameObject*					goSelected = nullptr;
-	std::vector<GameObject*>	objectsPossiblePick;
+	GameObject* goSelected = nullptr;
+	std::vector<GameObject*> objectsPossiblePick;
 
-	math::LineSegment	rayCast;
-	bool				sceneFocused;
+	math::LineSegment rayCast;
+	bool sceneFocused;
 
 	// Mouse 
 	bool firstMouse;

@@ -182,15 +182,15 @@ void ModuleCamera::Move() {
 void ModuleCamera::SelectGameObject() {
 	const fPoint mousePos = App->input->GetMousePosition();
 
-	float normalizedX = -(1.0f - (float(mousePos.x - App->options->scene->viewport.x) * 2.0f) / App->options->scene->winSize.x);
-	float normalizedY = 1.0f - (float(mousePos.y - App->options->scene->viewport.y) * 2.0f) / App->options->scene->winSize.y;
+	float normalizedX = -(1.0f - (float(mousePos.x - App->options->scene->getViewport().x) * 2.0f) / App->options->scene->getWinSize().x);
+	float normalizedY = 1.0f - (float(mousePos.y - App->options->scene->getViewport().y) * 2.0f) / App->options->scene->getWinSize().y;
 
 	rayCast = sceneCamera->frustum.UnProjectLineSegment(normalizedX, normalizedY);
 
 	objectsPossiblePick.clear();
-	App->scene->quadTree->CollectIntersections(objectsPossiblePick, rayCast);
+	App->scene->getQuadTree()->CollectIntersections(objectsPossiblePick, rayCast);
 
-	for (std::list<ComponentMesh*>::iterator iterator = App->renderer->getMeshes().begin(); iterator != App->renderer->getMeshes().end(); ++iterator) {
+	for (std::list<ComponentMesh*>::iterator iterator = App->renderer->meshes.begin(); iterator != App->renderer->meshes.end(); ++iterator) {
 		if (!(*iterator)->goContainer->getStaticGo() && (*iterator)->getMesh().verticesNumber > 0 && rayCast.Intersects((*iterator)->goContainer->ComputeBBox)) {
 			objectsPossiblePick.push_back((*iterator)->goContainer);
 		}
@@ -282,4 +282,8 @@ void ModuleCamera::setSelectedCamera(ComponentCamera* newCamera) {
 
 void ModuleCamera::setQuadCamera(ComponentCamera* newCamera) {
 	quadCamera = newCamera;
+}
+
+void ModuleCamera::setSceneFocus(bool newFocus) {
+	sceneFocused = newFocus;
 }

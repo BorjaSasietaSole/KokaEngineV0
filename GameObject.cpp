@@ -94,9 +94,9 @@ GameObject::GameObject(const GameObject& duplicateGameObject) {
 	for (const auto &component : duplicateGameObject.components) {
 		Component* duplicatedComponent = component->Duplicate();
 		components.push_back(duplicatedComponent);
-		duplicatedComponent->setGoContainer(this);
+		duplicatedComponent->goContainer = this;
 
-		sprintf_s(duplicatedComponent->parentUuid, uuid);
+		printf_s(duplicatedComponent->getParentUuid(), getUuid());
 		if (duplicatedComponent->getComponentType() == ComponentType::TRANSFORM) {
 			transform = (ComponentTransform*)duplicatedComponent;
 		}
@@ -119,7 +119,7 @@ GameObject::GameObject(const GameObject& duplicateGameObject) {
 GameObject::~GameObject() {
 
 	if (staticGo) {
-		App->scene->quadTree->Remove(this);
+		App->scene->getQuadTree()->Remove(this);
 	}
 
 	for (auto &component : components) {
@@ -195,7 +195,7 @@ void GameObject::DrawProperties() {
 
 	if (ImGui::Checkbox("Enabled", &enabled)) {
 		for (auto &component : components) {
-			component->setEnabled(enabled);
+			component->enabled = enabled;
 		}
 	} ImGui::SameLine();
 
@@ -219,7 +219,7 @@ void GameObject::DrawProperties() {
 
 	if (components.size() > 0) {
 		for (std::list<Component*>::iterator it = components.begin(); it != components.end();) {
-			if (!(*it)->toBeDeleted) {
+			if (!(*it)->getTobeDelete()) {
 				(*it)->DrawProperties(staticGo);
 				it++;
 			}
@@ -419,10 +419,10 @@ void GameObject::ModelTransform(unsigned shader) const {
 void GameObject::UpdateStaticChilds(bool staticState) {
 	staticGo = staticState;
 	if (staticGo && GetComponent(ComponentType::MESH) != nullptr) {
-		App->scene->quadTree->Insert(this, true);
+		App->scene->getQuadTree()->Insert(this, true);
 	}
 	else if (!staticGo && GetComponent(ComponentType::MESH) != nullptr) {
-		App->scene->quadTree->Remove(this);
+		App->scene->getQuadTree()->Remove(this);
 	}
 	for (auto &child : goChilds) {
 		child->UpdateStaticChilds(staticState);
@@ -480,7 +480,7 @@ void GameObject::Load(Config* config, rapidjson::Value& value) {
 	}
 
 	if (staticGo) {
-		App->scene->quadTree->Insert(this, true);
+		App->scene->getQuadTree()->Insert(this, true);
 	}
 
 }
@@ -493,7 +493,7 @@ void GameObject::DrawHierarchy(GameObject* goSelected) {
 		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
 
-	bool obj_open = ImGui::TreeNodeEx(this, node_flags, name);
+	bool obj_open = ImGui::TreeNodeEx(this, node_flags, name.c_str());
 
 	if (ImGui::IsItemClicked()) {
 		App->scene->setGoSelected(this);
@@ -516,23 +516,49 @@ Component* GameObject::AddComponent(ComponentType type) {
 
 	switch (type) {
 	case ComponentType::CAMERA:
+		component = new ComponentCamera(this);
+		if (App->camera->getSelectedCamera() == nullptr) {
+			App->camera->setSelectedCamera((ComponentCamera*)component);
+		}
+		App->camera->getGameCameras().push_back((ComponentCamera*)component);
 		break;
 	case ComponentType::TRANSFORM:
-		component = new ComponentTransform(this, math::float4x4());
-		transform = (ComponentTransform*)component;
+		if (GetComponent(ComponentType::TRANSFORM) == nullptr) {
+			component = new ComponentTransform(this, math::float4x4().identity);
+			transform = (ComponentTransform*)component;
+		}
+		else {
+			LOG("This GO already have a TRANSFORM");
+		}
 		break;
 	case  ComponentType::MESH:
-		component = new ComponentMesh(this, nullptr);
+		if (GetComponent(ComponentType::MESH) == nullptr) {
+			component = new ComponentMesh(this);
+			mesh = (ComponentMesh*)component;
+			//We need to have a material to render a mesh, so we include one if not already added
+			AddComponent(ComponentType::MATERIAL);
+		}
+		else {
+			LOG("This GO already have a MESH");
+		}
 		break;
 	case ComponentType::MATERIAL:
-		component = new ComponentMaterial(this);
+		if (GetComponent(ComponentType::MATERIAL) == nullptr) {
+			component = new ComponentMaterial(this);
+			material = (ComponentMaterial*)component;
+		}
+		else {
+			LOG("This GO already have a MATERIAL");
+		}
 		break;
 	case ComponentType::EMPTY:
 	default:
 		break;
 	}
 
-	components.push_back(component);
+	if (component != nullptr) {
+		components.push_back(component);
+	}
 	return component;
 }
 
@@ -580,7 +606,7 @@ AABB& GameObject::ComputeBBox() {
 
 	if (mesh != nullptr && transform != nullptr) {
 		bbox.SetNegativeInfinity();
-		bbox.Enclose(mesh->mesh.bbox);
+		bbox.Enclose(mesh->getMesh().bbox);
 		bbox.TransformAsAABB(transform->GetGlobalTransform());
 	}
 	return bbox;

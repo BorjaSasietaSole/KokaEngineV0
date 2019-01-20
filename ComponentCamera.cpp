@@ -21,7 +21,7 @@ ComponentCamera::~ComponentCamera() {
 	glDeleteRenderbuffers(1, &rbo);
 	glDeleteTextures(1, &renderTexture);
 
-	for (std::list<ComponentCamera*>::iterator it = App->camera->getGameCameras().begin(); it != App->camera->getGameCameras().end(); ++it) {
+	for (std::vector<ComponentCamera*>::iterator it = App->camera->getGameCameras().begin(); it != App->camera->getGameCameras().end(); ++it) {
 		if ((*it) == this) {
 			if (App->camera->getSelectedCamera() == this) {
 				App->camera->setSelectedCamera(nullptr);

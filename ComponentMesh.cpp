@@ -176,7 +176,7 @@ void ComponentMesh::LoadMesh(const char* name) {
 	MeshImporter::Load(&mesh, name);
 
 	ComputeMesh();
-	getGoContainer()->ComputeBBox();
+	goContainer->ComputeBBox();
 	App->renderer->meshes.push_back(this);
 }
 
@@ -327,7 +327,7 @@ void ComponentMesh::Save(Config* config) {
 	config->StartObject();
 
 	config->AddComponentType("componentType", getComponentType());
-	config->AddString("parent", getGoContainer()->getUuid());
+	config->AddString("parent", goContainer->getUuid());
 	config->AddString("currentMesh", currentMesh.c_str());
 
 	config->EndObject();

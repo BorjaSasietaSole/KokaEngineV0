@@ -42,9 +42,10 @@ public:
 	const GameObject* getGoContainer() { return goContainer; }
 	GameObject*	goContainer = nullptr;
 
+	bool enabled = true;
+
 private:
 	bool toBeDeleted = false;
-	bool enabled = true;
 	ComponentType componentType = ComponentType::EMPTY;
 	char uuid[37];
 	char parentUuid[37];
