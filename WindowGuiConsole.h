@@ -16,7 +16,7 @@ public:
 private:
 	ImGuiTextBuffer buf;
 	ImVector<int> lineOffsets;
-	bool scrollToBottom = true;
+	bool scrollToBottom;
 };
 
 #endif

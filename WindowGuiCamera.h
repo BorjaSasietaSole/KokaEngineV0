@@ -12,7 +12,7 @@ public:
 	bool IsFocused() const { return focus; }
 
 private:
-	bool focus = false;
+	bool focus;
 
 };
 

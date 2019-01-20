@@ -1,8 +1,10 @@
 #include "WindowGuiConsole.h"
 
-WindowGuiConsole::WindowGuiConsole() {}
+WindowGuiConsole::WindowGuiConsole():scrollToBottom(true) {}
 
-WindowGuiConsole::~WindowGuiConsole() {}
+WindowGuiConsole::~WindowGuiConsole() {
+	Clear();
+}
 
 void WindowGuiConsole::Clear() { 
 	buf.clear(); 
