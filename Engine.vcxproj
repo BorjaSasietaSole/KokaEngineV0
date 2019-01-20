@@ -477,9 +477,9 @@
     <ClInclude Include="WindowGuiCamera.h" />
     <ClInclude Include="WindowGuiConfiguration.h" />
     <ClInclude Include="WindowGuiConsole.h" />
-    <ClInclude Include="WindowGuiEditScene.h" />
     <ClInclude Include="WindowGuiHierarchy.h" />
     <ClInclude Include="WindowGuiInspector.h" />
+    <ClInclude Include="WindowGuiLight.h" />
     <ClInclude Include="WindowGuiTime.h" />
   </ItemGroup>
   <ItemGroup>
@@ -556,10 +556,10 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="WindowGui.cpp" />
     <ClCompile Include="WindowGuiAboutOf.cpp" />
+    <ClCompile Include="WindowGuiAssets.cpp" />
     <ClCompile Include="WindowGuiCamera.cpp" />
     <ClCompile Include="WindowGuiConfiguration.cpp" />
     <ClCompile Include="WindowGuiConsole.cpp" />
-    <ClCompile Include="WindowGuiEditScene.cpp" />
     <ClCompile Include="WindowGuiHierarchy.cpp" />
     <ClCompile Include="WindowGuiInspector.cpp" />
     <ClCompile Include="WindowGuiTime.cpp" />

@@ -2,7 +2,8 @@
 #define __WINDOWGUINSPECTOR_H__
 
 #include "WindowGui.h"
-#include "Component.h"
+
+class GameObject;
 
 class WindowGuiInspector : public WindowGui
 {
@@ -14,7 +15,7 @@ public:
 	void Focus(GameObject* gameobject);
 
 private:
-	bool focus = false;
+	bool focus;
 };
 
 #endif

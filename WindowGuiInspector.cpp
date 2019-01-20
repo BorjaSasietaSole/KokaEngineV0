@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "ModuleScene.h"
 
-WindowGuiInspector::WindowGuiInspector(){}
+WindowGuiInspector::WindowGuiInspector(): focus(false) {}
 WindowGuiInspector::~WindowGuiInspector() {}
 
 void WindowGuiInspector::Draw() {
