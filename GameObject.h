@@ -73,6 +73,8 @@ public:
 	
 	GameObject* getParent() { return parent; }
 
+	bool getEnabled() {	return enabled;	}
+
 private:
 	char uuid[37];
 	char parentUuid[37];
