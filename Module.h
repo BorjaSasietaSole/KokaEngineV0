@@ -1,12 +1,14 @@
 #ifndef __MODULE_H__
 #define __MODULE_H__
+
 #include "Globals.h"
 
-class Module
-{
+class Module{
 public:
 
 	Module(){}
+
+	virtual ~Module() {}
 
 	virtual bool Init() { return true; }
 

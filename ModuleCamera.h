@@ -2,13 +2,15 @@
 #define __MODULECAMERA_H_
 
 #include "Module.h"
+#include "Globals.h"
+#include "MathGeoLib.h"
 #include "ComponentMesh.h"
-#include "ComponentTransform.h"
 #include "ComponentCamera.h"
 #include "GameObject.h"
-#include "Point.h"
 #include "GL/glew.h"
 #include "SDL.h"
+
+class Camera;
 
 class ModuleCamera : public Module
 {
@@ -27,11 +29,13 @@ public:
 	ModuleCamera();
 	~ModuleCamera();
 
-	bool Init();
+	bool Init() override;
 	update_status PreUpdate() override;
 	update_status Update() override;
 	bool CleanUp() override;
 	void DrawGui();
+
+	void SelectGameObject();
 
 	// Movement
 	void Move();
@@ -45,36 +49,38 @@ public:
 
 	void setSceneCamera(ComponentCamera* newCamera);
 	void setSelectedCamera(ComponentCamera* newCamera);
+	void setQuadCamera(ComponentCamera* newCamera);
 
+	ComponentCamera* getQuadCamera() { return quadCamera; }
 	ComponentCamera* getSceneCamera() { return sceneCamera; }
 	ComponentCamera* getSelectedCamera() { return selectedCamera; }
 	std::vector<ComponentCamera*> getGameCameras() { return gameCameras; }
 
-	float getCameraSpeed() { return cameraSpeed; }
-	float getRotationSpeed() { return rotationSpeed; }
-	float getMouseSensitivity() { return mouseSensitivity; }
+	GameObject* getGoSelected() { return goSelected; }
+	std::vector<GameObject*> getObjectsPossible() { return objectsPossiblePick; }
+
+	math::LineSegment getRayCast() { return rayCast; }
+	bool getSceneFocus() { return sceneFocused; }
 
 	bool getFirstMouse() { return firstMouse; }
 	float getLastX() { return lastX; }
 	float getLastY() { return lastY; }
 
-	GameObject* getSelectedObject() { return selectedObject; }
-
 private:
 
-	GameObject* selectedObject = nullptr;
-
-	// User attributes
-	float mouseSensitivity = 65.0f;
-	float rotationSpeed = 65.0f;
-	float cameraSpeed = 17.0f;;
-
+	ComponentCamera* quadCamera = nullptr;
 	ComponentCamera* sceneCamera = nullptr;
 	ComponentCamera* selectedCamera = nullptr;
 	std::vector<ComponentCamera*> gameCameras;
 
+	GameObject*					goSelected = nullptr;
+	std::vector<GameObject*>	objectsPossiblePick;
+
+	math::LineSegment	rayCast;
+	bool				sceneFocused;
+
 	// Mouse 
-	bool firstMouse = true;
+	bool firstMouse;
 	float lastX = 0.0f;
 	float lastY = 0.0f;
 

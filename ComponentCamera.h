@@ -1,10 +1,17 @@
 #ifndef __COMPONENTCAMERA_H__
 #define __COMPONENTCAMERA_H__
 
+#include "Globals.h"
 #include "Component.h"
-#include "MathGeoLib.h"
-#include "imgui/imgui.h"
-#include "glew-2.1.0/include/GL/glew.h"
+#include "MathGeoLib/include/Math/Quat.h"
+#include "MathGeoLib/include/Math/float3.h"
+#include "MathGeoLib/include/Math/float4x4.h"
+#include "MathGeoLib/include/Math/MathFunc.h"
+#include "MathGeoLib/include/Geometry/Frustum.h"
+#include "SDL.h"
+#include "GL/glew.h"
+
+class GameObject;
 
 class ComponentCamera : public Component
 {
@@ -12,89 +19,54 @@ public:
 	ComponentCamera(GameObject* goParent);
 	~ComponentCamera();
 
-	void DrawProperties(bool enabled) override;
-	Component* Duplicate() override;
-	void Update();
+	void			DrawProperties(bool enabled) override;
+	Component*		Duplicate() override;
+	void			Update() override;
 
-	void InitFrustum();
+	void			InitFrustum(math::float3 camPos = math::float3(0.0f, 300.0f, 1000.0f), math::float3 camFront = math::float3(0.0f, 0.0f, -1.0f), math::float3 camUp = float3::unitY);
+	void			InitOrthographicFrustum(math::float3 camPos = math::float3(0.0f, 300.0f, 1000.0f), math::float3 camFront = math::float3(0.0f, 0.0f, -1.0f), math::float3 camUp = float3::unitY);
 
-	void LookAt(math::float3 target);
-	math::float4x4 GetViewMatrix();
-	math::float4x4 GetProjectionMatrix();
+	void			LookAt(math::float3 target);
+	math::float4x4	GetViewMatrix() const;
+	math::float4x4	GetProjectionMatrix() const;
 
-	void Rotate(float dx, float dy);
-	void Orbit(float dx, float dy);
+	void			Rotate(float dx, float dy);
+	void			Orbit(float dx, float dy);
+	void			SetScreenNewScreenSize(unsigned newWidth, unsigned newHeight);
 
-	void SetScreenNewScreenSize(unsigned newWidth, unsigned newHeight);
-	void SetHorizontalFOV(float fovXDegrees);
-	void SetVerticalFOV(float fovYDegrees);
+	void			Load(Config* config, rapidjson::Value& value) override;
+	void			Save(Config* config) override;
 
-	void setCameraPosition(const math::float3 newPosition);
-	void setCameraFront(const math::float3 newPosition);
-	void setCameraUp(const math::float3 newPosition);
+private:
+	void			CreateFrameBuffer(float winWidth, float winHeight);
+	void			SetHorizontalFOV(float fovXDegrees);
+	void			SetVerticalFOV(float fovYDegrees);
 
-	void setCameraSpeed(const float newSpeed);
-	void setRotationSpeed(const float newSpeed);
+public:
+	math::Frustum	frustum;
 
-	math::Frustum frustum;
+	// Camera specs
+	float			maxFov = 80.0f;
+	float			minFov = 20.0f;
+	float			fovY = 45.0f;
+	float			fovX = 45.0f;
+	float			cameraSpeed = 0.1f;
+	float			rotationSpeed = 0.5f;
+	float			mouseSensitivity = 0.15f;
+	float			zoomSpeed = 0.1f;
+	float			zoomValue = 0.0f;
 
-	math::float3 getCameraPosition() { return cameraPosition; }
-	math::float3 getCameraFront() { return cameraFront; }
-	math::float3 getCameraUp() { return cameraUp; }
+	unsigned		screenWidth = SCREEN_WIDTH;
+	unsigned		screenHeight = SCREEN_HEIGHT;
 
-	float getMaxFov() { return maxFov; }
-	float getMinFov() { return minFov; }
-	float getPitch() { return pitch; }
-	float getYaw() { return yaw; }
-	float getCameraSpeed() { return cameraSpeed; }
-	float getRotationSpeed() { return rotationSpeed; }
+	unsigned		fbo = 0u;
+	unsigned		rbo = 0u;
+	unsigned		renderTexture = 0u;
 
-	unsigned getRenderTexture() { return renderTexture; }
-	unsigned getFbo() { return fbo; }
+	//Camera debug settings
+	bool			debugDraw = true;
+	int				wireFrame = GL_FILL;
 
-	bool debugDraw = true;
-
-	void CreateFrameBuffer();
-
-	void Load(Config* config, rapidjson::Value& value) override;
-	void Save(Config* config) override;
-
-	private:
-
-		math::float3 cameraPosition = math::float3(0.0f, 3.0f, 20.0f);
-		math::float3 cameraFront = math::float3(0.0f, 0.0f, -1.0f);
-		math::float3 cameraUp = math::float3(0.0f, 1.0f, 0.0f);
-
-		// Camera specs
-		float maxFov = 100.0f;
-		float minFov = 10.0f;
-		float pitch = 0.0f;
-		float yaw = 0.0f;
-
-		unsigned screenWidth = SCREEN_WIDTH;
-		unsigned screenHeight = SCREEN_HEIGHT;
-
-		float screenRatio = screenWidth / screenHeight;
-
-		float cameraSpeed = 15.0f;
-		float rotationSpeed = 65.0f;
-		float mouseSensitivity = 0.2f;
-
-		float fovY = 45.0f;
-		float fovX = 45.0f;
-		float zoomValue = 0.0f;
-
-		unsigned fbo = 0u;
-		unsigned rbo = 0u;
-		unsigned renderTexture = 0u;
-
-		//Camera debug settings
-		bool debugDraw = true;
-		int	wireFrame = GL_FILL;
-
-		void zCreateFrameBuffer(float winWidth, float winHeight);
-		void SetHorizontalFOV(float fovXDegrees);
-		void SetVerticalFOV(float fovYDegrees);
 };
 
 #endif

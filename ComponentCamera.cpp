@@ -6,22 +6,22 @@
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
 #include "ComponentCamera.h"
+#include "ComponentTransform.h"
 
 ComponentCamera::ComponentCamera(GameObject* goParent) : Component(goParent, ComponentType::CAMERA) {
 	InitFrustum();
-	CreateFrameBuffer();
-	if (goParent != nullptr) {
-		frustum.pos = goParent->ComputeBBox().CenterPoint();
-	}
+	CreateFrameBuffer(App->window->width, App->window->height);
+	cameraSpeed *= App->scene->scaleFactor;
+	rotationSpeed *= App->scene->scaleFactor;
 }
 
-ComponentCamera::~ComponentCamera() { 
+ComponentCamera::~ComponentCamera() {
 
 	glDeleteFramebuffers(1, &fbo);
 	glDeleteRenderbuffers(1, &rbo);
 	glDeleteTextures(1, &renderTexture);
 
-	for (std::vector<ComponentCamera*>::iterator it = App->camera->getGameCameras().begin(); it != App->camera->getGameCameras().end(); ++it) {
+	for (std::list<ComponentCamera*>::iterator it = App->camera->getGameCameras().begin(); it != App->camera->getGameCameras().end(); ++it) {
 		if ((*it) == this) {
 			if (App->camera->getSelectedCamera() == this) {
 				App->camera->setSelectedCamera(nullptr);
@@ -30,26 +30,35 @@ ComponentCamera::~ComponentCamera() {
 			return;
 		}
 	}
-
 }
 
-void ComponentCamera::InitFrustum() {
+void ComponentCamera::InitFrustum(math::float3 camPos, math::float3 camFront, math::float3 camUp) {
 	frustum.type = FrustumType::PerspectiveFrustum;
-	frustum.pos = cameraPosition;
-	frustum.front = cameraFront;
-	frustum.up = float3::unitY;
-	frustum.nearPlaneDistance = 0.1f;
-	frustum.farPlaneDistance = 420.0f;
+	frustum.pos = camPos;
+	frustum.front = camFront;
+	frustum.up = camUp;
+	frustum.nearPlaneDistance = 0.008f * App->scene->scaleFactor;
+	frustum.farPlaneDistance = 42.0f * App->scene->scaleFactor;
 	frustum.verticalFov = math::pi / 2.0f;
-	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * ((float)App->window->width / (float)App->window->height));
+	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * ((float)screenWidth / (float)screenHeight));
+}
+
+void ComponentCamera::InitOrthographicFrustum(math::float3 camPos, math::float3 camFront, math::float3 camUp) {
+	frustum.type = FrustumType::OrthographicFrustum;
+	frustum.pos = camPos;
+	frustum.front = camFront;
+	frustum.up = camUp;
+	frustum.nearPlaneDistance = 0.01f * App->scene->scaleFactor;
+	frustum.farPlaneDistance = 10.0f * App->scene->scaleFactor;
+	frustum.orthographicWidth = 4.464f * App->scene->scaleFactor;
+	frustum.orthographicHeight = 4.464f * App->scene->scaleFactor;
 }
 
 void ComponentCamera::Update() {
-	GameObject* Go = getGoContainer();
-	if (Go == nullptr) return;
-	if (Go->getTransform() == nullptr) return;
+	if (goContainer == nullptr) return;
+	if (goContainer->getTransform() == nullptr) return;
 
-	math::float4x4 transform = Go->GetGlobalTransform();
+	math::float4x4 transform = goContainer->getTransform()->GetGlobalTransform();
 	frustum.pos = transform.TranslatePart();
 	frustum.front = transform.RotatePart().Mul(math::float3::unitZ).Normalized();
 	frustum.up = transform.RotatePart().Mul(math::float3::unitY).Normalized();
@@ -117,23 +126,21 @@ void ComponentCamera::LookAt(math::float3 target) {
 	frustum.up = look.Mul(frustum.up).Normalized();
 }
 
-math::float4x4 ComponentCamera::GetViewMatrix() {
+math::float4x4 ComponentCamera::GetViewMatrix() const {
 	math::float4x4 view = frustum.ViewMatrix();
 	return view.Transposed();
 }
 
-math::float4x4 ComponentCamera::GetProjectionMatrix() {
+math::float4x4 ComponentCamera::GetProjectionMatrix() const {
 	return frustum.ProjectionMatrix().Transposed();
 }
 
 void ComponentCamera::SetScreenNewScreenSize(unsigned width, unsigned height) {
 	screenWidth = width;
 	screenHeight = height;
-	screenRatio = (float)screenWidth / (float)screenHeight;
 
 	SetHorizontalFOV(fovX);
 	SetVerticalFOV(fovY);
-	CreateFrameBuffer();
 }
 
 void ComponentCamera::Rotate(float dx, float dy) {
@@ -154,10 +161,10 @@ void ComponentCamera::Rotate(float dx, float dy) {
 }
 
 void ComponentCamera::Orbit(float dx, float dy) {
+	// TODO: set up the orbit when no GO is selected in front of the camera
 	if (App->scene->getGoSelect() == nullptr) return;
 
-	AABB& bbox = App->scene->getGoSelect()->ComputeBBox();
-	math::float3 center = bbox.CenterPoint();
+	math::float3 center = App->scene->getGoSelect()->getTransform()->getPosition();
 
 	if (dx != 0) {
 		math::Quat rotation = math::Quat::RotateY(math::DegToRad(-dx)).Normalized();
@@ -174,7 +181,7 @@ void ComponentCamera::Orbit(float dx, float dy) {
 	LookAt(center);
 }
 
-void ComponentCamera::CreateFrameBuffer() {
+void ComponentCamera::CreateFrameBuffer(float winWidth, float winHeight) {
 	glDeleteFramebuffers(1, &fbo);
 	glDeleteRenderbuffers(1, &rbo);
 
@@ -184,7 +191,7 @@ void ComponentCamera::CreateFrameBuffer() {
 	glGenTextures(1, &renderTexture);
 	glBindTexture(GL_TEXTURE_2D, renderTexture);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, App->window->width, App->window->height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, winWidth, winHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -195,7 +202,7 @@ void ComponentCamera::CreateFrameBuffer() {
 
 	glGenRenderbuffers(1, &rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, App->window->width, App->window->height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, winWidth, winHeight);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -207,36 +214,16 @@ void ComponentCamera::CreateFrameBuffer() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void ComponentCamera::setCameraPosition(const math::float3 newPosition) {
-	cameraPosition = newPosition;
-}
-
-void ComponentCamera::setCameraFront(const math::float3 newPosition) {
-	cameraFront = newPosition;
-}
-
-void ComponentCamera::setCameraUp(const math::float3 newPosition) {
-	cameraUp = newPosition;
-}
-
-void ComponentCamera::setCameraSpeed(const float newSpeed) {
-	cameraSpeed = newSpeed;
-}
-
-void ComponentCamera::setRotationSpeed(const float newSpeed) {
-	cameraSpeed = newSpeed;
-}
-
+/* RapidJson Storage */
 void ComponentCamera::Save(Config* config) {
 	config->StartObject();
 
 	config->AddComponentType("componentType", getComponentType());
 
-	if (getGoContainer() != nullptr) {
-		config->AddString("goContainer", getGoContainer()->getUuid());
+	if (goContainer != nullptr) {
+		config->AddString("goContainer", goContainer->getUuid());
 	}
 
-	//TODO: we are not moving the camera anymore, we are moving his goContainer
 	config->AddFloat("frustum.nearPlaneDistance", frustum.nearPlaneDistance);
 	config->AddFloat("frustum.farPlaneDistance", frustum.farPlaneDistance);
 	config->AddFloat3("frustum.pos", frustum.pos);
