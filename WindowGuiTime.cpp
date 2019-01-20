@@ -2,11 +2,13 @@
 #include "Application.h"
 #include "ModuleTime.h"
 #include "ModuleWindow.h"
+#include "ModuleScene.h"
 
 WindowGuiTime::WindowGuiTime() {}
 WindowGuiTime::~WindowGuiTime(){}
 
 void WindowGuiTime::Draw() {
+
 	ImGui::Begin("Time", &enabled, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse);
 
 	ImVec2 size = ImGui::GetWindowSize();
@@ -27,9 +29,11 @@ void WindowGuiTime::Draw() {
 	if (ImGui::ArrowButton("Play", ImGuiDir_Right)) {
 		if (App->timers->gameState == GameState::STOP) {
 			App->timers->StartGameClock();
+			App->scene->SaveScene();
 		}
 		else {
 			App->timers->StopGameClock();
+			App->scene->LoadScene();
 		}
 	}
 
@@ -78,4 +82,5 @@ void WindowGuiTime::Draw() {
 	ImGui::EndMenuBar();
 
 	ImGui::End();
+
 }
