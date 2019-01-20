@@ -10,18 +10,17 @@ WindowGuiCamera::~WindowGuiCamera(){}
 void WindowGuiCamera::Draw() {
 
 	ImGui::Begin("Game", &enabled, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
 	ImVec2 size = ImGui::GetWindowSize();
-	
+
 	if (App->camera->getSelectedCamera() != nullptr) {
 		App->camera->getSelectedCamera()->SetScreenNewScreenSize(size.x, size.y);
 	}
 
-	if (App->camera->getSelectedCamera() != nullptr && App->camera->getSelectedCamera()->getEnabled() == true) {
-		ImGui::Image((ImTextureID)App->camera->getSelectedCamera()->renderTexture, { (float)App->window->width, (float)App->window->height }, { 0,1 }, { 1,0 });
+	if (App->camera->getSelectedCamera() != nullptr && App->camera->getSelectedCamera()->enabled == true) {
+		ImGui::Image((ImTextureID)App->camera->getSelectedCamera()->renderTexture, size, { 0,1 }, { 1,0 });
 	}
 	else {
-		ImGui::Image((ImTextureID)App->textures->noCameraSelectedTexture->id, { (float)App->window->width, (float)App->window->height }, { 0,1 }, { 1,0 });
+		ImGui::Image((ImTextureID)App->textures->noCameraSelectedTexture->id, size, { 0,1 }, { 1,0 });
 	}
 	ImGui::End();
 }
