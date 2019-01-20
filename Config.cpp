@@ -114,6 +114,7 @@ ComponentType Config::GetComponentType(const char* name, rapidjson::Value& value
 	if (strcmp(stringComponentType, "CAMERA") == 0) {
 		return ComponentType::CAMERA;
 	}
+	return ComponentType::MATERIAL;
 }
 
 int Config::GetInt(const char* name, rapidjson::Value& value) {

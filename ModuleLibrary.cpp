@@ -4,7 +4,8 @@
 #include "ModuleFileSystem.h"
 #include "MaterialImporter.h"
 #include "imgui.h"
-#include "thread";
+#include "thread"
+#include "Brofiler.h"
 
 bool stopWatcher = false;
 

@@ -10,6 +10,7 @@
 #include "ComponentCamera.h"
 #include "ComponentMaterial.h"
 #include "ComponentTransform.h"
+#include "Brofiler.h"
 
 #define PAR_SHAPES_IMPLEMENTATION
 #include "par_shapes.h"

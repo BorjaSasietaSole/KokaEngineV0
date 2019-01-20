@@ -84,7 +84,7 @@ void ComponentMesh::Draw(unsigned shaderProgram, const ComponentMaterial* materi
 	glUniform1i(glGetUniformLocation(shaderProgram, "emissiveMap"), 1);
 
 	glActiveTexture(GL_TEXTURE2);
-	if (material->Enable && material->material.occlusionMap != 0) {
+	if (material->enabled && material->material.occlusionMap != 0) {
 		glBindTexture(GL_TEXTURE_2D, material->material.occlusionMap);
 	}
 	else {
@@ -93,7 +93,7 @@ void ComponentMesh::Draw(unsigned shaderProgram, const ComponentMaterial* materi
 	glUniform1i(glGetUniformLocation(shaderProgram, "occlusionMap"), 2);
 
 	glActiveTexture(GL_TEXTURE3);
-	if (material->Enable && material->material.specularMap != 0) {
+	if (material->enabled && material->material.specularMap != 0) {
 		glBindTexture(GL_TEXTURE_2D, material->material.specularMap);
 	}
 	else {

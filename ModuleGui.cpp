@@ -1,5 +1,3 @@
-#include "Globals.h"
-
 #include "ModuleTime.h"
 #include "ModuleScene.h"
 #include "Application.h"
@@ -8,6 +6,7 @@
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleTextures.h"
+#include "Brofiler.h"
 
 #include "ImGuizmo/ImGuizmo.h"
 

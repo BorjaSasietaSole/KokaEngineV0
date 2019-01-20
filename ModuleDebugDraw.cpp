@@ -1,4 +1,3 @@
-#include "Globals.h"
 #include "ModuleDebugDraw.h"
 #include "Application.h"
 

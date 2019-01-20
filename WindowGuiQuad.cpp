@@ -21,14 +21,14 @@ void WindowGuiQuad::Draw() {
 	ImGui::Checkbox("Draw", &App->renderer->showQuad);
 
 	if (App->renderer->showQuad) {
-		if (App->camera->quadCamera != nullptr) {
-			ImGui::Image((ImTextureID)App->camera->quadCamera->renderTexture, { winSize.x, winSize.x }, { 0,1 }, { 1,0 });
+		if (App->camera->getQuadCamera() != nullptr) {
+			ImGui::Image((ImTextureID)App->camera->getQuadCamera()->renderTexture, { winSize.x, winSize.x }, { 0,1 }, { 1,0 });
 		}
 	}
 
 	ImGui::SliderInt("Min nodes", &maxNodes, 1, 5);
 	if (ImGui::Button("Recalculate")) {
-		App->scene->quadTree->InitQuadTree(App->scene->quadTree->quadLimits);
+		App->scene->getQuadTree()->InitQuadTree(App->scene->getQuadTree()->quadLimits);
 	}
 
 	focus = ImGui::IsWindowFocused();

@@ -3,13 +3,11 @@
 
 #include<list>
 #include "Module.h"
-#include "Globals.h"
-#include "Brofiler.h"
 
 class ModuleRender;
 class ModuleWindow;
 class ModuleTextures;
-class ModuleEditor;
+class ModuleGui;
 class ModuleCamera;
 class ModuleInput;
 class ModuleScene;

@@ -43,7 +43,7 @@ public:
 	void ClearScene();
 
 	int	scaleFactor = 1000;
-	math::float3 lightPosition = math::float3(0.0f, 1.0 * scaleFactor, 1.0f * scaleFactor);
+	math::float3 lightPosition = math::float3(0.0f, 1.0f * scaleFactor, 1.0f * scaleFactor);
 	float ambientLight = 0.3f;
 
 	GameObject* getRoot() { return root; }

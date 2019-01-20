@@ -29,7 +29,6 @@ public:
 	bool frustCulling = true;
 	int	frustumCullingType = 0;
 	bool vsyncEnabled = true;
-	void* context = nullptr;
 	unsigned ubo = 0u;
 	bool showQuad = false;
 	bool showRayCast = false;

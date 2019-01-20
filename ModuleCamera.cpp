@@ -11,6 +11,7 @@
 #include "ModuleCamera.h"
 #include "QuadTreeKoka.h"
 #include "ComponentTransform.h"
+#include "Brofiler.h"
 
 ModuleCamera::ModuleCamera(): sceneFocused(false), firstMouse(true) { }
 
@@ -191,7 +192,7 @@ void ModuleCamera::SelectGameObject() {
 	App->scene->getQuadTree()->CollectIntersections(objectsPossiblePick, rayCast);
 
 	for (std::list<ComponentMesh*>::iterator iterator = App->renderer->meshes.begin(); iterator != App->renderer->meshes.end(); ++iterator) {
-		if (!(*iterator)->goContainer->getStaticGo() && (*iterator)->getMesh().verticesNumber > 0 && rayCast.Intersects((*iterator)->goContainer->ComputeBBox)) {
+		if (!(*iterator)->goContainer->getStaticGo() && (*iterator)->getMesh().verticesNumber > 0 && rayCast.Intersects((*iterator)->goContainer->ComputeBBox())) {
 			objectsPossiblePick.push_back((*iterator)->goContainer);
 		}
 	}

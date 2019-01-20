@@ -67,7 +67,7 @@ template<typename TYPE>
 inline void QuadTreeNode::CollectIntersections(std::vector<GameObject*>& gameObject, const TYPE& primitive) const {
 	if (primitive.Intersects(aabb)) {
 		for (std::list<GameObject*>::const_iterator it = goList.begin(); it != goList.end(); ++it) {
-			if (primitive.Intersects((*it)->bbox)) {
+			if (primitive.Intersects((*it)->ComputeBBox())) {
 				gameObject.push_back(*it);
 			}
 		}

@@ -11,6 +11,8 @@
 #include "MeshImporter.h"
 #include "SDL.h"
 
+#include "Brofiler.h"
+
 #define MAX_KEYS 300
 
 ModuleInput::ModuleInput() : Module(), mouse({ 0, 0 }), mouse_motion({ 0,0 }) {

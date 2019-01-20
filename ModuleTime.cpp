@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "ModuleGui.h"
 
+#include "Brofiler.h"
+
 ModuleTime::ModuleTime() { }
 
 ModuleTime::~ModuleTime() { }

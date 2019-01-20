@@ -1,17 +1,17 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
-#include "ModuleTextures.h"
-#include "ModuleInput.h"
-#include "ModulePrograms.h"
 #include "ModuleGui.h"
 #include "ModuleCamera.h"
-#include "ModuleTime.h"
-#include "ModuleScene.h"
+#include "ModulePrograms.h"
+#include "ModuleTextures.h"
+#include "ModuleInput.h"
 #include "ModuleDebugDraw.h"
+#include "ModuleScene.h"
 #include "ModuleLibrary.h"
 #include "ModuleFileSystem.h"
-
+#include "ModuleTime.h"
+#include "Brofiler.h"
 
 using namespace std;
 

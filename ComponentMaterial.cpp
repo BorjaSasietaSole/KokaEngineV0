@@ -186,7 +186,7 @@ void ComponentMaterial::Save(Config* config) {
 	config->StartObject();
 
 	config->AddComponentType("componentType", getComponentType());
-	config->AddString("parent", getGoContainer()->getUuid());
+	config->AddString("parent", goContainer->getUuid());
 
 	config->AddString("diffuseSelected", diffuseSelected.c_str());
 	config->AddFloat4("diffuseColor", material.diffuseColor);

@@ -20,9 +20,8 @@ class ModuleLibrary : public Module
 		void UpdateTexturesList();
 		void UpdateScenesList();
 
-	public:
-		bool					 toBeDeleted = false;
-		bool			  		 removeHead = false;
+		bool toBeDeleted = false;
+		bool removeHead = false;
 		std::vector<std::string>* fileMeshesList = nullptr;
 		std::vector<std::string>* fileTexturesList = nullptr;
 		std::vector<std::string>* fileScenesList = nullptr;

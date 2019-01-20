@@ -18,6 +18,7 @@
 #include "debugdraw.h"
 #include "imgui_internal.h"
 #include "Math/float4x4.h"
+#include "Brofiler.h"
 
 ModuleRender::ModuleRender() { }
 
@@ -116,7 +117,7 @@ void ModuleRender::DrawDebugData(ComponentCamera* camera) const {
 		dd::frustum((App->camera->getSelectedCamera()->frustum.ProjectionMatrix() * App->camera->getSelectedCamera()->frustum.ViewMatrix()).Inverted(), dd::colors::Crimson);
 	}
 
-	if (App->camera->getQuadCamera != nullptr) {
+	if (App->camera->getQuadCamera() != nullptr) {
 		dd::frustum((App->camera->getQuadCamera()->frustum.ProjectionMatrix() * App->camera->getQuadCamera()->frustum.ViewMatrix()).Inverted(), dd::colors::HotPink);
 	}
 
@@ -271,4 +272,52 @@ void ModuleRender::CullingFromQuadTree(ComponentCamera* camera, ComponentMesh* m
 bool ModuleRender::CleanUp() {
 	glDeleteBuffers(1, &ubo);
 	return true;
+}
+
+void ModuleRender::PrintQuadNode(QuadTreeNode* quadNode) const {
+
+	if (quadNode->childs[0] != nullptr) {
+		for (int i = 0; i < 4; ++i) {
+			PrintQuadNode(quadNode->childs[i]);
+		}
+	}
+
+	dd::aabb(quadNode->aabb.minPoint, quadNode->aabb.maxPoint, dd::colors::Yellow);
+}
+
+void ModuleRender::PrintRayCast() const {
+	dd::line(App->camera->getRayCast().a, App->camera->getRayCast().b, math::float3(0.0f, 0.0f, 1.0f));
+}
+
+void ModuleRender::DrawImGuizmo(float width, float height, float winPosX, float winPosY) {
+	ImGuizmo::SetRect(winPosX, winPosY, width, height);
+	ImGuizmo::SetDrawlist();
+
+	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+	static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+
+	ImGui::SetCursorPos({ 20,30 });
+
+	if (App->scene->getGoSelect() != nullptr) {
+		mCurrentGizmoOperation = (ImGuizmo::OPERATION)imGuizmoOp;
+		mCurrentGizmoMode = (ImGuizmo::MODE)imGuizmoMode;
+
+		ImGuizmo::Enable(!App->scene->getGoSelect()->getStaticGo());
+
+		ComponentTransform* transform = (ComponentTransform*)App->scene->getGoSelect()->GetComponent(ComponentType::TRANSFORM);
+
+		math::float4x4 model = App->scene->getGoSelect()->getTransform()->GetGlobalTransform();
+		math::float4x4 viewScene = App->camera->getSceneCamera()->GetViewMatrix();
+		math::float4x4 projectionScene = App->camera->getSceneCamera()->GetProjectionMatrix();
+
+		ImGuizmo::SetOrthographic(false);
+
+		model.Transpose();
+		ImGuizmo::Manipulate((float*)&viewScene, (float*)&projectionScene, mCurrentGizmoOperation, mCurrentGizmoMode, (float*)&model, NULL, NULL, NULL, NULL);
+
+		if (ImGuizmo::IsUsing()) {
+			model.Transpose();
+			App->scene->getGoSelect()->getTransform()->SetGlobalTransform(model);
+		}
+	}
 }

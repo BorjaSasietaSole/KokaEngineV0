@@ -141,13 +141,6 @@ GameObject::~GameObject() {
 }
 
 void GameObject::Update() {
-	for (const auto &child : goChilds) {
-		child->Update();
-	}
-
-}
-
-void GameObject::Update() {
 
 	if (!enabled) return;
 
@@ -331,89 +324,12 @@ void GameObject::DrawHierarchy(GameObject* goSelected) {
 	ImGui::PopID();
 }
 
-Component* GameObject::AddComponent(ComponentType type) {
-	Component* component = nullptr;
-
-	switch (type) {
-	case ComponentType::CAMERA:
-		component = new ComponentCamera(this);
-		if (App->camera->getSelectedCamera() == nullptr) {
-			App->camera->setSelectedCamera((ComponentCamera*)component);
-		}
-		App->camera->getGameCameras().push_back((ComponentCamera*)component);
-		break;
-	case ComponentType::TRANSFORM:
-		if (GetComponent(ComponentType::TRANSFORM) == nullptr) {
-			component = new ComponentTransform(this, math::float4x4().identity);
-			transform = (ComponentTransform*)component;
-		}
-		else {
-			LOG("This GO already have a TRANSFORM");
-		}
-		break;
-	case  ComponentType::MESH:
-		if (GetComponent(ComponentType::MESH) == nullptr) {
-			component = new ComponentMesh(this);
-			mesh = (ComponentMesh*)component;
-			//We need to have a material to render a mesh, so we include one if not already added
-			AddComponent(ComponentType::MATERIAL);
-		}
-		else {
-			LOG("This GO already have a MESH");
-		}
-		break;
-	case ComponentType::MATERIAL:
-		if (GetComponent(ComponentType::MATERIAL) == nullptr) {
-			component = new ComponentMaterial(this);
-			material = (ComponentMaterial*)component;
-		}
-		else {
-			LOG("This GO already have a MATERIAL");
-		}
-		break;
-	case ComponentType::EMPTY:
-	default:
-		break;
-	}
-
-	if (component != nullptr) {
-		components.push_back(component);
-	}
-	return component;
-}
-
 std::list<Component*>::iterator GameObject::RemoveComponent(std::list<Component*>::iterator component) {
 	assert(*component != nullptr);
 
 	delete *component;
 	*component = nullptr;
 	return components.erase(component);
-}
-
-Component* GameObject::GetComponent(ComponentType type) const {
-	for (auto &component : components) {
-		if (component->getComponentType() == type) {
-			return component;
-		}
-	}
-
-	return nullptr;
-}
-
-std::vector<Component*> GameObject::GetComponents(ComponentType type) const {
-	std::vector<Component*> list;
-	for (auto &component : components) {
-		if (component->getComponentType() == type) {
-			list.push_back(component);
-		}
-	}
-
-	return list;
-}
-
-void GameObject::ModelTransform(unsigned shader) const {
-	//TODO: we could probably check if GO have transfom if we want to generate GO without location as Scripts Components, etc.
-	glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_TRUE, &transform->GetGlobalTransform()[0][0]);
 }
 
 void GameObject::UpdateStaticChilds(bool staticState) {
@@ -485,32 +401,6 @@ void GameObject::Load(Config* config, rapidjson::Value& value) {
 
 }
 
-void GameObject::DrawHierarchy(GameObject* goSelected) {
-	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | (goSelected == this ? ImGuiTreeNodeFlags_Selected : 0);
-
-	ImGui::PushID(this);
-	if (goChilds.empty()) {
-		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-	}
-
-	bool obj_open = ImGui::TreeNodeEx(this, node_flags, name.c_str());
-
-	if (ImGui::IsItemClicked()) {
-		App->scene->setGoSelected(this);
-	}
-
-	if (obj_open) {
-		for (auto &child : goChilds) {
-			child->DrawHierarchy(goSelected);
-		}
-
-		if (!(node_flags & ImGuiTreeNodeFlags_NoTreePushOnOpen)) {
-			ImGui::TreePop();
-		}
-	}
-	ImGui::PopID();
-}
-
 Component* GameObject::AddComponent(ComponentType type) {
 	Component* component = nullptr;
 
@@ -564,7 +454,7 @@ Component* GameObject::AddComponent(ComponentType type) {
 
 Component* GameObject::GetComponent(ComponentType type) const {
 	for (auto &component : components) {
-		if (component->getComponentType() == type) return component;
+		if (component->getComponentType() == type) { return component; }
 	}
 	return nullptr;
 }
