@@ -1,10 +1,17 @@
+#include "Globals.h"
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleTextures.h"
+#include "ModuleScene.h"
+#include "ComponentMaterial.h"
+#include "MaterialImporter.h"
+#include "ModuleFileSystem.h"
 
 ModuleTextures::ModuleTextures() { }
 
-ModuleTextures::~ModuleTextures() { }
+ModuleTextures::~ModuleTextures() {
+	CleanUp();
+}
 
 bool ModuleTextures::Init() {
 	LOG("Init Image library");
@@ -14,10 +21,18 @@ bool ModuleTextures::Init() {
 	iluInit();
 	ilutInit();
 
+	LoadDefaulTextures();
+
 	return ilutRenderer(ILUT_OPENGL);
 }
 
-// Load new texture from file path
+bool ModuleTextures::CleanUp() {
+	delete noCameraSelectedTexture;
+	noCameraSelectedTexture = nullptr;
+
+	return true;
+}
+
 Texture* const ModuleTextures::Load(const char* path) {
 	assert(path != nullptr);
 	
@@ -97,12 +112,93 @@ Texture* const ModuleTextures::Load(const char* path) {
 	return nullptr;
 }
 
+void ModuleTextures::LoadMaterial(std::string path, unsigned& textureID, int& width, int& height) {
+	unsigned imageID;
+
+	ilGenImages(1, &imageID);
+
+	ilBindImage(imageID);
+
+	path.insert(0, "/Library/Textures/");
+
+	LOG("Loading material %s", path.c_str());
+
+	char* fileBuffer;
+	unsigned lenghBuffer = App->fileSystem->Load(path.c_str(), &fileBuffer);
+
+	if (ilLoadL(IL_DDS, fileBuffer, lenghBuffer)) {
+		ILinfo ImageInfo;
+		iluGetImageInfo(&ImageInfo);
+		if (ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT) {
+			iluFlipImage();
+		}
+
+		if (!ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE)) {
+			LOG("Error: Image conversion failed %s", iluErrorString(ilGetError()));
+			return;
+		}
+
+		glGenTextures(1, &textureID);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		width = ilGetInteger(IL_IMAGE_WIDTH);
+		height = ilGetInteger(IL_IMAGE_HEIGHT);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_FORMAT), width, height, 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
+	}
+
+	ilDeleteImages(1, &imageID);
+	delete[] fileBuffer;
+	fileBuffer = nullptr;
+
+	LOG("Material creation successful.");
+}
+
+void ModuleTextures::LoadMaterial(const char* path, ComponentMaterial* componentMaterial, MaterialType materialTypeSelected) {
+	switch (materialTypeSelected) {
+	case MaterialType::OCCLUSION_MAP:
+		if (componentMaterial->material.occlusionMap != 0u) {
+			Unload(componentMaterial->material.occlusionMap);
+		}
+		LoadMaterial(path, componentMaterial->material.occlusionMap, componentMaterial->material.ambientWidth, componentMaterial->material.ambientHeight);
+		break;
+	case MaterialType::DIFFUSE_MAP:
+		if (componentMaterial->material.diffuseMap != 0u) {
+			Unload(componentMaterial->material.diffuseMap);
+		}
+		LoadMaterial(path, componentMaterial->material.diffuseMap, componentMaterial->material.diffuseWidth, componentMaterial->material.diffuseHeight);
+		break;
+	case MaterialType::SPECULAR_MAP:
+		if (componentMaterial->material.specularMap != 0u) {
+			Unload(componentMaterial->material.specularMap);
+		}
+		LoadMaterial(path, componentMaterial->material.specularMap, componentMaterial->material.specularWidth, componentMaterial->material.specularHeight);
+		break;
+	case MaterialType::EMISSIVE_MAP:
+		if (componentMaterial->material.emissiveMap != 0u) {
+			Unload(componentMaterial->material.emissiveMap);
+		}
+		LoadMaterial(path, componentMaterial->material.emissiveMap, componentMaterial->material.emissiveWidth, componentMaterial->material.emissiveHeight);
+		break;
+	}
+}
+
+void ModuleTextures::Unload(unsigned id) {
+	if (id != 0u) {
+		glDeleteTextures(1, &id);
+	}
+}
+
 void ModuleTextures::LoadDefaulTextures() {
-	defaultTexture = Load("checkers.jpg");
 	noCameraSelectedTexture = Load("nocamselected.jpg");
 }
 
-void ModuleTextures::DrawGui() {
+void ModuleTextures::DrawGUI() {
 	ImGui::Text("This will be applied only to the next loaded models");
 	ImGui::Text("Filter type:");
 	ImGui::RadioButton("Linear", &filterType, GL_LINEAR); ImGui::SameLine();

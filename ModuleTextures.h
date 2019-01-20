@@ -1,11 +1,17 @@
 #ifndef __MODULETEXTURES_H__
 #define __MODULETEXTURES_H__
 
+#include <list>
 #include "Module.h"
 #include "Globals.h"
 #include "imgui.h"
 #include "GL/glew.h"
 #include "IL/ilut.h"
+#include "Math/float4.h"
+#include "Geometry/AABB.h"
+
+enum class MaterialType;
+class ComponentMaterial;
 
 struct Material {
 	unsigned		occlusionMap = 0u;
@@ -69,21 +75,21 @@ public:
 	~ModuleTextures();
 
 	bool Init() override;
-	Texture* const Load(const char* path);
-	void LoadDefaulTextures();
-	void DrawGui();
+	bool CleanUp() override;
+	void DrawGUI();
 
-	int pixelDepth = 0;
-	int height = 0;
-	int format = 0;
-	int width = 0;
+	void LoadMaterial(std::string path, unsigned& textureID, int& width, int& height);
+	void LoadMaterial(const char* path, ComponentMaterial* componentMaterial, MaterialType materialTypeSelected);
+	void Unload(unsigned id);
 
 	bool mipmaping = false;
 	int filterType = GL_LINEAR;
 	int mipMapMode = GL_NEAREST_MIPMAP_NEAREST;
 	int wrapMode = GL_CLAMP;
-	Texture* defaultTexture = nullptr;
 	Texture* noCameraSelectedTexture = nullptr;
+private:
+	void LoadDefaulTextures();
+	Texture* const Load(const char* path);
 };
 
 #endif
