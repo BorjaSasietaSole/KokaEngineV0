@@ -246,10 +246,6 @@ update_status ModuleGui::Update() {
 	return UPDATE_CONTINUE;
 }
 
-void ModuleGui::HandleInputs(SDL_Event* event) const {
-	ImGui_ImplSDL2_ProcessEvent(event);
-}
-
 void ModuleGui::RenderGUI() const {
 	ImGui::End();
 	ImGui::Render();

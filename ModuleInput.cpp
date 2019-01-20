@@ -5,8 +5,10 @@
 #include "ModuleTextures.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
-#include "ModuleSceneLoader.h"
 #include "ModuleCamera.h"
+#include "MaterialImporter.h"
+#include "ModuleFileSystem.h"
+#include "MeshImporter.h"
 #include "SDL.h"
 
 #define MAX_KEYS 300
@@ -36,6 +38,7 @@ bool ModuleInput::Init() {
 }
 
 update_status ModuleInput::PreUpdate() {
+	BROFILER_CATEGORY("InputPreUpdate()", Profiler::Color::Chocolate);
 	static SDL_Event event;
 
 	mouse_motion = { 0, 0 };
@@ -152,15 +155,23 @@ bool ModuleInput::CleanUp() {
 
 void ModuleInput::FileDropped(const char* fileDroppedPath) {
 
-	std::string extension(fileDroppedPath);
-	std::size_t found = extension.find_last_of(".");
-	extension = extension.substr(found + 1, extension.length());
+	std::string fileName(fileDroppedPath);
+	std::string extension(fileName.substr(fileName.length() - 3));
 
-	if (extension == "fbx" || extension == "FBX") {
-		App->sceneLoader->LoadFile(fileDroppedPath);
+	std::size_t found = fileName.find("Models");
+	fileName = fileName.substr(found, fileName.length());
+
+	//TODO: we should be able to drop fbx and png from outside the project
+	if (extension == "png" || extension == "tif") {
+		App->fileSystem->ChangePathSlashes(fileName);
+		MaterialImporter::Import(fileName.c_str());
+	}
+	else if (extension == "fbx" || extension == "FBX") {
+		App->fileSystem->ChangePathSlashes(fileName);
+		MeshImporter::ImportFBX(fileName.c_str());
 	}
 	else {
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "The file you are trying to drop is not accepted.", App->window->window);
+		LOG("Error: The file you are trying to drop is not accepted.");
 	}
 }
 
@@ -178,9 +189,4 @@ const int ModuleInput::GetMouseWheel() const {
 
 const fPoint& ModuleInput::GetMouseMotion() const {
 	return mouse_motion;
-}
-
-void ModuleInput::DrawGui() {
-	ImGui::Text("Mouse position:");
-	ImGui::BulletText("X:%.2f | Y:%.2f", mouse.x * App->window->width, mouse.y * App->window->height);
 }

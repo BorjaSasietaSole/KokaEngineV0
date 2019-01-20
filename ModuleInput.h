@@ -32,7 +32,6 @@ public:
 	bool Init() override;
 	update_status PreUpdate() override;
 	bool CleanUp() override;
-	void DrawGui();
 
 	// Check key states from keyboard
 	KeyState GetKey(int id) const { return keyboard[id]; }

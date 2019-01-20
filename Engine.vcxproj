@@ -477,9 +477,11 @@
     <ClInclude Include="WindowGuiCamera.h" />
     <ClInclude Include="WindowGuiConfiguration.h" />
     <ClInclude Include="WindowGuiConsole.h" />
+    <ClInclude Include="WindowGuiEditScene.h" />
     <ClInclude Include="WindowGuiHierarchy.h" />
     <ClInclude Include="WindowGuiInspector.h" />
     <ClInclude Include="WindowGuiLight.h" />
+    <ClInclude Include="WindowGuiQuad.h" />
     <ClInclude Include="WindowGuiTime.h" />
   </ItemGroup>
   <ItemGroup>
@@ -560,8 +562,11 @@
     <ClCompile Include="WindowGuiCamera.cpp" />
     <ClCompile Include="WindowGuiConfiguration.cpp" />
     <ClCompile Include="WindowGuiConsole.cpp" />
+    <ClCompile Include="WindowGuiEditScene.cpp" />
     <ClCompile Include="WindowGuiHierarchy.cpp" />
     <ClCompile Include="WindowGuiInspector.cpp" />
+    <ClCompile Include="WindowGuiLight.cpp" />
+    <ClCompile Include="WindowGuiQuad.cpp" />
     <ClCompile Include="WindowGuiTime.cpp" />
   </ItemGroup>
   <ItemGroup>
